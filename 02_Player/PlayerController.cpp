@@ -1,4 +1,5 @@
 #include "PlayerController.h"
+#include "DxLib.h"
 
 void PlayerController::Init()
 {
