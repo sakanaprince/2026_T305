@@ -1,18 +1,15 @@
 #pragma once
 #include "DxPlus.h"
-#include "../99_Math/Vector3.h"
+#include "../07_Math/Vector3.h"
 
 class CameraController
 {
 public:
-	void Init();
 	void Reset();
-	void Update();
-	void Step();
-	void Draw();
+	void Update(float deltaTime);
 
 private:
-	Vec3 eye{ 0.0f,0.0f,0.0f };
+	Vec3 eye{ 600.0f,600.0f,-600.0f };
 	Vec3 target{ 0.0f,0.0f,0.0f };
 	Vec3 up{ 0.0f,1.0f,0.0f };
 
