@@ -9,7 +9,6 @@ void PlayerController::Init()
 void PlayerController::Reset()
 {
 	position = { 600.0f,600.0f,-600.0f };
-	camera.SetEye(position);
 }
 
 void PlayerController::Update(float deltaTime)
