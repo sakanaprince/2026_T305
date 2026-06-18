@@ -1,7 +1,4 @@
-﻿// =============================
-// DebugUI/DebugUI.cpp
-// =============================
-#include "DebugUI.h"
+﻿#include "DebugUI.h"
 
 #include <d3d11.h>
 #include "DxLib.h"
@@ -67,7 +64,20 @@ void DebugUI::BeginFrame()
 
 void DebugUI::Draw(GameContext& ctx)
 {
+    if (ImGui::Begin("Log"))
+    {
+        if (ImGui::Button("Clear"))
+        {
+            debugText.clear();
+        }
 
+        for (auto& t : debugText)
+        {
+            ImGui::Text(u8"%s： %s： %d", t.first.c_str(), t.second.variableText.c_str(), t.second.cnt);
+        }
+    }
+
+    ImGui::End();
 }
 
 void DebugUI::EndFrame()
@@ -122,5 +132,60 @@ void DebugUI::EndFrame()
 
         if (oldRTV) oldRTV->Release();
         if (oldDSV) oldDSV->Release();
+    }
+}
+
+void DebugUI::Log(const std::string& text, const bool& variable)
+{
+    switch (variable)
+    {
+    case 0:
+        LogSetting(text, "FALSE");
+        break;
+    case 1:
+        LogSetting(text, "TRUE");
+        break;
+    }
+}
+
+//小数点以下は6桁まで表示されます
+void DebugUI::Log(const std::string& text, const float& variable)
+{
+    //std::stringstreamは必要最低限で表現するようになっているから、小数点以下の余分な0は消してくれるらしい
+    std::stringstream ss;
+    ss << variable;
+    LogSetting(text, ss.str() + "f");
+}
+
+void DebugUI::Log(const std::string& text, const int& variable)
+{
+    LogSetting(text, std::to_string(variable).c_str());
+}
+
+void DebugUI::Log(const std::string& text)
+{
+    LogSetting(text, "");
+}
+
+void DebugUI::LogSetting(const std::string& text, const std::string variableText)
+{
+    if (auto t_it = debugText.find(text); t_it == debugText.end())
+    {
+        DebugLog log;
+        log.variableText = variableText;
+        debugText[text] = log;
+    }
+    else
+    {
+        if (t_it->second.variableText != variableText)
+        {
+            debugText[text].variableText = variableText;
+            t_it->second.cnt = 0;
+        }
+        else
+        {
+            t_it->second.cnt++;
+            t_it->second.cnt = std::min(t_it->second.cnt, 999);
+        }
     }
 }
