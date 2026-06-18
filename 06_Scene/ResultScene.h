@@ -3,14 +3,12 @@
 
 class ResultScene final : public Scene
 {
-	
 public:
-	ResultScene() = default;
+    explicit ResultScene(class GameContext* context) : Scene(context) {}
+    void Init() override;
+    void Update(float deltaTime) override;
+    void Render() const override;
 
-	// Scene ‚ğ‰î‚µ‚ÄŒp³‚³‚ê‚Ü‚µ‚½
-	void Initialize() override;
-	void Update(float deltaTime) override;
-	void Draw() const override;
-	void End() override;
+private:
+    int fontHandle{ -1 };
 };
-

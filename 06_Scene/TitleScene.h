@@ -1,19 +1,19 @@
 #pragma once
 #include "Scene.h"
+#include "../01_Core/GameContext.h"
 
-class TitleScene : public Scene
+class TitleScene final : public Scene
 {
 public:
-
-	TitleScene() = default;
-
-	void Initialize() override;
-	void Update(float deltaTime) override;
-	void Draw() const override;
-	void End() override;
+    explicit TitleScene(GameContext* context) : Scene(context) {}
+    void Init() override;
+    void Update(float deltaTime) override;
+    void Render() const override;
 
 private:
+    int fontHandle{ -1 };
+
+    static constexpr float BLINK_INTERVAL = 0.5f;
+    float blinkTimer{ BLINK_INTERVAL };
+    bool isPushEnterVisible{ false };
 };
-
-
-

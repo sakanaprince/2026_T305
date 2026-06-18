@@ -1,29 +1,36 @@
 #include "GameScene.h"
-#include "../DxPlus/DxPlus.h"
+#include "SceneManager.h"
+#include "../04_Resource/ResourceManager.h"
+#include "../04_Resource/ResourceKeys.h"
 
-void GameScene::Initialize()
+void GameScene::Init()
 {
+    DxLib::SetBackgroundColor(32, 32, 32);
+    gameContext->Reset();
+
+    StartFadeIn();
 }
 
 void GameScene::Update(float deltaTime)
-{ 
+{
+    gameContext->Update(deltaTime);
+
+    using namespace DxPlus::Input;
+    int buttonDown = GetButtonDown(PLAYER1);
+    if (buttonDown & BUTTON_SELECT)
+    {
+        Scene* resultScene = SceneManager::GetInstance().GetScene(SceneID::Result);
+        SetNextScene(resultScene);
+        finished = true;    // フェード無しの場合は finished を true にしておく必要あり
+        return;
+    }
 }
 
-void GameScene::Draw() const
+void GameScene::Render() const
 {
-	int sizeX, sizeY;
-	DxLib::GetDrawScreenSize(&sizeX, &sizeY);
-	DxPlus::Text::DrawString(
-		L"ゲーム画面",
-		{ static_cast<float>(sizeX / 2), static_cast<float>(sizeY / 2) },
-		GetColor(255, 255, 255),
-		DxPlus::Text::TextAlign::BOTTOM_CENTER,
-		{ 3.0f,3.0f }
-	);
+    gameContext->Draw();
 }
 
 void GameScene::End()
 {
 }
-
-

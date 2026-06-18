@@ -1,32 +1,37 @@
 #include "ResultScene.h"
-#include "../DxPlus/DxPlus.h"
-//#include "SceneManager.h"
+#include "SceneManager.h"
+#include "../04_Resource/ResourceManager.h"
+#include "../04_Resource/ResourceKeys.h"
 
-void ResultScene::Initialize()
+void ResultScene::Init()
 {
+    DxLib::SetBackgroundColor(128, 64, 0);
+    fontHandle = RM().GetFont(ResourceKeys::Font_Title);
+    StartFadeIn(0.0f);
 }
 
 void ResultScene::Update(float deltaTime)
 {
-    if (CheckHitKey(KEY_INPUT_RETURN))
+    (void)deltaTime;
+
+    using namespace DxPlus::Input;
+    if (GetButtonDown(PLAYER1) & BUTTON_START)
     {
-        //SM().SceneLoadToTitle();
+        Scene* titleScene = 
+            SceneManager::GetInstance().GetScene(SceneID::Title);
+        SetNextScene(titleScene);
+        StartFadeOut();
+        return;
     }
 }
 
-void ResultScene::Draw() const
+void ResultScene::Render() const
 {
-	int sizeX, sizeY;
-	DxLib::GetDrawScreenSize(&sizeX, &sizeY);
-	DxPlus::Text::DrawString(
-		L"ƒŠƒUƒ‹ƒg‰æ–Ê",
-		{ static_cast<float>(sizeX / 2), static_cast<float>(sizeY / 2) },
-		GetColor(255, 255, 255),
-		DxPlus::Text::TextAlign::BOTTOM_CENTER,
-		{ 3.0f,3.0f }
-	);
-}
+    gameContext->Draw();
 
-void ResultScene::End()
-{
+    const int white = DxLib::GetColor(255, 255, 255);
+    DxPlus::Text::DrawString(L"Result Scene",
+        { DxPlus::CLIENT_WIDTH * 0.5f, DxPlus::CLIENT_HEIGHT * 0.25f },
+        white, DxPlus::Text::TextAlign::MIDDLE_CENTER, { 2, 2 }, 
+        0, fontHandle);
 }
