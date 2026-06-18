@@ -1,35 +1,51 @@
 #include "TitleScene.h"
-//#include "../06_Scene/SceneManager.h"
-#include "../DxPlus/DxPlus.h"
+#include "../04_Resource/ResourceManager.h"
+#include "SceneManager.h"
+#include "../04_Resource/ResourceKeys.h"
 
-void TitleScene::Initialize()
+void TitleScene::Init()
 {
-	SetFontSize(50);
+    DxLib::SetBackgroundColor(0, 255, 224);
+//    frameCount = 0;
+    fontHandle = RM().GetFont(ResourceKeys::Font_Title);
+    StartFadeIn();
+
+    blinkTimer = BLINK_INTERVAL;
+    isPushEnterVisible = false;
 }
 
 void TitleScene::Update(float deltaTime)
 {
-	//開始ボタンが押されて数秒たったらGamesシーン読み込み
-	if (CheckHitKey(KEY_INPUT_RETURN))
-	{
-		//SM().SceneLoadToGame();
-	}
+    using namespace DxPlus::Input;
+    if (GetButtonDown(PLAYER1) & BUTTON_START)
+    {
+        Scene* gameScene = SceneManager::GetInstance().GetScene(SceneID::Game);
+        SetNextScene(gameScene);
+        StartFadeOut();
+        return;
+    }
+
+    // PushEnterの点滅
+    blinkTimer -= deltaTime;
+    if (blinkTimer <= 0.0f)
+    {
+        blinkTimer += BLINK_INTERVAL;
+        isPushEnterVisible = !isPushEnterVisible;
+    }
 }
 
-void TitleScene::Draw() const
+void TitleScene::Render() const
 {
-	int sizeX, sizeY;
-	DxLib::GetDrawScreenSize(&sizeX, &sizeY);
-	DxPlus::Text::DrawString(
-		L"タイトル画面",
-		{ static_cast<float>(sizeX / 2), static_cast<float>(sizeY / 2) },
-		GetColor(255, 255, 255),
-		DxPlus::Text::TextAlign::BOTTOM_CENTER,
-		{ 3.0f,3.0f }
-	);
-}
+    const int white = DxLib::GetColor(255, 255, 255);
+    DxPlus::Text::DrawString(L"TitleScene",
+        { DxPlus::CLIENT_WIDTH * 0.5f, DxPlus::CLIENT_HEIGHT * 0.25f },
+        white, DxPlus::Text::TextAlign::MIDDLE_CENTER, { 2, 2 }, 0, fontHandle);
 
-void TitleScene::End()
-{
-
+    const int yellow = DxLib::GetColor(255, 255, 0);
+    if (isPushEnterVisible)
+    {
+        DxPlus::Text::DrawString(L"Push Enter",
+            { DxPlus::CLIENT_WIDTH * 0.5f, DxPlus::CLIENT_HEIGHT * 0.75f },
+            yellow, DxPlus::Text::TextAlign::MIDDLE_CENTER, { 1,1 }, 0, fontHandle);
+    }
 }
