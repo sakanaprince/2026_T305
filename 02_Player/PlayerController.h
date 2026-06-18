@@ -10,7 +10,7 @@ public:
 	void Reset();
 	void Update(float deltaTime);
 	void Step(float deltaTime);
-	void Draw();
+	void Draw() const;
 
 private:
 	Vec3 position{ 0.0f,0.0f,0.0f };
