@@ -162,6 +162,13 @@ void DebugUI::Log(const std::string& text, const int& variable)
     LogSetting(text, std::to_string(variable).c_str());
 }
 
+void DebugUI::Log(const std::string& text, const Vec3& variable)
+{
+    std::stringstream ss;
+    ss << "X : {" << variable.x << "} Y : {" << variable.y << "} Z : {" << variable.z << "}";
+    LogSetting(text, ss.str());
+}
+
 void DebugUI::Log(const std::string& text)
 {
     LogSetting(text, "");
