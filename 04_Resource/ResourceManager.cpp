@@ -11,6 +11,7 @@ ResourceManager& ResourceManager::GetInstance()
 void ResourceManager::LoadAll()
 {
     LoadFont(ResourceKeys::Font_Title, L"./Data/Fonts/Bitcount/static/Bitcount-Light.ttf");
+    LoadModel(ResourceKeys::Model_Stage, L"./Data/Models/Stage.mv1");
 }
 
 void ResourceManager::UnloadAll()
