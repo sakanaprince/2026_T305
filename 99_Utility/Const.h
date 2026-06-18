@@ -7,4 +7,8 @@ namespace Const
 	//===== “GŠÖ˜A =====
 
 	//===== •¨—ŠÖ˜A =====
+
+		// ===== ƒQ[ƒ€“à‹¤’Ê =====
+	constexpr int FPS_CAP = 480;
+	constexpr float EPS = 1e-3f;
 }
