@@ -28,6 +28,7 @@ public:
     void Log(const std::string& text, const bool& variable);
     void Log(const std::string& text, const float& variable);
     void Log(const std::string& text, const int& variable);
+    void Log(const std::string& text, const Vec3& variable);
     void Log(const std::string& text);
 
 private:
