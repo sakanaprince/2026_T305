@@ -15,6 +15,7 @@ public:
     void SetPosition(const Vec3& pos) { position = pos; }
     //アクセサー
 
+
     virtual void Init() = 0;
     virtual void Reset(const Vec3& startPosition, float startYaw) {};
     virtual void Update(float deltaTime, const Vec3& playerPos) {};
