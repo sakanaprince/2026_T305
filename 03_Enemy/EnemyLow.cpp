@@ -4,6 +4,7 @@
 #include "../07_Math/Vector3.h"
 #include "../DxPlus/DxPlus.h"
 
+#include "../08_Debug/DebugUI.h"
 void EnemyLow::BodyLine() const
 {
 	constexpr float skin = 70.0f;
@@ -15,6 +16,7 @@ void EnemyLow::BodyLine() const
 	
 		50, 16, GetColor(255, 255, 255), GetColor(255, 0, 0), true
 	);
+
 
 	//position.yÇÕå≈íË
 	constexpr float RADIUS = 150;
@@ -30,14 +32,14 @@ void EnemyLow::BodyLine() const
 		//sinÇ∆Ç©cosÇÕ -1Ç©ÇÁ1ÇÇÆÇÈÇÆÇÈÇ∑ÇÈÇ∆Ç¢Ç§ê´éøÇégÇ¡ÇƒóùëzÇï\åªÇµÇƒÇ¢ÇÈ
 		
 
-		DxConv::ToVECTOR({ (position.x + RADIUS) * sin_mul, position.y + height, (position.z + RADIUS)*cos_mul }),
-		DxConv::ToVECTOR(position),
+		DxConv::ToVECTOR({ position.x + (RADIUS * sin_mul), position.y + height, position.z + ( RADIUS * cos_mul) }),
+		DxConv::ToVECTOR({position.x, position.y, position.z}),
 		50, 16, GetColor(255, 255, 0), GetColor(255, 0, 0), true
 	);
 
 	DxLib::DrawCapsule3D
 	(
-		DxConv::ToVECTOR({ (position.x - RADIUS) * sin_mul, position.y + height, (position.x - RADIUS) * cos_mul }),
+		DxConv::ToVECTOR({ position.x - (RADIUS * sin_mul), position.y + height, position.z - (RADIUS * cos_mul) }),
 		DxConv::ToVECTOR(position),
 		50, 16, GetColor(255, 255, 0), GetColor(255, 0, 0), true
 	);
@@ -52,10 +54,24 @@ void EnemyLow::BodyLine() const
 }
 
 
-
-void EnemyLow::Update()
+void EnemyLow::Init()
 {
-	animTimer += 0.05f;
+	radius = 200.0f;
+	height = 250.0f;
+	position = { 250.0f, 0.0f, -250.0f };
+
+	//âº
+	moveDir = Vec3(-10.0f, 0.0f, 10.0f).Normalized();
+}
+
+void EnemyLow::Update(float deltaTime)
+{
+	animTimer += 10.0f * deltaTime;
+;
+
+
+
+	position += moveDir * moveSpeed * deltaTime;
 }
 
 void EnemyLow::Draw() const
