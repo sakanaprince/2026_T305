@@ -52,10 +52,17 @@ void EnemyLow::BodyLine() const
 }
 
 
-
-void EnemyLow::Update()
+void EnemyLow::Init()
 {
-	animTimer += 0.05f;
+	radius = 200.0f;
+	height = 250.0f;
+}
+
+void EnemyLow::Update(float deltaTime)
+{
+	animTimer += 10.0f * deltaTime;
+
+	position += moveDir * moveSpeed * deltaTime;
 }
 
 void EnemyLow::Draw() const
