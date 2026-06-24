@@ -8,7 +8,11 @@ void PlayerController::Init()
 
 void PlayerController::Reset()
 {
-	position = { 0.0f,100.0f,0.0f };
+	position = { 0.0f,0.0f,0.0f };
+	velocity = { 0.0f,0.0f,0.0f };
+	yaw = { 0.0f };
+	pitch = { 0.0f };
+	radius = { 30.0f };
 }
 
 void PlayerController::Update(float deltaTime)
@@ -27,19 +31,24 @@ void PlayerController::Update(float deltaTime)
 	//マウスの位置の更新
 	prevMouse = currentMouse;
 
-	//プレイヤーの前方向
-	Vec3 forwerd{ cos(yaw),0.0f,sin(yaw) };
-	//プレイヤーの右方向
-	Vec3 right{ -forwerd.z,0.0f,forwerd.x };
+	//プレイヤーの前方向ベクトル
+	Vec3 forward{ cos(yaw),0.0f,sin(yaw) };
+	//プレイヤーの右方向ベクトル
+	Vec3 right{ -forward.z,0.0f,forward.x };
+
+	//プレイヤーの歩き、ダッシュの移動速度
+	float playerSpeed = CheckHitKey(KEY_INPUT_LSHIFT) ? Const::PLAYER_DASH_SPEED : Const::PLAYER_WALK_SPEED;
 
 	//カメラの向きに合わせたWASD移動
-	if (CheckHitKey(KEY_INPUT_W)) position += forwerd * Const::MOVE_SPEED * deltaTime;
-	if (CheckHitKey(KEY_INPUT_S)) position -= forwerd * Const::MOVE_SPEED * deltaTime;
-	if (CheckHitKey(KEY_INPUT_A)) position += right * Const::MOVE_SPEED * deltaTime;
-	if (CheckHitKey(KEY_INPUT_D)) position -= right * Const::MOVE_SPEED * deltaTime;
+	if (CheckHitKey(KEY_INPUT_W)) position += forward * playerSpeed * deltaTime;
+	if (CheckHitKey(KEY_INPUT_S)) position -= forward * playerSpeed * deltaTime;
+	if (CheckHitKey(KEY_INPUT_A)) position += right * playerSpeed * deltaTime;
+	if (CheckHitKey(KEY_INPUT_D)) position -= right * playerSpeed * deltaTime;
+
+	Vec3 eye = position + Vec3(0, Const::PLAYER_EYE_POSITION, 0);
 
 	//カメラの更新
-	camera.UpdateFromPlayer(position, yaw, pitch);
+	camera.UpdateFromPlayer(eye, yaw, pitch);
 }
 
 void PlayerController::Step(float deltaTime)
@@ -48,6 +57,9 @@ void PlayerController::Step(float deltaTime)
 
 void PlayerController::Draw() const
 {
+	DrawCapsule3D(DxConv::ToVECTOR(position), { position.x, position.y + 100, position.z }, radius, 12,
+		GetColor(0, 255, 0), GetColor(0, 255, 0), TRUE);
+
 	//カメラのレティクルの描画
 	camera.ReticleDraw();
 }

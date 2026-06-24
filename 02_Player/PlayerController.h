@@ -17,6 +17,7 @@ private:
 	Vec3 velocity{ 0.0f,0.0f,0.0f };
 	float yaw{ 0.0f };
 	float pitch{ 0.0f };
+	float radius{ 30.0f };
 
 	DxPlus::Vec2Int currentMouse{ 0,0 };
 	DxPlus::Vec2Int prevMouse{ 0,0 };
