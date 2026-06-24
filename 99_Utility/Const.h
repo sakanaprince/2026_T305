@@ -13,6 +13,9 @@ namespace Const
 
 	//===== 敵関連 =====
 
+	//==== タレット関連
+	static constexpr float TULLET_RELEASEDISTANCE = 100.0f;
+
 	//===== 物理関連 =====
 
 	//===== ゲーム内共通 =====
