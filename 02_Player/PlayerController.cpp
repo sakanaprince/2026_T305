@@ -17,29 +17,29 @@ void PlayerController::Reset()
 
 void PlayerController::Update(float deltaTime)
 {
-	//ƒ}ƒEƒX‚ÌŒ»İ’n‚ğæ“¾
+	//ãƒã‚¦ã‚¹ã®ç¾åœ¨åœ°ã‚’å–å¾—
 	GetMousePoint(&currentMouse.x, &currentMouse.y);
 
-	//¶‰E‰ñ“]
+	//å·¦å³å›è»¢
 	yaw -= (currentMouse.x - prevMouse.x) * Const::ROTATE_RAD_PAR_PIXEL;
-	//ã‰º‰ñ“]
+	//ä¸Šä¸‹å›è»¢
 	pitch -= (currentMouse.y - prevMouse.y) * Const::ROTATE_RAD_PAR_PIXEL;
 
-	//ã‰º‚ÌŒü‚«‚ğ§ŒÀ
+	//ä¸Šä¸‹ã®å‘ãã‚’åˆ¶é™
 	pitch = std::clamp(pitch, Const::PITC_MIN, Const::PITC_MAX);
 
-	//ƒ}ƒEƒX‚ÌˆÊ’u‚ÌXV
+	//ãƒã‚¦ã‚¹ã®ä½ç½®ã®æ›´æ–°
 	prevMouse = currentMouse;
 
-	//ƒvƒŒƒCƒ„[‚Ì‘O•ûŒüƒxƒNƒgƒ‹
+	//ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®å‰æ–¹å‘ãƒ™ã‚¯ãƒˆãƒ«
 	Vec3 forward{ cos(yaw),0.0f,sin(yaw) };
-	//ƒvƒŒƒCƒ„[‚Ì‰E•ûŒüƒxƒNƒgƒ‹
+	//ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®å³æ–¹å‘ãƒ™ã‚¯ãƒˆãƒ«
 	Vec3 right{ -forward.z,0.0f,forward.x };
 
-	//ƒvƒŒƒCƒ„[‚Ì•à‚«Aƒ_ƒbƒVƒ…‚ÌˆÚ“®‘¬“x
+	//ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®æ­©ãã€ãƒ€ãƒƒã‚·ãƒ¥ã®ç§»å‹•é€Ÿåº¦
 	float playerSpeed = CheckHitKey(KEY_INPUT_LSHIFT) ? Const::PLAYER_DASH_SPEED : Const::PLAYER_WALK_SPEED;
 
-	//ƒJƒƒ‰‚ÌŒü‚«‚É‡‚í‚¹‚½WASDˆÚ“®
+	//ã‚«ãƒ¡ãƒ©ã®å‘ãã«åˆã‚ã›ãŸWASDç§»å‹•
 	if (CheckHitKey(KEY_INPUT_W)) position += forward * playerSpeed * deltaTime;
 	if (CheckHitKey(KEY_INPUT_S)) position -= forward * playerSpeed * deltaTime;
 	if (CheckHitKey(KEY_INPUT_A)) position += right * playerSpeed * deltaTime;
@@ -47,7 +47,7 @@ void PlayerController::Update(float deltaTime)
 
 	Vec3 eye = position + Vec3(0, Const::PLAYER_EYE_POSITION, 0);
 
-	//ƒJƒƒ‰‚ÌXV
+	//ã‚«ãƒ¡ãƒ©ã®æ›´æ–°
 	camera.UpdateFromPlayer(eye, yaw, pitch);
 }
 
@@ -60,6 +60,6 @@ void PlayerController::Draw() const
 	DrawCapsule3D(DxConv::ToVECTOR(position), { position.x, position.y + 100, position.z }, radius, 12,
 		GetColor(0, 255, 0), GetColor(0, 255, 0), TRUE);
 
-	//ƒJƒƒ‰‚ÌƒŒƒeƒBƒNƒ‹‚Ì•`‰æ
+	//ã‚«ãƒ¡ãƒ©ã®ãƒ¬ãƒ†ã‚£ã‚¯ãƒ«ã®æç”»
 	camera.ReticleDraw();
 }
