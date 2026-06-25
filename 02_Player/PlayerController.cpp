@@ -19,29 +19,29 @@ void PlayerController::Reset()
 
 void PlayerController::Update(float deltaTime)
 {
-	//マウスの現在地を取得
+	//�}�E�X�̌��ݒn���擾
 	GetMousePoint(&currentMouse.x, &currentMouse.y);
 
-	//左右回転
+	//���E��]
 	yaw -= (currentMouse.x - prevMouse.x) * Const::ROTATE_RAD_PAR_PIXEL;
-	//上下回転
+	//�㉺��]
 	pitch -= (currentMouse.y - prevMouse.y) * Const::ROTATE_RAD_PAR_PIXEL;
 
-	//上下の向きを制限
+	//�㉺�̌����𐧌�
 	pitch = std::clamp(pitch, Const::PITC_MIN, Const::PITC_MAX);
 
-	//マウスの位置の更新
+	//�}�E�X�̈ʒu�̍X�V
 	prevMouse = currentMouse;
 
-	//プレイヤーの前方向ベクトル
+	//�v���C���[�̑O�����x�N�g��
 	Vec3 forward{ cos(yaw),0.0f,sin(yaw) };
-	//プレイヤーの右方向ベクトル
+	//�v���C���[�̉E�����x�N�g��
 	Vec3 right{ -forward.z,0.0f,forward.x };
 
-	//プレイヤーの歩き、ダッシュの移動速度
+	//�v���C���[�̕����A�_�b�V���̈ړ����x
 	float playerSpeed = CheckHitKey(KEY_INPUT_LSHIFT) ? Const::PLAYER_DASH_SPEED : Const::PLAYER_WALK_SPEED;
 
-	//カメラの向きに合わせたWASD移動
+	//�J�����̌����ɍ��킹��WASD�ړ�
 	if (CheckHitKey(KEY_INPUT_W)) position += forward * playerSpeed * deltaTime;
 	if (CheckHitKey(KEY_INPUT_S)) position -= forward * playerSpeed * deltaTime;
 	if (CheckHitKey(KEY_INPUT_A)) position += right * playerSpeed * deltaTime;
@@ -72,7 +72,7 @@ void PlayerController::Update(float deltaTime)
 	//���_�̍����ɍX�V
 	Vec3 eye = position + Vec3(0, Const::PLAYER_EYE_POSITION, 0);
 
-	//カメラの更新
+	//�J�����̍X�V
 	camera.UpdateFromPlayer(eye, yaw, pitch);
 }
 
