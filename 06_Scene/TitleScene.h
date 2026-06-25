@@ -12,6 +12,7 @@ public:
 
 private:
     int fontHandle{ -1 };
+    int backGroundHandle{ -1 };
 
     static constexpr float BLINK_INTERVAL = 0.5f;
     float blinkTimer{ BLINK_INTERVAL };
