@@ -12,6 +12,7 @@ public:
 	void Draw() const;
 
 	float GetGroundHeight(const Vec3& pos);
+	int GetModelHandle() { return modelHandle; }
 
 private:
 	int modelHandle{ -1 };

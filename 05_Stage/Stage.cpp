@@ -17,7 +17,7 @@ void Stage::Init()
 
 void Stage::Reset()
 {
-	scale = { 1.0f,1.0f,1.0f };
+	scale = { 2.0f,2.0f,2.0f };
 	MV1SetScale(modelHandle, DxConv::ToVECTOR(scale));
 }
 
