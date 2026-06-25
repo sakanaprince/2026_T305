@@ -10,6 +10,7 @@ ResourceManager& ResourceManager::GetInstance()
 
 void ResourceManager::LoadAll()
 {
+    LoadSprite(ResourceKeys::Sprite_TitleBG, L"TitleBG.png");
     LoadFont(ResourceKeys::Font_Title, L"./Data/Fonts/Bitcount/static/Bitcount-Light.ttf");
     LoadModel(ResourceKeys::Model_Stage, L"Stage.mv1");
     LoadModel(ResourceKeys::Model_Turret, L"Turret.mv1");
@@ -23,6 +24,7 @@ void ResourceManager::UnloadAll()
     UnloadGrids();
     UnloadFonts();
     UnloadModels();
+    UnloadSprites();
 }
 
 // ===============================[  GRIDS  ]===================================
@@ -66,6 +68,13 @@ int ResourceManager::GetModel(const std::wstring& key) const
     return (it != models.end()) ? it->second : -1;
 }
 
+int ResourceManager::GetSprite(const std::wstring& key) const
+{
+    auto it = sprites.find(key);
+    return (it != sprites.end()) ? it->second : -1;
+    return 0;
+}
+
 int ResourceManager::LoadMusic(const std::wstring& key, const std::wstring& path)
 {
     int music = DxLib::LoadSoundMem(path.c_str());
@@ -73,6 +82,7 @@ int ResourceManager::LoadMusic(const std::wstring& key, const std::wstring& path
     musics[key] = music;
     return music;
 }
+
 
 int ResourceManager::LoadSound(const std::wstring& key, const std::wstring& path)
 {
@@ -93,6 +103,18 @@ int ResourceManager::LoadModel(const std::wstring& key, const std::wstring& path
 
     models[key] = h;
     return h;
+}
+
+int ResourceManager::LoadSprite(const std::wstring& key, const std::wstring& path)
+{
+    if (auto it = sprites.find(key); it != sprites.end())
+    return it->second;
+
+    int s = DxPlus::Sprite::Load((L"./Data/Images/" + path).c_str());
+    if (s == -1) DxPlus::Utils::FatalError((L"Failed to load model " + path).c_str());
+
+    sprites[key] = s;
+    return s;
 }
 
 void ResourceManager::UnloadMusics()
@@ -120,6 +142,14 @@ void ResourceManager::UnloadModels()
         if (m.second >= 0) DxLib::MV1DeleteModel(m.second);
     }
     models.clear();
+}
+
+void ResourceManager::UnloadSprites()
+{
+    for (auto& s : sprites)
+    {
+        if (s.second >= 0) DxLib::DeleteGraph(s.second);
+    }
 }
 
 // ===============================[  FONTS  ]===================================

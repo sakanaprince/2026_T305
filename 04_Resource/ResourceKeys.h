@@ -5,6 +5,7 @@
 namespace ResourceKeys
 {
     // ===== Textures / Grids =====
+    inline constexpr const wchar_t* Sprite_TitleBG = L"SpriteTitleBG";
 
     // ===== Models =====
     inline constexpr const wchar_t* Model_Stage = L"ModelStage";

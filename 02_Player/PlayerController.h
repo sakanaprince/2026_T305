@@ -7,6 +7,7 @@
 
 class PlayerController
 {
+	Bullet* bullet = nullptr;
 public:
 	void SetBulletPointer(Bullet* b, int count) {
 		bullets = b;
