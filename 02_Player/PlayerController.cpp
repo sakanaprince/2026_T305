@@ -19,29 +19,29 @@ void PlayerController::Reset()
 
 void PlayerController::Update(float deltaTime)
 {
-	//ƒ}ƒEƒX‚ÌŒ»İ’n‚ğæ“¾
+	//ï¿½}ï¿½Eï¿½Xï¿½ÌŒï¿½ï¿½İ’nï¿½ï¿½ï¿½æ“¾
 	GetMousePoint(&currentMouse.x, &currentMouse.y);
 
-	//¶‰E‰ñ“]
+	//ï¿½ï¿½ï¿½Eï¿½ï¿½]
 	yaw -= (currentMouse.x - prevMouse.x) * Const::ROTATE_RAD_PAR_PIXEL;
-	//ã‰º‰ñ“]
+	//ï¿½ã‰ºï¿½ï¿½]
 	pitch -= (currentMouse.y - prevMouse.y) * Const::ROTATE_RAD_PAR_PIXEL;
 
-	//ã‰º‚ÌŒü‚«‚ğ§ŒÀ
+	//ï¿½ã‰ºï¿½ÌŒï¿½ï¿½ï¿½ï¿½ğ§Œï¿½
 	pitch = std::clamp(pitch, Const::PITC_MIN, Const::PITC_MAX);
 
-	//ƒ}ƒEƒX‚ÌˆÊ’u‚ÌXV
+	//ï¿½}ï¿½Eï¿½Xï¿½ÌˆÊ’uï¿½ÌXï¿½V
 	prevMouse = currentMouse;
 
-	//ƒvƒŒƒCƒ„[‚Ì‘O•ûŒüƒxƒNƒgƒ‹
+	//ï¿½vï¿½ï¿½ï¿½Cï¿½ï¿½ï¿½[ï¿½Ì‘Oï¿½ï¿½ï¿½ï¿½ï¿½xï¿½Nï¿½gï¿½ï¿½
 	Vec3 forward{ cos(yaw),0.0f,sin(yaw) };
-	//ƒvƒŒƒCƒ„[‚Ì‰E•ûŒüƒxƒNƒgƒ‹
+	//ï¿½vï¿½ï¿½ï¿½Cï¿½ï¿½ï¿½[ï¿½Ì‰Eï¿½ï¿½ï¿½ï¿½ï¿½xï¿½Nï¿½gï¿½ï¿½
 	Vec3 right{ -forward.z,0.0f,forward.x };
 
-	//ƒvƒŒƒCƒ„[‚Ì•à‚«Aƒ_ƒbƒVƒ…‚ÌˆÚ“®‘¬“x
+	//ï¿½vï¿½ï¿½ï¿½Cï¿½ï¿½ï¿½[ï¿½Ì•ï¿½ï¿½ï¿½ï¿½Aï¿½_ï¿½bï¿½Vï¿½ï¿½ï¿½ÌˆÚ“ï¿½ï¿½ï¿½ï¿½x
 	float playerSpeed = CheckHitKey(KEY_INPUT_LSHIFT) ? Const::PLAYER_DASH_SPEED : Const::PLAYER_WALK_SPEED;
 
-	//ƒJƒƒ‰‚ÌŒü‚«‚É‡‚í‚¹‚½WASDˆÚ“®
+	//ï¿½Jï¿½ï¿½ï¿½ï¿½ï¿½ÌŒï¿½ï¿½ï¿½ï¿½Éï¿½ï¿½í‚¹ï¿½ï¿½WASDï¿½Ú“ï¿½
 	if (CheckHitKey(KEY_INPUT_W)) position += forward * playerSpeed * deltaTime;
 	if (CheckHitKey(KEY_INPUT_S)) position -= forward * playerSpeed * deltaTime;
 	if (CheckHitKey(KEY_INPUT_A)) position += right * playerSpeed * deltaTime;
@@ -69,10 +69,10 @@ void PlayerController::Update(float deltaTime)
 		isGrounded = false;
 	}
 
-	//‹“_‚Ì‚‚³‚ÉXV
+	//ï¿½ï¿½ï¿½_ï¿½Ìï¿½ï¿½ï¿½ï¿½ÉXï¿½V
 	Vec3 eye = position + Vec3(0, Const::PLAYER_EYE_POSITION, 0);
 
-	//ƒJƒƒ‰‚ÌXV
+	//ï¿½Jï¿½ï¿½ï¿½ï¿½ï¿½ÌXï¿½V
 	camera.UpdateFromPlayer(eye, yaw, pitch);
 }
 
@@ -85,6 +85,6 @@ void PlayerController::Draw() const
 	DrawCapsule3D(DxConv::ToVECTOR(position), { position.x, position.y + halfHeight, position.z }, radius, 12,
 		GetColor(0, 255, 0), GetColor(0, 255, 0), TRUE);
 
-	//ƒJƒƒ‰‚ÌƒŒƒeƒBƒNƒ‹‚Ì•`‰æ
+	//ï¿½Jï¿½ï¿½ï¿½ï¿½ï¿½Ìƒï¿½ï¿½eï¿½Bï¿½Nï¿½ï¿½ï¿½Ì•`ï¿½ï¿½
 	camera.ReticleDraw();
 }
