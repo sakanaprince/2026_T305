@@ -7,6 +7,7 @@
 void GameContext::Init()
 {
     player.Init();
+    player.SetBulletPointer(bullets, Const::BULLET_COUNT);
     stage.Init();
     enemy.Init();
 
@@ -24,6 +25,9 @@ void GameContext::Reset()
     SetBackgroundColor(0, 105, 255);
 
     player.Reset();
+    for (auto& b : bullets) {
+        b.Reset();
+    }
     enemy.SetPosition({ 300,400,300 });
     stage.Reset();
 
@@ -35,7 +39,10 @@ void GameContext::Reset()
 
 void GameContext::Update(float deltaTime)
 {
-    player.Update(deltaTime);  
+    for (auto& b : bullets) {
+        b.Update(deltaTime);
+    }
+    player.Update(deltaTime);
     enemy.Update(deltaTime);
 
     for (auto& t : turrets)
@@ -60,6 +67,9 @@ void GameContext::Draw() const
     for (auto& t : turrets)
     {
         t.Draw();
+    }
+    for (auto& b : bullets) {
+        b.Draw();
     }
     player.Draw();
 }
