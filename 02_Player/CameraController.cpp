@@ -7,38 +7,25 @@ void CameraController::Reset(const Vec3& pos)
 	up = { 0.0f,1.0f,0.0f };
 }
 
-//ƒvƒŒƒCƒ„[‚ÌˆÊ’uEŒü‚«‚©‚çƒJƒƒ‰‚ğXV‚·‚é
+//ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®ä½ç½®ãƒ»å‘ãã‹ã‚‰ã‚«ãƒ¡ãƒ©ã‚’æ›´æ–°ã™ã‚‹
 void CameraController::UpdateFromPlayer(const Vec3& playerEye, float yaw, float pitch)
 {
-	//ƒJƒƒ‰ˆÊ’u = ƒvƒŒƒCƒ„[ˆÊ’u
+	//ã‚«ãƒ¡ãƒ©ä½ç½® = ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ä½ç½®
 	eye = playerEye;
 
-	//yaw/pitch ‚©‚ç forward ƒxƒNƒgƒ‹‚ğŒvZ
+	//yaw/pitch ã‹ã‚‰ forward ãƒ™ã‚¯ãƒˆãƒ«ã‚’è¨ˆç®—
 	float cosPitch = cos(pitch);
 	float sinPitch = sin(pitch);
 	float cosYaw = cos(yaw);
 	float sinYaw = sin(yaw);
 
-	//ƒJƒƒ‰‚Ì‘O•ûŒüƒxƒNƒgƒ‹
+	//ã‚«ãƒ¡ãƒ©ã®å‰æ–¹å‘ãƒ™ã‚¯ãƒˆãƒ«
 	Vec3 forwerd{ cosYaw * cosPitch,sinPitch,sinYaw * cosPitch };
 
-	//OlÌ‹“_
-	if (CheckHitKey(KEY_INPUT_LCONTROL)) {
-		Vec3 back{ -cosYaw,0.0f,sinYaw };
-		float distance = 200.0f;
-		float height = 80.0f;
-
-		eye = playerEye + back * distance + Vec3(0, height, 0);
-		target = playerEye;
-
-		SetCameraPositionAndTargetAndUpVec(DxConv::ToVECTOR(eye), DxConv::ToVECTOR(target), DxConv::ToVECTOR(up));
-		return;
-	}
-
-	//’‹“_ = ‹“_ + ‘O•ûŒü
+	//æ³¨è¦–ç‚¹ = è¦–ç‚¹ + å‰æ–¹å‘
 	target = eye + forwerd;
 
-	//OlÌ‹“_
+	//ä¸‰äººç§°è¦–ç‚¹
 	if (CheckHitKey(KEY_INPUT_LCONTROL)) {
 		Vec3 back{ -cosYaw,0.0f,sinYaw };
 		float distance = 200.0f;
@@ -48,26 +35,26 @@ void CameraController::UpdateFromPlayer(const Vec3& playerEye, float yaw, float 
 		target = playerEye;
 	}
 
-	//ƒJƒƒ‰‚É”½‰f
+	//ã‚«ãƒ¡ãƒ©ã«åæ˜ 
 	SetCameraPositionAndTargetAndUpVec(DxConv::ToVECTOR(eye), DxConv::ToVECTOR(target), DxConv::ToVECTOR(up));
 }
 
-//ƒŒƒeƒBƒNƒ‹‚Ì•`‰æ(\š)
+//ãƒ¬ãƒ†ã‚£ã‚¯ãƒ«ã®æç”»(åå­—)
 void CameraController::ReticleDraw() const
 {
-	//ƒŒƒeƒBƒNƒ‹‚Ì•\¦ˆÊ’u(‰æ–Ê’†‰›)
+	//ãƒ¬ãƒ†ã‚£ã‚¯ãƒ«ã®è¡¨ç¤ºä½ç½®(ç”»é¢ä¸­å¤®)
 	int cx = DxPlus::CLIENT_WIDTH / 2;
 	int cy = DxPlus::CLIENT_HEIGHT / 2;
 
-	//ü‚Ì’·‚³
+	//ç·šã®é•·ã•
 	int size = 10;
-	//ü‚Ì‘¾‚³
+	//ç·šã®å¤ªã•
 	int thick = 5;
-	//ü‚ÌF(ƒOƒŒ[)
+	//ç·šã®è‰²(ã‚°ãƒ¬ãƒ¼)
 	int color = GetColor(128, 128, 128);
 
-	//ü‚Ì•`‰æ(‰¡)
+	//ç·šã®æç”»(æ¨ª)
 	DrawLine(cx - size, cy, cx + size, cy, color, thick);
-	//ü‚Ì•`‰æ(c)
+	//ç·šã®æç”»(ç¸¦)
 	DrawLine(cx, cy - size, cx, cy + size, color, thick);
 }
