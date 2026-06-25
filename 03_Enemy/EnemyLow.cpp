@@ -19,7 +19,7 @@ void EnemyLow::BodyLine() const
 
 
 	//position.y‚ÍŒÅ’è
-	constexpr float RADIUS = 150.0f;
+	constexpr float RADIUS = 50.0f;
 
 	float sinSpin = std::sinf(animTimer) * RADIUS;
 	float cosSpin = std::cosf(animTimer) * RADIUS;
@@ -58,7 +58,7 @@ void EnemyLow::BodyLine() const
 void EnemyLow::Init(EnemyRoot* enRoot)
 {
 	radius = 100.0f;
-	height = 120.0f;
+	height = 60.0f;
 	enemyRoot_p = enRoot;
 
 	if (!enemyRoot_p)
@@ -72,7 +72,7 @@ void EnemyLow::Reset()
 {
 	position = { 0,0,0 };
 	moveDir = Vec3(0.0f, 0.0f, 0.0f);
-	moveSpeed = 300.0f;
+	moveSpeed = 100.0f;
 	rootTargetIndex = 0;
 
 	isAlive = true;
