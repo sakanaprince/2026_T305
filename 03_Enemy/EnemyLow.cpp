@@ -62,25 +62,63 @@ void EnemyLow::Init()
 
 	//仮
 	moveDir = Vec3(-10.0f, 0.0f, 10.0f).Normalized();
+	moveSpeed = 500.0f;
+	isAlive = true;
+
 }
+
+
 
 void EnemyLow::Update(float deltaTime)
 {
+	if (!isAlive) { return; }
+
 	animTimer += 10.0f * deltaTime;
-;
 
+	const float  DISTANCE_LIMIT = 1.0f;
+	const size_t ROOT_ARRAY_SIZE = enemyRoot_p->GetRootPointsLength();
 
+	float distance = (rootTargetPoint - position).Length();
 
+	//目的地に近づいたらrootTargetIndexを更新
+	if (distance <= DISTANCE_LIMIT)
+	{
+		rootTargetIndex = std::min(rootTargetIndex + 1, ROOT_ARRAY_SIZE );
+
+		//レングス以上ならコアに到達処理...NULL確認しないと警告が出る
+		if (rootTargetIndex < ROOT_ARRAY_SIZE)
+		{
+			if (enemyRoot_p) 
+			{
+				rootTargetPoint = enemyRoot_p->GetTargetPos(rootTargetIndex);
+			}
+		}
+		else
+		{
+			isAlive = false;
+		}
+	}
+	
+	Debug().Log("TargetPos",rootTargetPoint);
+	Debug().Log("RootTargetIdx = ", static_cast<int>(rootTargetIndex));
+
+	//移動方向の確定
+	moveDir = (rootTargetPoint - position).Normalized();
 	position += moveDir * moveSpeed * deltaTime;
 }
 
 void EnemyLow::Draw() const
 {
+	if (!isAlive) { return; }
+
 	BodyLine();
 }
 
 void EnemyLow::DrawDebug() const
 {
+	if (!isAlive) { return; }
+
+
 	const int division = 24;
 	const unsigned int color = DxLib::GetColor(255, 255, 0);
 
