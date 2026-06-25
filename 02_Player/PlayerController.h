@@ -10,6 +10,7 @@ class PlayerController
 	Bullet* bullet = nullptr;
 public:
 	void SetBulletPointer(Bullet* b) { bullet = b; }
+	const Vec3& GetPosition() const { return position; }
 
 	void Init();
 	void Reset();
