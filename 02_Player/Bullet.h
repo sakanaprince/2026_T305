@@ -11,6 +11,8 @@ private:
 	bool isActive{ false };
 
 public:
+	const bool IsActive() const { return isActive; }
+
 	void Init();
 	void Reset();
 	void Update(float deltaTime);

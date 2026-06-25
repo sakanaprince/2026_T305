@@ -9,7 +9,10 @@ class PlayerController
 {
 	Bullet* bullet = nullptr;
 public:
-	void SetBulletPointer(Bullet* b) { bullet = b; }
+	void SetBulletPointer(Bullet* b, int count) {
+		bullets = b;
+		bulletCount = count;
+	}
 	const Vec3& GetPosition() const { return position; }
 
 	void Init();
@@ -26,11 +29,13 @@ private:
 	float pitch{ 0.0f };
 	float radius{ 10.0f };
 	bool isGrounded{ true };
+	int bulletCount{ 0 };
 
 	DxPlus::Vec2Int currentMouse{ 0,0 };
 	DxPlus::Vec2Int prevMouse{ 0,0 };
 
 	CameraController camera;
+	Bullet* bullets = nullptr;
 	Stage stage;
 };
 

@@ -32,10 +32,10 @@ void Bullet::Draw() const
 {
 	if (!isActive)return;
 
-	//íeä€(ãÖ)
+	//‚Äôe≈†√õ(‚Äπ‚Ä¶)
 	DrawSphere3D(DxConv::ToVECTOR(position), radius, 8, GetColor(255, 255, 0), GetColor(255, 255, 0), TRUE);
 
-	//íeä€ÇÃécëú(ê¸)
+	//‚Äôe≈†√õ‚Äö√å≈Ωc‚Äò≈ì(¬ê√º)
 	Vec3 tail = position - velocity.Normalized() * 10;
 	DrawLine3D(DxConv::ToVECTOR(position), DxConv::ToVECTOR(tail), GetColor(255, 200, 50));
 }
@@ -44,5 +44,6 @@ void Bullet::Fire(const Vec3& pos, const Vec3& dir)
 {
 	position = pos;
 	velocity = dir.Normalized() * Const::BULLET_SPEED;
+	life = 3.0f;
 	isActive = true;
 }
