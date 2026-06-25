@@ -22,6 +22,9 @@ void CameraController::UpdateFromPlayer(const Vec3& playerEye, float yaw, float 
 	//カメラの前方向ベクトル
 	Vec3 forwerd{ cosYaw * cosPitch,sinPitch,sinYaw * cosPitch };
 
+	//注視点 = 視点 + 前方向
+	target = eye + forwerd;
+
 	//三人称視点
 	if (CheckHitKey(KEY_INPUT_LCONTROL)) {
 		Vec3 back{ -cosYaw,0.0f,sinYaw };
@@ -30,17 +33,6 @@ void CameraController::UpdateFromPlayer(const Vec3& playerEye, float yaw, float 
 
 		eye = playerEye + back * distance + Vec3(0, height, 0);
 		target = playerEye;
-
-		SetCameraPositionAndTargetAndUpVec(DxConv::ToVECTOR(eye), DxConv::ToVECTOR(target), DxConv::ToVECTOR(up));
-		return;
-	}
-
-	//注視点 = 視点 + 前方向
-	target = eye + forwerd;
-
-	//見下ろし視点
-	if (CheckHitKey(KEY_INPUT_LCONTROL)) {
-		eye.y = 500.0f;
 	}
 
 	//カメラに反映
