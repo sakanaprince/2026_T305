@@ -6,19 +6,18 @@
 void EnemyRoot::Init()
 {
 	rootPoints[0] = { 0, 0, 0 };
-	rootPoints[1] = { 3000, 0, 0 };
-	rootPoints[2] = { 0, 0, 2000 };
-	rootPoints[3] = { -6000, 0, 4000 };
+	rootPoints[1] = { 300, 0, 0 };
+	rootPoints[2] = { 0, 0, 200 };
+	rootPoints[3] = { -200, 0, 10 };
 	rootPoints[4] = { 0, 0, 0 };
 }
 
 void EnemyRoot::DebugDraw() const
 {
-	for (auto& p : rootPoints)
+	for (const auto& p : rootPoints)
 	{
-		DrawSphere3D(DxConv::ToVECTOR(p), 50.0f, 16, GetColor(255, 0, 0), GetColor(255, 0, 0), true);
-	}
-	
+		DrawSphere3D(DxConv::ToVECTOR(p), 50.0f, 16, GetColor(255, 0, 0), GetColor(255, 255, 0), true);
+	}	
 }
 
 [[nodiscard]]  Vec3 EnemyRoot::GetTargetPos(const size_t idx) const
