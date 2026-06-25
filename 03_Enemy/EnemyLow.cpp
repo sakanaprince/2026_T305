@@ -7,7 +7,7 @@
 #include "../08_Debug/DebugUI.h"
 void EnemyLow::BodyLine() const
 {
-	constexpr float skin = 70.0f;
+	constexpr float skin = 30.0f;
 	//中心の縦棒
 	DxLib::DrawCapsule3D
 	(
@@ -54,20 +54,30 @@ void EnemyLow::BodyLine() const
 }
 
 
-void EnemyLow::Init()
-{
-	radius = 200.0f;
-	height = 250.0f;
-	position = { 250.0f, 0.0f, -250.0f };
 
-	//仮
-	moveDir = Vec3(-10.0f, 0.0f, 10.0f).Normalized();
-	moveSpeed = 500.0f;
+void EnemyLow::Init(EnemyRoot* enRoot)
+{
+	radius = 100.0f;
+	height = 120.0f;
+	enemyRoot_p = enRoot;
+
+	if (!enemyRoot_p)
+	{
+		DxPlus::Utils::FatalError(L"null Ptr enemyRoot_p");
+		return;
+	}
+}
+
+void EnemyLow::Reset()
+{
+	position = { 0,0,0 };
+	moveDir = Vec3(0.0f, 0.0f, 0.0f);
+	moveSpeed = 300.0f;
+	rootTargetIndex = 0;
+
 	isAlive = true;
 
 }
-
-
 
 void EnemyLow::Update(float deltaTime)
 {
@@ -75,7 +85,14 @@ void EnemyLow::Update(float deltaTime)
 
 	animTimer += 10.0f * deltaTime;
 
-	const float  DISTANCE_LIMIT = 1.0f;
+	const float  DISTANCE_LIMIT = 10.0f;
+
+	if (!enemyRoot_p)
+	{
+		DxPlus::Utils::FatalError(L"Null Ptr");
+		return;
+	}
+
 	const size_t ROOT_ARRAY_SIZE = enemyRoot_p->GetRootPointsLength();
 
 	float distance = (rootTargetPoint - position).Length();
@@ -83,29 +100,36 @@ void EnemyLow::Update(float deltaTime)
 	//目的地に近づいたらrootTargetIndexを更新
 	if (distance <= DISTANCE_LIMIT)
 	{
-		rootTargetIndex = std::min(rootTargetIndex + 1, ROOT_ARRAY_SIZE );
+		rootTargetIndex = std::min(rootTargetIndex + 1, ROOT_ARRAY_SIZE);
 
 		//レングス以上ならコアに到達処理...NULL確認しないと警告が出る
 		if (rootTargetIndex < ROOT_ARRAY_SIZE)
 		{
-			if (enemyRoot_p) 
+			if (enemyRoot_p)
 			{
 				rootTargetPoint = enemyRoot_p->GetTargetPos(rootTargetIndex);
+				//移動方向の確定
+				moveDir = (rootTargetPoint - position).Normalized();
 			}
+		
 		}
 		else
 		{
 			isAlive = false;
 		}
-	}
-	
-	Debug().Log("TargetPos",rootTargetPoint);
-	Debug().Log("RootTargetIdx = ", static_cast<int>(rootTargetIndex));
 
-	//移動方向の確定
-	moveDir = (rootTargetPoint - position).Normalized();
+		Debug().Log("TargetPos", rootTargetPoint);
+		Debug().Log("MMs", moveDir);
+		Debug().Log("RootTargetIdx = ", static_cast<int>(rootTargetIndex));
+
+	}
+
+
 	position += moveDir * moveSpeed * deltaTime;
 }
+
+
+
 
 void EnemyLow::Draw() const
 {
@@ -116,8 +140,8 @@ void EnemyLow::Draw() const
 
 void EnemyLow::DrawDebug() const
 {
+	
 	if (!isAlive) { return; }
-
 
 	const int division = 24;
 	const unsigned int color = DxLib::GetColor(255, 255, 0);
@@ -174,7 +198,9 @@ void EnemyLow::DrawDebug() const
 		//縦線
 		if (i % 6 == 0) { MyDrawCircle(bottom0, top0); }
 	}
+	
 }
+
 
 
 
