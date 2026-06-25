@@ -9,19 +9,31 @@ void Turret::Init()
 {
 	modelBrokenTurret = RM().GetModel(ResourceKeys::Model_BrokenTurret);
 	modelTurret = RM().GetModel(ResourceKeys::Model_Turret);
+	MV1SetScale(modelBrokenTurret, DxConv::ToVECTOR(scale));
+	MV1SetScale(modelTurret, DxConv::ToVECTOR(scale));
 	modelTurretHandle = modelBrokenTurret;
-	MV1SetScale(modelTurretHandle, DxConv::ToVECTOR(scale));
+
+
+	for (auto& a : arrow)
+	{
+		a.Init();
+	}
 }
 
 void Turret::Reset(Vec3 startPosition)
 {
 	position = startPosition;
-	scale = { 0.5f,0.5f,0.5f };
+	scale = { 1.0f,1.0f,1.0f };
 	yaw = 0.0f;
 	state = State::Broken;
+
+	for (auto& a : arrow)
+	{
+		a.Reset();
+	}
 }
 
-void Turret::Update(float deltaTime, PlayerController& player)
+void Turret::Update(float deltaTime, PlayerController& player, EnemyLow& enemy)
 {
 	switch (state)
 	{
@@ -29,7 +41,7 @@ void Turret::Update(float deltaTime, PlayerController& player)
 		BrokenUpdate(player);
 		break;
 	case Available:
-		AvailableUpdate(deltaTime, player);
+		AvailableUpdate(deltaTime, enemy);
 		break;
 	default:
 		break;
@@ -38,25 +50,47 @@ void Turret::Update(float deltaTime, PlayerController& player)
 
 void Turret::BrokenUpdate(PlayerController& player)
 {
-	//Vec3 toPlayer = player.GetPos() - position;
-	//float dir = toPlayer.Length();
-
-	////距離が一定以下の時に0を押すと解放できる
-	//if (dir <= Const::TULLET_RELEASEDISTANCE && CheckHitKey(KEY_INPUT_0))
-	//{
-	//	//モデルの切り替え
-	//	modelTurretHandle = modelTurret;
-	//	state = State::Available;
-	//}
+	Vec3 toPlayer = player.GetPosition() - position;
+	float dir = toPlayer.Length();
+	if (dir <= Const::TULLET_RELEASEDISTANCE && CheckHitKey(KEY_INPUT_0))
+	{
+		modelTurretHandle = modelTurret;
+		state = State::Available;
+	}
 }
 
-void Turret::AvailableUpdate(float deltaTime, PlayerController player)
-{
-	//仮でプレイヤーのいる方向に向くようになってます
-	//Vec3 toPlayer = player.GetPos() - position;
-	//toPlayer.y = 0;
-	//toPlayer = toPlayer.Normalized();
-	//yaw = std::atan2(toPlayer.x, toPlayer.z);
+void Turret::AvailableUpdate(float deltaTime, EnemyLow enemy)
+{	
+	for (auto& a : arrow)
+	{
+		if (!a.IsActive()) { continue; }
+
+		a.Update(deltaTime);
+	}
+
+	Vec3 toPlayer = enemy.GetPosition() - position;
+
+	float dirX = toPlayer.LengthIndividual(toPlayer.x);
+	float dirZ = toPlayer.LengthIndividual(toPlayer.z);
+
+	if (dirX > Const::TULLET_SHOTRANGE || dirZ > Const::TULLET_SHOTRANGE) { return; }
+    shotIntervalTimer -= deltaTime;
+	
+	toPlayer = toPlayer.Normalized();
+	yaw = std::atan2(toPlayer.x, toPlayer.z);
+	
+	if (shotIntervalTimer <= 0.0f)
+	{
+		for (auto& a : arrow)
+		{
+			if (a.IsActive()) { continue; }
+
+			a.LaunchArrow(toPlayer, deltaTime, *this);
+			Debug().Log(u8"矢が発射された");
+			break;
+		}
+		shotIntervalTimer = shotIntervalTime;
+	}
 }
 
 
@@ -67,4 +101,11 @@ void Turret::Draw() const
 	MV1SetPosition(modelTurretHandle, DxConv::ToVECTOR(position));
 	MV1SetRotationXYZ(modelTurretHandle, DxConv::ToVECTOR({ 0.0f, yaw, 0.0f }));
 	MV1DrawModel(modelTurretHandle);
+
+	for (auto& a : arrow)
+	{
+		if (!a.IsActive()) { continue; }
+
+		a.Draw();
+	}
 }

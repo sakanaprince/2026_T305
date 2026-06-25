@@ -24,30 +24,33 @@ void GameContext::Reset()
     DxLib::SetDrawScreen(DX_SCREEN_BACK);
     SetBackgroundColor(0, 105, 255);
 
+    enemyRoot.Init();
     player.Reset();
-    for (auto& b : bullets) {
+    for (auto& b : bullets) 
+    {
         b.Reset();
     }
-    enemy.SetPosition({ 300,400,300 });
+    enemy.Init();
     stage.Reset();
 
-    turrets[0].Reset({ 515, 130, 435 });
-    turrets[1].Reset({ -585, 130, 435 });
-    turrets[2].Reset({ -585, 130, -670 });
-    turrets[3].Reset({ 515, 130, -670 });
+    turrets[0].Reset({ 1030,260, 870 });
+    turrets[1].Reset({ -1170, 260, 870 });
+    turrets[2].Reset({ -1170, 260, -1340 });
+    turrets[3].Reset({ 1030, 260, -1340 });
 }
 
 void GameContext::Update(float deltaTime)
 {
-    for (auto& b : bullets) {
+    for (auto& b : bullets) 
+    {
         b.Update(deltaTime);
     }
-    player.Update(deltaTime);
+    player.Update(deltaTime);  
     enemy.Update(deltaTime);
 
     for (auto& t : turrets)
     {
-        t.Update(deltaTime, player);
+        t.Update(deltaTime, player, enemy);
     }
 }
 
@@ -56,12 +59,6 @@ void GameContext::Draw() const
     // 画面をクリア
     DxLib::ClearDrawScreen();
 
-    const int white = DxLib::GetColor(255, 255, 255);
-    DxPlus::Text::DrawString(L"GameScene",
-        { DxPlus::CLIENT_WIDTH * 0.5f, DxPlus::CLIENT_HEIGHT * 0.25f },
-        white, DxPlus::Text::TextAlign::MIDDLE_CENTER, { 2, 2 }, 0);
-
-    grid.Draw();
     enemy.Draw();
     stage.Draw();
     for (auto& t : turrets)

@@ -78,6 +78,16 @@ struct Vector3
         return static_cast<T>(std::sqrt(LengthSq()));
     }
 
+    /// <summary>
+    /// ’·‚³‚ğŒÂ•Ê‚Åæ‚é‚½‚ß‚ÌŠÖ”
+    /// </summary>
+    /// <param name="value">XYZ‚Ì“àæ‚è‚½‚¢’l‚ğ“ü‚ê‚é</param>
+    /// <returns></returns>
+    T LengthIndividual(T value) const 
+    {
+        return static_cast<T>(std::sqrt(value * value));
+    }
+
     Vector3<T> Normalized() const
     {
         T length = Length();

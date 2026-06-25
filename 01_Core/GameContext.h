@@ -9,6 +9,7 @@
 #include "../03_Enemy/EnemyLow.h"
 #include "../05_Stage/Turret.h"
 #include "../99_Utility/Const.h"
+#include "../05_Stage/EnemyRoot.h"
 
 class GameContext
 {
@@ -24,6 +25,7 @@ public:
 private:
     PlayerController player;
     EnemyLow enemy;
+    EnemyRoot enemyRoot;
     Stage stage;
     Turret turret;
     CameraController camera;
@@ -32,6 +34,5 @@ private:
 
     std::vector<std::unique_ptr<Entity>> entities;
 
-    static constexpr int TURRET_COUNT = 4;
-    Turret turrets[TURRET_COUNT];
+    Turret turrets[Const::TURRET_COUNT];
 };
