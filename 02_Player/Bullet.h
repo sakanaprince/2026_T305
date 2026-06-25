@@ -6,13 +6,17 @@ class Bullet
 private:
 	Vec3 position{ 0.0f,0.0f,0.0f };
 	Vec3 velocity{ 0.0f,0.0f,0.0f };
-	float radius{ 5.0f };
+	float radius{ 1.0f };
+	float life{ 3.0f };
 	bool isActive{ false };
 
 public:
+	const bool IsActive() const { return isActive; }
+
 	void Init();
 	void Reset();
-	void Update();
+	void Update(float deltaTime);
 	void Draw() const;
+	void Fire(const Vec3& pos, const Vec3& dir);
 };
 
