@@ -8,7 +8,13 @@ void PlayerController::Init()
 
 void PlayerController::Reset()
 {
-	position = { 0.0f,0.0f,0.0f };
+	position = { 0.0f,50.0f,0.0f };
+	velocity = { 0.0f,0.0f,0.0f };
+	yaw = { 0.0f };
+	pitch = { 0.0f };
+	radius = { 30.0f };
+	halfHeight = { 50.0f };
+	isGrounded = { true };
 }
 
 void PlayerController::Update(float deltaTime)
@@ -41,6 +47,29 @@ void PlayerController::Update(float deltaTime)
 	if (CheckHitKey(KEY_INPUT_A)) position += right * playerSpeed * deltaTime;
 	if (CheckHitKey(KEY_INPUT_D)) position -= right * playerSpeed * deltaTime;
 
+	if (CheckHitKey(KEY_INPUT_SPACE) && isGrounded) {
+		velocity.y = Const::PLAYER_JUMP_FORCE;
+		isGrounded = false;
+	}
+
+	velocity.y -= Const::GRAVITY * deltaTime;
+	position.y += velocity.y * deltaTime;
+
+	Vec3 footPos = position - Vec3(0, halfHeight, 0);
+
+	float groundY = stage.GetGroundHeight(footPos);
+
+	if (footPos.y <= groundY) {
+		float diff = groundY - footPos.y;
+		position.y += diff;
+		velocity.y = 0.0f;
+		isGrounded = true;
+	}
+	else {
+		isGrounded = false;
+	}
+
+	//視点の高さに更新
 	Vec3 eye = position + Vec3(0, Const::PLAYER_EYE_POSITION, 0);
 
 	//カメラの更新
@@ -53,6 +82,9 @@ void PlayerController::Step(float deltaTime)
 
 void PlayerController::Draw() const
 {
+	DrawCapsule3D(DxConv::ToVECTOR(position), { position.x, position.y + halfHeight, position.z }, radius, 12,
+		GetColor(0, 255, 0), GetColor(0, 255, 0), TRUE);
+
 	//カメラのレティクルの描画
 	camera.ReticleDraw();
 }

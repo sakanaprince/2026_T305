@@ -7,10 +7,11 @@ void CameraController::Reset(const Vec3& pos)
 	up = { 0.0f,1.0f,0.0f };
 }
 
-void CameraController::UpdateFromPlayer(const Vec3& pos, float yaw, float pitch)
+//プレイヤーの位置・向きからカメラを更新する
+void CameraController::UpdateFromPlayer(const Vec3& playerEye, float yaw, float pitch)
 {
 	//カメラ位置 = プレイヤー位置
-	eye = pos;
+	eye = playerEye;
 
 	//yaw/pitch から forward ベクトルを計算
 	float cosPitch = cos(pitch);
@@ -18,8 +19,21 @@ void CameraController::UpdateFromPlayer(const Vec3& pos, float yaw, float pitch)
 	float cosYaw = cos(yaw);
 	float sinYaw = sin(yaw);
 
-	//カメラの前方向
+	//カメラの前方向ベクトル
 	Vec3 forwerd{ cosYaw * cosPitch,sinPitch,sinYaw * cosPitch };
+
+	//三人称視点
+	if (CheckHitKey(KEY_INPUT_LCONTROL)) {
+		Vec3 back{ -cosYaw,0.0f,sinYaw };
+		float distance = 200.0f;
+		float height = 80.0f;
+
+		eye = playerEye + back * distance + Vec3(0, height, 0);
+		target = playerEye;
+
+		SetCameraPositionAndTargetAndUpVec(DxConv::ToVECTOR(eye), DxConv::ToVECTOR(target), DxConv::ToVECTOR(up));
+		return;
+	}
 
 	//注視点 = 視点 + 前方向
 	target = eye + forwerd;
@@ -28,6 +42,7 @@ void CameraController::UpdateFromPlayer(const Vec3& pos, float yaw, float pitch)
 	SetCameraPositionAndTargetAndUpVec(DxConv::ToVECTOR(eye), DxConv::ToVECTOR(target), DxConv::ToVECTOR(up));
 }
 
+//レティクルの描画(十字)
 void CameraController::ReticleDraw() const
 {
 	//レティクルの表示位置(画面中央)
