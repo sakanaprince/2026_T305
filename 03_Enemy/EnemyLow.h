@@ -1,6 +1,7 @@
 #pragma once
 #include "../01_Core/Entity.h"
 
+
 class EnemyLow final : public Entity
 {
 public:

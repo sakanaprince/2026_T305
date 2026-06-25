@@ -2,6 +2,9 @@
 #include "../07_Math/Vector3.h"
 #include "../02_Player/PlayerController.h"
 
+#include "../05_Stage/EnemyRoot.h"
+
+
 class Entity
 {
 public:
@@ -15,7 +18,13 @@ public:
     const float GetHeight()const { return height; }
 
     void SetPosition(const Vec3& pos) { position = pos; }
+
+
+    //＝＝＝＝おそらく敵しか使わないもの＝＝＝＝＝＝＝
+    void SetEnemyRoot_p(EnemyRoot* enRoot) { enemyRoot_p = enRoot; }
     void SetPlayerPointer(PlayerController* pc) { playerCont = pc; };
+    //＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
+    
     //アクセサー
 
     virtual void Init() = 0;
@@ -41,5 +50,11 @@ protected:
     float height{ 100.0f };
 
     PlayerController* playerCont{ nullptr };
+
+    //＝＝＝＝おそらく敵しか使わないもの＝＝＝＝＝＝＝
+    EnemyRoot* enemyRoot_p{nullptr};
+    Vec3 rootTargetPoint{ 0.0f, 0.0f, 0.0f };
+    size_t rootTargetIndex{ 0 };
+    //＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
 };
 
