@@ -25,9 +25,14 @@ void CameraController::UpdateFromPlayer(const Vec3& playerEye, float yaw, float 
 	//注視点 = 視点 + 前方向
 	target = eye + forwerd;
 
-	//見下ろし視点
+	//三人称視点
 	if (CheckHitKey(KEY_INPUT_LCONTROL)) {
-		eye.y = 500.0f;
+		Vec3 back{ -cosYaw,0.0f,sinYaw };
+		float distance = 200.0f;
+		float height = 80.0f;
+
+		eye = playerEye + back * distance + Vec3(0, height, 0);
+		target = playerEye;
 	}
 
 	//カメラに反映

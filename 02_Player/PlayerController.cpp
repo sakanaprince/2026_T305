@@ -8,46 +8,71 @@ void PlayerController::Init()
 
 void PlayerController::Reset()
 {
-	position = { 0.0f,0.0f,0.0f };
+	position = { 0.0f,50.0f,0.0f };
 	velocity = { 0.0f,0.0f,0.0f };
 	yaw = { 0.0f };
 	pitch = { 0.0f };
 	radius = { 30.0f };
+	halfHeight = { 50.0f };
+	isGrounded = { true };
 }
 
 void PlayerController::Update(float deltaTime)
 {
-	//ãƒã‚¦ã‚¹ã®ç¾åœ¨åœ°ã‚’å–å¾—
+	//ƒ}ƒEƒX‚ÌŒ»İ’n‚ğæ“¾
 	GetMousePoint(&currentMouse.x, &currentMouse.y);
 
-	//å·¦å³å›è»¢
+	//¶‰E‰ñ“]
 	yaw -= (currentMouse.x - prevMouse.x) * Const::ROTATE_RAD_PAR_PIXEL;
-	//ä¸Šä¸‹å›è»¢
+	//ã‰º‰ñ“]
 	pitch -= (currentMouse.y - prevMouse.y) * Const::ROTATE_RAD_PAR_PIXEL;
 
-	//ä¸Šä¸‹ã®å‘ãã‚’åˆ¶é™
+	//ã‰º‚ÌŒü‚«‚ğ§ŒÀ
 	pitch = std::clamp(pitch, Const::PITC_MIN, Const::PITC_MAX);
 
-	//ãƒã‚¦ã‚¹ã®ä½ç½®ã®æ›´æ–°
+	//ƒ}ƒEƒX‚ÌˆÊ’u‚ÌXV
 	prevMouse = currentMouse;
 
-	//ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®å‰æ–¹å‘ãƒ™ã‚¯ãƒˆãƒ«
+	//ƒvƒŒƒCƒ„[‚Ì‘O•ûŒüƒxƒNƒgƒ‹
 	Vec3 forward{ cos(yaw),0.0f,sin(yaw) };
-	//ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®å³æ–¹å‘ãƒ™ã‚¯ãƒˆãƒ«
+	//ƒvƒŒƒCƒ„[‚Ì‰E•ûŒüƒxƒNƒgƒ‹
 	Vec3 right{ -forward.z,0.0f,forward.x };
 
-	//ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®æ­©ãã€ãƒ€ãƒƒã‚·ãƒ¥ã®ç§»å‹•é€Ÿåº¦
+	//ƒvƒŒƒCƒ„[‚Ì•à‚«Aƒ_ƒbƒVƒ…‚ÌˆÚ“®‘¬“x
 	float playerSpeed = CheckHitKey(KEY_INPUT_LSHIFT) ? Const::PLAYER_DASH_SPEED : Const::PLAYER_WALK_SPEED;
 
-	//ã‚«ãƒ¡ãƒ©ã®å‘ãã«åˆã‚ã›ãŸWASDç§»å‹•
+	//ƒJƒƒ‰‚ÌŒü‚«‚É‡‚í‚¹‚½WASDˆÚ“®
 	if (CheckHitKey(KEY_INPUT_W)) position += forward * playerSpeed * deltaTime;
 	if (CheckHitKey(KEY_INPUT_S)) position -= forward * playerSpeed * deltaTime;
 	if (CheckHitKey(KEY_INPUT_A)) position += right * playerSpeed * deltaTime;
 	if (CheckHitKey(KEY_INPUT_D)) position -= right * playerSpeed * deltaTime;
 
+	if (CheckHitKey(KEY_INPUT_SPACE) && isGrounded) {
+		velocity.y = Const::PLAYER_JUMP_FORCE;
+		isGrounded = false;
+	}
+
+	velocity.y -= Const::GRAVITY * deltaTime;
+	position.y += velocity.y * deltaTime;
+
+	Vec3 footPos = position - Vec3(0, halfHeight, 0);
+
+	float groundY = stage.GetGroundHeight(footPos);
+
+	if (footPos.y <= groundY) {
+		float diff = groundY - footPos.y;
+		position.y += diff;
+		velocity.y = 0.0f;
+		isGrounded = true;
+	}
+	else {
+		isGrounded = false;
+	}
+
+	//‹“_‚Ì‚‚³‚ÉXV
 	Vec3 eye = position + Vec3(0, Const::PLAYER_EYE_POSITION, 0);
 
-	//ã‚«ãƒ¡ãƒ©ã®æ›´æ–°
+	//ƒJƒƒ‰‚ÌXV
 	camera.UpdateFromPlayer(eye, yaw, pitch);
 }
 
@@ -57,9 +82,9 @@ void PlayerController::Step(float deltaTime)
 
 void PlayerController::Draw() const
 {
-	DrawCapsule3D(DxConv::ToVECTOR(position), { position.x, position.y + 100, position.z }, radius, 12,
+	DrawCapsule3D(DxConv::ToVECTOR(position), { position.x, position.y + halfHeight, position.z }, radius, 12,
 		GetColor(0, 255, 0), GetColor(0, 255, 0), TRUE);
 
-	//ã‚«ãƒ¡ãƒ©ã®ãƒ¬ãƒ†ã‚£ã‚¯ãƒ«ã®æç”»
+	//ƒJƒƒ‰‚ÌƒŒƒeƒBƒNƒ‹‚Ì•`‰æ
 	camera.ReticleDraw();
 }
