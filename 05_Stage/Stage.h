@@ -11,6 +11,9 @@ public:
 	void Reset();
 	void Draw() const;
 
+	float GetGroundHeight(const Vec3& pos);
+	int GetModelHandle() { return modelHandle; }
+
 private:
 	int modelHandle{ -1 };
 	Vec3 scale{ 1.0f,1.0f,1.0f };

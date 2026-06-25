@@ -1,14 +1,20 @@
 #pragma once
-#include "../03_Enemy/Enemy.h"
+#include "../01_Core/Entity.h"
 
-class EnemyLow final : public Enemy
+
+class EnemyLow final : public Entity
 {
 public:
-	void BodyLine() const override;
-
-	void Init()override;
-	void Update() override;
+ 
+	void Init() override;
+	void Update(float deltaTime) override;
 	void Draw() const override;
+	void DrawDebug()const override;
 
+
+
+private:
+	void BodyLine() const ;
+	float animTimer{ 0.0f };
 };
 

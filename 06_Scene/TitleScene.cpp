@@ -5,9 +5,9 @@
 
 void TitleScene::Init()
 {
-    DxLib::SetBackgroundColor(0, 255, 224);
 //    frameCount = 0;
     fontHandle = RM().GetFont(ResourceKeys::Font_Title);
+    backGroundHandle = RM().GetSprite(ResourceKeys::Sprite_TitleBG);
     StartFadeIn();
 
     blinkTimer = BLINK_INTERVAL;
@@ -21,7 +21,6 @@ void TitleScene::Update(float deltaTime)
     {
         Scene* gameScene = SceneManager::GetInstance().GetScene(SceneID::Game);
         SetNextScene(gameScene);
-        StartFadeOut();
         return;
     }
 
@@ -36,10 +35,13 @@ void TitleScene::Update(float deltaTime)
 
 void TitleScene::Render() const
 {
-    const int white = DxLib::GetColor(255, 255, 255);
-    DxPlus::Text::DrawString(L"TitleScene",
-        { DxPlus::CLIENT_WIDTH * 0.5f, DxPlus::CLIENT_HEIGHT * 0.25f },
-        white, DxPlus::Text::TextAlign::MIDDLE_CENTER, { 2, 2 }, 0, fontHandle);
+    DxPlus::Sprite::Draw(backGroundHandle);
+
+    const int black = DxLib::GetColor(0, 0, 0);
+    DxPlus::Text::DrawString(L"Tower Difense",
+        { DxPlus::CLIENT_WIDTH * 0.5f, DxPlus::CLIENT_HEIGHT * 0.35f },
+        black, DxPlus::Text::TextAlign::MIDDLE_CENTER, { 2,2 }, 0, fontHandle);
+
 
     const int yellow = DxLib::GetColor(255, 255, 0);
     if (isPushEnterVisible)

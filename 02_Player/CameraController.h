@@ -1,5 +1,6 @@
 #pragma once
 #include "DxLib.h"
+#include "DxPlus.h"
 #include "../07_Math/Vector3.h"
 #include "../07_Math/DxConv.h"
 
@@ -8,27 +9,24 @@ class CameraController
 public:
 	CameraController() = default;
 
-	void Reset(const Vec3& pos) { eye = pos; };
+	const Vec3& GetEye() const { return eye; }
+	const Vec3& GetForward() const { return forward; }
 
-	void UpdateFromPlayer(const Vec3& pos, float yaw, float pitch)
-	{
-		eye = pos;
+	void Reset(const Vec3& pos);
 
-		float cosPitch = std::cos(pitch);
-		float sinPitch = std::sin(pitch);
-		float cosYaw = std::cos(yaw);
-		float sinYaw = std::sin(yaw);
+	//プレイヤーの位置・向きからカメラを更新する
+	void UpdateFromPlayer(const Vec3& playerEye, float yaw, float pitch);
 
-		Vec3 forwerd{ cosYaw * cosPitch,sinPitch,sinYaw * cosPitch };
-
-		target = eye + forwerd;
-
-		SetCameraPositionAndTargetAndUpVec(DxConv::ToVECTOR(eye), DxConv::ToVECTOR(target), DxConv::ToVECTOR(up));
-	};
+	//レティクルの描画(十字)
+	void ReticleDraw()const;
 
 private:
-	Vec3 eye{ 600.0f,600.0f,-600.0f };
+	//視点
+	Vec3 eye{ 0.0f,0.0f,0.0f };
+	//注視点
 	Vec3 target{ 0.0f,0.0f,0.0f };
+	//上方向
 	Vec3 up{ 0.0f,1.0f,0.0f };
+	//前方向
+	Vec3 forward{ 0.0f,0.0f,0.0f };
 };
-

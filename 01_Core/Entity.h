@@ -1,5 +1,9 @@
 #pragma once
 #include "../07_Math/Vector3.h"
+#include "../02_Player/PlayerController.h"
+
+#include "../05_Stage/EnemyRoot.h"
+
 
 class Entity
 {
@@ -12,12 +16,20 @@ public:
     const Vec3& const GetPosition() { return position; }
     const float GetRadius()const { return radius; }
     const float GetHeight()const { return height; }
+
     void SetPosition(const Vec3& pos) { position = pos; }
+
+
+    //＝＝＝＝おそらく敵しか使わないもの＝＝＝＝＝＝＝
+    void SetEnemyRoot_p(EnemyRoot* enRoot) { enemyRoot_p = enRoot; }
+    void SetPlayerPointer(PlayerController* pc) { playerCont = pc; };
+    //＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
+    
     //アクセサー
 
     virtual void Init() = 0;
     virtual void Reset(const Vec3& startPosition, float startYaw) {};
-    virtual void Update(float deltaTime, const Vec3& playerPos) {};
+    virtual void Update(float deltaTime) {};
     virtual void Draw()const {};
     virtual void DrawDebug()const {}; //判定の可視化とか で
     virtual void Release() {}; 
@@ -29,6 +41,7 @@ protected:
     Vec3 scale;
     float yaw; //向いてる方向
     bool isMoving{ false };
+    bool isAlive{ false };
 
     float moveSpeed{ 80.0f };
 
@@ -36,5 +49,13 @@ protected:
 
     float radius{ 60.0f };
     float height{ 100.0f };
+
+    PlayerController* playerCont{ nullptr };
+
+    //＝＝＝＝おそらく敵しか使わないもの＝＝＝＝＝＝＝
+    EnemyRoot* enemyRoot_p{nullptr};
+    Vec3 rootTargetPoint{ 0.0f, 0.0f, 0.0f };
+    size_t rootTargetIndex{ 0 };
+    //＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
 };
 
