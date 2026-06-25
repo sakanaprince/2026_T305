@@ -5,27 +5,28 @@ void CameraController::Reset(const Vec3& pos)
 	eye = pos;
 	target = { 0.0f,0.0f,0.0f };
 	up = { 0.0f,1.0f,0.0f };
+	forward = { 0.0f,0.0f,1.0f };
 }
 
-//ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®ä½ç½®ãƒ»å‘ãã‹ã‚‰ã‚«ãƒ¡ãƒ©ã‚’æ›´æ–°ã™ã‚‹
+//ƒvƒŒƒCƒ„[‚ÌˆÊ’uEŒü‚«‚©‚çƒJƒƒ‰‚ğXV‚·‚é
 void CameraController::UpdateFromPlayer(const Vec3& playerEye, float yaw, float pitch)
 {
-	//ã‚«ãƒ¡ãƒ©ä½ç½® = ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ä½ç½®
+	//ƒJƒƒ‰ˆÊ’u = ƒvƒŒƒCƒ„[ˆÊ’u
 	eye = playerEye;
 
-	//yaw/pitch ã‹ã‚‰ forward ãƒ™ã‚¯ãƒˆãƒ«ã‚’è¨ˆç®—
+	//yaw/pitch ‚©‚ç forward ƒxƒNƒgƒ‹‚ğŒvZ
 	float cosPitch = cos(pitch);
 	float sinPitch = sin(pitch);
 	float cosYaw = cos(yaw);
 	float sinYaw = sin(yaw);
 
-	//ã‚«ãƒ¡ãƒ©ã®å‰æ–¹å‘ãƒ™ã‚¯ãƒˆãƒ«
-	Vec3 forwerd{ cosYaw * cosPitch,sinPitch,sinYaw * cosPitch };
+	//ƒJƒƒ‰‚Ì‘O•ûŒüƒxƒNƒgƒ‹
+	forward = { cosYaw * cosPitch,sinPitch,sinYaw * cosPitch };
 
-	//æ³¨è¦–ç‚¹ = è¦–ç‚¹ + å‰æ–¹å‘
-	target = eye + forwerd;
+	//’‹“_ = ‹“_ + ‘O•ûŒü
+	target = eye + forward;
 
-	//ä¸‰äººç§°è¦–ç‚¹
+	//OlÌ‹“_
 	if (CheckHitKey(KEY_INPUT_LCONTROL)) {
 		Vec3 back{ -cosYaw,0.0f,sinYaw };
 		float distance = 200.0f;
@@ -35,26 +36,26 @@ void CameraController::UpdateFromPlayer(const Vec3& playerEye, float yaw, float 
 		target = playerEye;
 	}
 
-	//ã‚«ãƒ¡ãƒ©ã«åæ˜ 
+	//ƒJƒƒ‰‚É”½‰f
 	SetCameraPositionAndTargetAndUpVec(DxConv::ToVECTOR(eye), DxConv::ToVECTOR(target), DxConv::ToVECTOR(up));
 }
 
-//ãƒ¬ãƒ†ã‚£ã‚¯ãƒ«ã®æç”»(åå­—)
+//ƒŒƒeƒBƒNƒ‹‚Ì•`‰æ(\š)
 void CameraController::ReticleDraw() const
 {
-	//ãƒ¬ãƒ†ã‚£ã‚¯ãƒ«ã®è¡¨ç¤ºä½ç½®(ç”»é¢ä¸­å¤®)
+	//ƒŒƒeƒBƒNƒ‹‚Ì•\¦ˆÊ’u(‰æ–Ê’†‰›)
 	int cx = DxPlus::CLIENT_WIDTH / 2;
 	int cy = DxPlus::CLIENT_HEIGHT / 2;
 
-	//ç·šã®é•·ã•
+	//ü‚Ì’·‚³
 	int size = 10;
-	//ç·šã®å¤ªã•
+	//ü‚Ì‘¾‚³
 	int thick = 5;
-	//ç·šã®è‰²(ã‚°ãƒ¬ãƒ¼)
+	//ü‚ÌF(ƒOƒŒ[)
 	int color = GetColor(128, 128, 128);
 
-	//ç·šã®æç”»(æ¨ª)
+	//ü‚Ì•`‰æ(‰¡)
 	DrawLine(cx - size, cy, cx + size, cy, color, thick);
-	//ç·šã®æç”»(ç¸¦)
+	//ü‚Ì•`‰æ(c)
 	DrawLine(cx, cy - size, cx, cy + size, color, thick);
 }

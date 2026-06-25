@@ -10,6 +10,8 @@ void PlayerController::Reset()
 {
 	position = { 0.0f,0.0f,0.0f };
 	velocity = { 0.0f,0.0f,0.0f };
+	forward = { 0.0f,0.0f,0.0f };
+	right = { 0.0f,0.0f,0.0f };
 	yaw = { 0.0f };
 	pitch = { 0.0f };
 	radius = { 5.0f };
@@ -18,49 +20,49 @@ void PlayerController::Reset()
 
 void PlayerController::Update(float deltaTime)
 {
-	//ï¿½}ï¿½Eï¿½Xï¿½ÌŒï¿½ï¿½İ’nï¿½ï¿½ï¿½æ“¾
+	//ƒ}ƒEƒX‚ÌŒ»İ’n‚ğæ“¾
 	GetMousePoint(&currentMouse.x, &currentMouse.y);
 
-	//ï¿½ï¿½ï¿½Eï¿½ï¿½]
+	//¶‰E‰ñ“]
 	yaw -= (currentMouse.x - prevMouse.x) * Const::ROTATE_RAD_PAR_PIXEL;
-	//ï¿½ã‰ºï¿½ï¿½]
+	//ã‰º‰ñ“]
 	pitch -= (currentMouse.y - prevMouse.y) * Const::ROTATE_RAD_PAR_PIXEL;
 
-	//ï¿½ã‰ºï¿½ÌŒï¿½ï¿½ï¿½ï¿½ğ§Œï¿½
+	//ã‰º‚ÌŒü‚«‚ğ§ŒÀ
 	pitch = std::clamp(pitch, Const::PITC_MIN, Const::PITC_MAX);
 
-	//ï¿½}ï¿½Eï¿½Xï¿½ÌˆÊ’uï¿½ÌXï¿½V
+	//ƒ}ƒEƒX‚ÌˆÊ’u‚ÌXV
 	prevMouse = currentMouse;
 
-	//ï¿½vï¿½ï¿½ï¿½Cï¿½ï¿½ï¿½[ï¿½Ì‘Oï¿½ï¿½ï¿½ï¿½ï¿½xï¿½Nï¿½gï¿½ï¿½
-	Vec3 forward{ cos(yaw),0.0f,sin(yaw) };
-	//ï¿½vï¿½ï¿½ï¿½Cï¿½ï¿½ï¿½[ï¿½Ì‰Eï¿½ï¿½ï¿½ï¿½ï¿½xï¿½Nï¿½gï¿½ï¿½
-	Vec3 right{ -forward.z,0.0f,forward.x };
+	//ƒvƒŒƒCƒ„[‚Ì‘O•ûŒüƒxƒNƒgƒ‹
+	forward = { cos(yaw),0.0f,sin(yaw) };
+	//ƒvƒŒƒCƒ„[‚Ì‰E•ûŒüƒxƒNƒgƒ‹
+	right = { -forward.z,0.0f,forward.x };
 
-	//ï¿½vï¿½ï¿½ï¿½Cï¿½ï¿½ï¿½[ï¿½Ì•ï¿½ï¿½ï¿½ï¿½Aï¿½_ï¿½bï¿½Vï¿½ï¿½ï¿½ÌˆÚ“ï¿½ï¿½ï¿½ï¿½x
+	//ƒvƒŒƒCƒ„[‚Ì•à‚«Aƒ_ƒbƒVƒ…‚ÌˆÚ“®‘¬“x
 	float playerSpeed = CheckHitKey(KEY_INPUT_LSHIFT) ? Const::PLAYER_DASH_SPEED : Const::PLAYER_WALK_SPEED;
 
-	//ï¿½Jï¿½ï¿½ï¿½ï¿½ï¿½ÌŒï¿½ï¿½ï¿½ï¿½Éï¿½ï¿½í‚¹ï¿½ï¿½WASDï¿½Ú“ï¿½
+	//ƒJƒƒ‰‚ÌŒü‚«‚É‡‚í‚¹‚½WASDˆÚ“®
 	if (CheckHitKey(KEY_INPUT_W)) position += forward * playerSpeed * deltaTime;
 	if (CheckHitKey(KEY_INPUT_S)) position -= forward * playerSpeed * deltaTime;
 	if (CheckHitKey(KEY_INPUT_A)) position += right * playerSpeed * deltaTime;
 	if (CheckHitKey(KEY_INPUT_D)) position -= right * playerSpeed * deltaTime;
 
-	//ï¿½Xï¿½yï¿½[ï¿½Xï¿½Lï¿½[ï¿½ÅƒWï¿½ï¿½ï¿½ï¿½ï¿½v
+	//ƒXƒy[ƒXƒL[‚ÅƒWƒƒƒ“ƒv
 	if (CheckHitKey(KEY_INPUT_SPACE) && isGrounded) {
 		velocity.y = Const::PLAYER_JUMP_FORCE;
 		isGrounded = false;
 	}
 
-	//ï¿½dï¿½ï¿½
+	//d—Í
 	velocity.y -= Const::GRAVITY * deltaTime;
-	//ï¿½Wï¿½ï¿½ï¿½ï¿½ï¿½vï¿½ï¿½ï¿½ï¿½ï¿½x
+	//ƒWƒƒƒ“ƒv‰Á‘¬“x
 	position.y += velocity.y * deltaTime;
 
-	//ï¿½Xï¿½eï¿½[ï¿½Wï¿½Ìï¿½ï¿½Ìï¿½ï¿½W
+	//ƒXƒe[ƒW‚Ì°‚ÌÀ•W
 	float groundY = stage.GetGroundHeight(position);
 
-	//ï¿½ï¿½ï¿½Ì”ï¿½ï¿½ï¿½
+	//°‚Ì”»’è
 	if (position.y <= groundY) {
 		float diff = groundY - position.y;
 		position.y += diff;
@@ -71,22 +73,29 @@ void PlayerController::Update(float deltaTime)
 		isGrounded = false;
 	}
 
-	//ï¿½ï¿½ï¿½_ï¿½Ìï¿½ï¿½ï¿½ï¿½ÉXï¿½V
+	//‹“_‚Ì‚‚³‚ÉXV
 	Vec3 eye = position + Vec3(0, Const::PLAYER_EYE_POSITION, 0);
 
-	//ï¿½Jï¿½ï¿½ï¿½ï¿½ï¿½ÌXï¿½V
+	//ƒJƒƒ‰‚ÌXV
 	camera.UpdateFromPlayer(eye, yaw, pitch);
-}
 
-void PlayerController::Step(float deltaTime)
-{
+	static int prevMouse = 0;
+	int nowMouse = GetMouseInput();
+
+	bool leftDown = (nowMouse & MOUSE_INPUT_LEFT) && !(prevMouse & MOUSE_INPUT_LEFT);
+
+	if (leftDown) {
+		bullet->Fire(camera.GetEye() + camera.GetForward() * 20.0f, camera.GetForward());
+	}
+
+	prevMouse = nowMouse;
 }
 
 void PlayerController::Draw() const
 {
-	DrawCapsule3D(DxConv::ToVECTOR(position), { position.x, position.y + Const::PLAYER_EYE_POSITION, position.z }, 
+	DrawCylinder3D(DxConv::ToVECTOR(position), DxConv::ToVECTOR(position + Vec3(0, Const::PLAYER_EYE_POSITION, 0)),
 		radius, 12, GetColor(0, 255, 0), GetColor(0, 255, 0), FALSE);
 
-	//ï¿½Jï¿½ï¿½ï¿½ï¿½ï¿½Ìƒï¿½ï¿½eï¿½Bï¿½Nï¿½ï¿½ï¿½Ì•`ï¿½ï¿½
+	//ƒJƒƒ‰‚ÌƒŒƒeƒBƒNƒ‹‚Ì•`‰æ
 	camera.ReticleDraw();
 }
