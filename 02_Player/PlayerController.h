@@ -7,13 +7,13 @@
 
 class PlayerController
 {
-	Bullet* bullet = nullptr;
 public:
 	void SetBulletPointer(Bullet* b, int count) {
 		bullets = b;
 		bulletCount = count;
 	}
 	const Vec3& GetPosition() const { return position; }
+	const int GetAmmoCount() const { return ammoCount; }
 
 	void Init();
 	void Reset();
@@ -30,6 +30,7 @@ private:
 	float radius{ 10.0f };
 	bool isGrounded{ true };
 	int bulletCount{ 0 };
+	int ammoCount{ 0 };
 
 	DxPlus::Vec2Int currentMouse{ 0,0 };
 	DxPlus::Vec2Int prevMouse{ 0,0 };
