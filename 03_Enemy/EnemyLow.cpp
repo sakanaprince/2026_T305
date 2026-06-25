@@ -63,6 +63,7 @@ void EnemyLow::Init()
 	//‰¼
 	moveDir = Vec3(-10.0f, 0.0f, 10.0f).Normalized();
 	moveSpeed = 500.0f;
+	isAlive = true;
 
 }
 
@@ -70,6 +71,8 @@ void EnemyLow::Init()
 
 void EnemyLow::Update(float deltaTime)
 {
+	if (!isAlive) { return; }
+
 	animTimer += 10.0f * deltaTime;
 
 	const float  DISTANCE_LIMIT = 1.0f;
@@ -88,10 +91,12 @@ void EnemyLow::Update(float deltaTime)
 			if (enemyRoot_p) 
 			{
 				rootTargetPoint = enemyRoot_p->GetTargetPos(rootTargetIndex);
-				MessageBox(NULL, L"IDX UP", L"Hi", MB_OK);
 			}
 		}
-		
+		else
+		{
+			isAlive = false;
+		}
 	}
 	
 	Debug().Log("TargetPos",rootTargetPoint);
@@ -104,11 +109,16 @@ void EnemyLow::Update(float deltaTime)
 
 void EnemyLow::Draw() const
 {
+	if (!isAlive) { return; }
+
 	BodyLine();
 }
 
 void EnemyLow::DrawDebug() const
 {
+	if (!isAlive) { return; }
+
+
 	const int division = 24;
 	const unsigned int color = DxLib::GetColor(255, 255, 0);
 

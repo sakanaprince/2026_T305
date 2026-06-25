@@ -41,6 +41,7 @@ protected:
     Vec3 scale;
     float yaw; //Œü‚¢‚Ä‚é•ûŒü
     bool isMoving{ false };
+    bool isAlive{ false };
 
     float moveSpeed{ 80.0f };
 
@@ -55,6 +56,6 @@ protected:
     EnemyRoot* enemyRoot_p{nullptr};
     Vec3 rootTargetPoint{ 0.0f, 0.0f, 0.0f };
     size_t rootTargetIndex{ 0 };
-    //
+    //
 };
 
