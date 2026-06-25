@@ -11,7 +11,11 @@ ResourceManager& ResourceManager::GetInstance()
 void ResourceManager::LoadAll()
 {
     LoadFont(ResourceKeys::Font_Title, L"./Data/Fonts/Bitcount/static/Bitcount-Light.ttf");
-    LoadModel(ResourceKeys::Model_Stage, L"./Data/Models/Stage.mv1");
+    LoadModel(ResourceKeys::Model_Stage, L"Stage.mv1");
+    LoadModel(ResourceKeys::Model_Turret, L"Turret.mv1");
+    LoadModel(ResourceKeys::Model_BrokenTurret, L"BrokenTurret.mv1");
+    LoadModel(ResourceKeys::Model_NotArrowTurret, L"NotArrowTurret.mv1");
+    LoadModel(ResourceKeys::Model_Arrow, L"Arrow.mv1");
 }
 
 void ResourceManager::UnloadAll()
@@ -84,7 +88,7 @@ int ResourceManager::LoadModel(const std::wstring& key, const std::wstring& path
     if (auto it = models.find(key); it != models.end())
         return it->second;
 
-    int h = DxLib::MV1LoadModel(path.c_str());
+    int h = DxLib::MV1LoadModel((L"./Data/Models/"+ path).c_str());
     if (h == -1) DxPlus::Utils::FatalError((L"Failed to load model " + path).c_str());
 
     models[key] = h;

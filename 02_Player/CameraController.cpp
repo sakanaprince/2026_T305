@@ -38,6 +38,11 @@ void CameraController::UpdateFromPlayer(const Vec3& playerEye, float yaw, float 
 	//注視点 = 視点 + 前方向
 	target = eye + forwerd;
 
+	//見下ろし視点
+	if (CheckHitKey(KEY_INPUT_LCONTROL)) {
+		eye.y = 500.0f;
+	}
+
 	//カメラに反映
 	SetCameraPositionAndTargetAndUpVec(DxConv::ToVECTOR(eye), DxConv::ToVECTOR(target), DxConv::ToVECTOR(up));
 }
