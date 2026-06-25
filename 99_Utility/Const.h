@@ -1,5 +1,5 @@
 #pragma once
-#include "DxPlus.h"
+#include "../DxPlus/DxPlus.h"
 
 namespace Const
 {
@@ -27,6 +27,12 @@ namespace Const
 	constexpr float BULLET_LANGE{ 500.0f };
 
 	//===== 敵関連 =====
+
+		//==== タレット関連
+	static constexpr int TURRET_COUNT = 4;
+	static constexpr float TULLET_RELEASEDISTANCE = 200.0f;
+	static constexpr float TULLET_SHOTRANGE = 2220.0f;
+	static constexpr int ARROW_COUNT = 10;
 
 	//===== 物理関連 =====
 	constexpr float GRAVITY{ 2000.0f };
