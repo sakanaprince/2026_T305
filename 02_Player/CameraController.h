@@ -9,6 +9,9 @@ class CameraController
 public:
 	CameraController() = default;
 
+	const Vec3& GetEye() const { return eye; }
+	const Vec3& GetForward() const { return forward; }
+
 	void Reset(const Vec3& pos);
 
 	//プレイヤーの位置・向きからカメラを更新する
@@ -24,4 +27,6 @@ private:
 	Vec3 target{ 0.0f,0.0f,0.0f };
 	//上方向
 	Vec3 up{ 0.0f,1.0f,0.0f };
+	//前方向
+	Vec3 forward{ 0.0f,0.0f,0.0f };
 };
