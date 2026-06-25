@@ -24,5 +24,6 @@ void Stage::Draw() const
 {
 	if (modelHandle < 0) { return; }
 
+	MV1SetPosition(modelHandle, { 0.0f,0.0f,0.0f });
 	MV1DrawModel(modelHandle);
 }

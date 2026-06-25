@@ -6,8 +6,15 @@
 
 void GameContext::Init()
 {
+    player.Init();
     stage.Init();
     enemy.Init();
+
+    for (auto& t : turrets)
+    {
+        t.Init();
+    }
+    enemy.SetPlayerPointer(&player);
 }
 
 void GameContext::Reset()
@@ -16,17 +23,25 @@ void GameContext::Reset()
     DxLib::SetDrawScreen(DX_SCREEN_BACK);
     SetBackgroundColor(0, 105, 255);
 
-    Debug().Log(u8"リセット");
-
     player.Reset();
     enemy.SetPosition({ 300,400,300 });
     stage.Reset();
+
+    turrets[0].Reset({ 515, 130, 435 });
+    turrets[1].Reset({ -585, 130, 435 });
+    turrets[2].Reset({ -585, 130, -670 });
+    turrets[3].Reset({ 515, 130, -670 });
 }
 
 void GameContext::Update(float deltaTime)
 {
-    player.Update(deltaTime);
-    enemy.Update();
+    player.Update(deltaTime);  
+    enemy.Update(deltaTime);
+
+    for (auto& t : turrets)
+    {
+        t.Update(deltaTime, player);
+    }
 }
 
 void GameContext::Draw() const
@@ -42,4 +57,9 @@ void GameContext::Draw() const
     grid.Draw();
     enemy.Draw();
     stage.Draw();
+    for (auto& t : turrets)
+    {
+        t.Draw();
+    }
+    player.Draw();
 }
