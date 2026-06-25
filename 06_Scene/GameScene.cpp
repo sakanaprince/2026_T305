@@ -21,7 +21,6 @@ void GameScene::Update(float deltaTime)
     {
         Scene* resultScene = SceneManager::GetInstance().GetScene(SceneID::Result);
         SetNextScene(resultScene);
-        finished = true;    // フェード無しの場合は finished を true にしておく必要あり
         return;
     }
 }
