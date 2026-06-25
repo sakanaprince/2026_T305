@@ -40,6 +40,7 @@ public:
     int GetMusic(const std::wstring& key) const;
     int GetSound(const std::wstring& key) const;
     int GetModel(const std::wstring& key) const;
+    int GetSprite(const std::wstring& key) const;
 
 private:
     // スプライトシートを分割して登録（詳細は定義部参照）
@@ -135,6 +136,7 @@ private:
     int LoadSound(const std::wstring& key, const std::wstring& path);
     int LoadFont(const std::wstring& fontName, const std::wstring& path);
     int LoadModel(const std::wstring& key, const std::wstring& path);
+    int LoadSprite(const std::wstring& key, const std::wstring& path);
 
     void UnloadGrids();
     void UnloadFont(const std::wstring& fontName);
@@ -142,6 +144,7 @@ private:
     void UnloadMusics();
     void UnloadSounds();
     void UnloadModels();
+    void UnloadSprites();
 
     ResourceManager() = default;
     ~ResourceManager() = default;
@@ -167,6 +170,7 @@ private:
     std::unordered_map<std::wstring, int> musics;
     std::unordered_map<std::wstring, int> sounds;
     std::unordered_map<std::wstring, int> models;
+    std::unordered_map<std::wstring, int> sprites;
 };
 /// <summary>
 /// ResourceManager のシングルトンインスタンスを取得するショートカット
