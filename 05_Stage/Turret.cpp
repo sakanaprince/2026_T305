@@ -5,7 +5,7 @@
 #include "../08_Debug/DebugUI.h"
 #include "../99_Utility/Const.h"
 
-void Turret::Init()
+void Turret::Init(PlayerController* _player, EnemyLow* _enemy, Coin* _coin)
 {
 	modelBrokenTurret = RM().GetModel(ResourceKeys::Model_BrokenTurret);
 	modelTurret = RM().GetModel(ResourceKeys::Model_Turret);
@@ -13,6 +13,9 @@ void Turret::Init()
 	MV1SetScale(modelTurret, DxConv::ToVECTOR(scale));
 	modelTurretHandle = modelBrokenTurret;
 
+	player = _player;
+	enemy  = _enemy;
+	coin   = _coin;
 
 	for (auto& a : arrow)
 	{
@@ -33,33 +36,35 @@ void Turret::Reset(Vec3 startPosition)
 	}
 }
 
-void Turret::Update(float deltaTime, PlayerController& player, EnemyLow& enemy)
+void Turret::Update(float deltaTime)
 {
+	Debug().Log("Coin", coin->GetCoin());
 	switch (state)
 	{
 	case Broken:
-		BrokenUpdate(player);
+		BrokenUpdate();
 		break;
 	case Available:
-		AvailableUpdate(deltaTime, enemy);
+		AvailableUpdate(deltaTime);
 		break;
 	default:
 		break;
 	}
 }
 
-void Turret::BrokenUpdate(PlayerController& player)
+void Turret::BrokenUpdate()
 {
-	Vec3 toPlayer = player.GetPosition() - position;
+	Vec3 toPlayer = player->GetPosition() - position;
 	float dir = toPlayer.Length();
-	if (dir <= Const::TULLET_RELEASEDISTANCE && CheckHitKey(KEY_INPUT_0))
+	if (dir <= Const::TULLET_RELEASEDISTANCE && CheckHitKey(KEY_INPUT_0) && coin->GetCoin() >= turretCoin)
 	{
+		coin->MinusCoin(turretCoin);
 		modelTurretHandle = modelTurret;
 		state = State::Available;
 	}
 }
 
-void Turret::AvailableUpdate(float deltaTime, EnemyLow enemy)
+void Turret::AvailableUpdate(float deltaTime)
 {	
 	for (auto& a : arrow)
 	{
@@ -68,7 +73,7 @@ void Turret::AvailableUpdate(float deltaTime, EnemyLow enemy)
 		a.Update(deltaTime);
 	}
 
-	Vec3 toPlayer = enemy.GetPosition() - position;
+	Vec3 toPlayer = enemy->GetPosition() - position;
 
 	float dirX = toPlayer.LengthIndividual(toPlayer.x);
 	float dirZ = toPlayer.LengthIndividual(toPlayer.z);
