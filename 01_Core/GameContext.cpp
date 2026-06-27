@@ -6,37 +6,41 @@
 
 void GameContext::Init()
 {
+    enemyRoot.Init();
+    enemy.Init(&enemyRoot);
     player.Init();
     player.SetBulletPointer(bullets, Const::BULLET_COUNT);
     stage.Init();
-    enemy.Init();
 
     for (auto& t : turrets)
     {
-        t.Init();
+        t.Init(&player, &enemy, &coin);
     }
     enemy.SetPlayerPointer(&player);
 }
 
 void GameContext::Reset()
 {
+
     // 描画先をバックバッファに指定
     DxLib::SetDrawScreen(DX_SCREEN_BACK);
     SetBackgroundColor(0, 105, 255);
 
-    enemyRoot.Init();
     player.Reset();
     for (auto& b : bullets) 
     {
         b.Reset();
     }
-    enemy.Init();
     stage.Reset();
+
+    enemy.Reset({ 500,500,500 }, 0);
 
     turrets[0].Reset({ 1030,260, 870 });
     turrets[1].Reset({ -1170, 260, 870 });
     turrets[2].Reset({ -1170, 260, -1340 });
     turrets[3].Reset({ 1030, 260, -1340 });
+
+    coin.Reset();
 }
 
 void GameContext::Update(float deltaTime)
@@ -50,7 +54,7 @@ void GameContext::Update(float deltaTime)
 
     for (auto& t : turrets)
     {
-        t.Update(deltaTime, player, enemy);
+        t.Update(deltaTime);
     }
 }
 

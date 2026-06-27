@@ -7,6 +7,7 @@ void ResultScene::Init()
 {
     DxLib::SetBackgroundColor(0, 0, 0);
     fontHandle = RM().GetFont(ResourceKeys::Font_Title);
+    DxLib::SetMouseDispFlag(TRUE);
     StartFadeIn();
 }
 

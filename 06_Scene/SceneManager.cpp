@@ -11,8 +11,6 @@ void SceneManager::Init()
 
     DxPlus::Initialize(w, h, runConfig.windowed);
 
-    //マウスを消すかの設定
-    DxLib::SetMouseDispFlag(TRUE);
 
 #ifndef NDEBUG
     // Debug のときだけ、さらに windowed のときだけ DebugUI を許可
@@ -73,6 +71,7 @@ void SceneManager::Run()
     //DxPlusだとFPSの設定ができる。if (DxLib::ProcessMessage() != 0)これでも動く。
     while (DxPlus::GameLoop(true))
     {
+
         //入力を受け取るための処理
         DxPlus::Input::Update();
 
