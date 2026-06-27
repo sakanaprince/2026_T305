@@ -7,7 +7,8 @@ private:
 	Vec3 position{ 0.0f,0.0f,0.0f };
 	Vec3 velocity{ 0.0f,0.0f,0.0f };
 	float radius{ 1.0f };
-	float life{ 3.0f };
+	float maxLife{ 2.0f };
+	float life{ maxLife };
 	bool isActive{ false };
 
 public:
