@@ -4,7 +4,7 @@
 
 #include "../05_Stage/EnemyRoot.h"
 
-
+#include "../10_Physics/Collision.h"
 class Entity
 {
 public:
@@ -16,6 +16,7 @@ public:
     const Vec3& const GetPosition() { return position; }
     const float GetRadius()const { return radius; }
     const float GetHeight()const { return height; }
+    const Collision::Sphere GetSphere() { return { position, radius }; }
     const bool IsAlive()const { return isAlive; }
 
     void SetPosition(const Vec3& pos) { position = pos; }
@@ -53,6 +54,8 @@ protected:
     float height{ 100.0f };
 
     PlayerController* playerCont{ nullptr };
+
+
 
     //‚¨‚»‚ç‚­“G‚µ‚©g‚í‚È‚¢‚à‚Ì
     EnemyRoot* pEnemyRoot{nullptr};
