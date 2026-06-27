@@ -25,4 +25,3 @@ public:
 	void Draw() const;
 	void Fire(const Vec3& pos, const Vec3& dir);
 };
-

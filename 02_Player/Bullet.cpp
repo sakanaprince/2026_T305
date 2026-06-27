@@ -21,7 +21,7 @@ void Bullet::Update(float deltaTime)
 {
 	if (!isActive)return;
 
-	bullet.position += velocity * deltaTime;
+	bullet.centerPos += velocity * deltaTime;
 	life -= deltaTime;
 
 	if (life <= 0)
@@ -33,17 +33,17 @@ void Bullet::Draw() const
 	if (!isActive)return;
 
 	//’eŠÛ(‹…)
-	DrawSphere3D(DxConv::ToVECTOR(bullet.position), bullet.radius, 8, 
+	DrawSphere3D(DxConv::ToVECTOR(bullet.centerPos), bullet.radius, 8,
 		GetColor(255, 255, 0), GetColor(255, 255, 0), TRUE);
 
 	//’eŠÛ‚ÌŽc‘œ(ü)
-	Vec3 tail = bullet.position - velocity.Normalized() * 10;
-	DrawLine3D(DxConv::ToVECTOR(bullet.position), DxConv::ToVECTOR(tail), GetColor(255, 200, 50));
+	Vec3 tail = bullet.centerPos - velocity.Normalized() * 10;
+	DrawLine3D(DxConv::ToVECTOR(bullet.centerPos), DxConv::ToVECTOR(tail), GetColor(255, 200, 50));
 }
 
 void Bullet::Fire(const Vec3& pos, const Vec3& dir)
 {
-	bullet.position = pos;
+	bullet.centerPos = pos;
 	velocity = dir.Normalized() * Const::BULLET_SPEED;
 	life = maxLife;
 	isActive = true;
