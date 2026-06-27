@@ -1,18 +1,23 @@
 #pragma once
 #include "../07_Math/Vector3.h"
 
+struct Sphere {
+	Vec3 position;
+	float radius;
+};
+
 class Bullet
 {
 private:
-	Vec3 position{ 0.0f,0.0f,0.0f };
+	Sphere bullet{};
 	Vec3 velocity{ 0.0f,0.0f,0.0f };
-	float radius{ 1.0f };
 	float maxLife{ 2.0f };
 	float life{ maxLife };
 	bool isActive{ false };
 
 public:
 	const bool IsActive() const { return isActive; }
+	const Sphere GetRadius() const { return bullet; }
 
 	void Init();
 	void Reset();

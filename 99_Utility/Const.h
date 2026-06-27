@@ -1,9 +1,11 @@
 #pragma once
-#include "../DxPlus/DxPlus.h"
+#include "DxPlus.h"
 
 namespace Const
 {
 	//===== プレイヤー関連 =====
+	//プレイヤーの半径
+	constexpr float PLAYER_RADIUS{ 5.0f };
 	//歩き中の移動速度
 	constexpr float PLAYER_WALK_SPEED{ 200.0f };
 	//ダッシュ中の移動速度
@@ -22,17 +24,14 @@ namespace Const
 	constexpr float PITC_MAX{ DxPlus::Deg2Rad * 89 };
 
 	//===== 弾丸関連 =====
-	constexpr int BULLET_COUNT{ 16 };
-	constexpr float BULLET_SPEED{ 1000.0f };
-	constexpr float BULLET_LANGE{ 500.0f };
+	//最大弾数
+	constexpr int AMMO_MAX{ 16 };
+	//弾速
+	constexpr float BULLET_SPEED{ 2000.0f };
+	//リロード時間
+	constexpr float RELOAD_TIME{ 1.5f };
 
 	//===== 敵関連 =====
-
-		//==== タレット関連
-	static constexpr int TURRET_COUNT = 4;
-	static constexpr float TULLET_RELEASEDISTANCE = 200.0f;
-	static constexpr float TULLET_SHOTRANGE = 2220.0f;
-	static constexpr int ARROW_COUNT = 10;
 
 	//===== 物理関連 =====
 	constexpr float GRAVITY{ 2000.0f };
