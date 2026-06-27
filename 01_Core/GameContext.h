@@ -22,6 +22,8 @@ public:
     void Update(float deltaTime);
     void Draw() const;
 
+    float GetLimit_Timer() { return limit_Timer; }
+
 private:
     PlayerController player;
     EnemyLow enemy;
@@ -36,4 +38,8 @@ private:
     std::vector<std::unique_ptr<Entity>> entities;
 
     Turret turrets[Const::TURRET_COUNT];
+
+    //Žc‚èŽžŠÔŒv‘ª—p
+    float limit_Timer{ 0 };
+    float limit_Time{ 300 };
 };
