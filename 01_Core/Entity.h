@@ -16,18 +16,20 @@ public:
     const Vec3& const GetPosition() { return position; }
     const float GetRadius()const { return radius; }
     const float GetHeight()const { return height; }
+    const bool IsAlive()const { return isAlive; }
 
     void SetPosition(const Vec3& pos) { position = pos; }
 
 
     //＝＝＝＝おそらく敵しか使わないもの＝＝＝＝＝＝＝
-    void SetEnemyRoot_p(EnemyRoot* enRoot) { enemyRoot_p = enRoot; }
+    void SetEnemyRoot_pointer(EnemyRoot* enRoot) { pEnemyRoot = enRoot; }
     void SetPlayerPointer(PlayerController* pc) { playerCont = pc; };
+    void Kill(){ isAlive = false; }
     //＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
     
     //アクセサー
 
-    virtual void Init() = 0;
+    virtual void Init(EnemyRoot* enRoot) = 0;
     virtual void Reset(const Vec3& startPosition, float startYaw) {};
     virtual void Update(float deltaTime) {};
     virtual void Draw()const {};
@@ -53,7 +55,7 @@ protected:
     PlayerController* playerCont{ nullptr };
 
     //＝＝＝＝おそらく敵しか使わないもの＝＝＝＝＝＝＝
-    EnemyRoot* enemyRoot_p{nullptr};
+    EnemyRoot* pEnemyRoot{nullptr};
     Vec3 rootTargetPoint{ 0.0f, 0.0f, 0.0f };
     size_t rootTargetIndex{ 0 };
     //＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
