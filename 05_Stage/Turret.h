@@ -5,6 +5,7 @@
 #include "../99_Utility/Const.h"
 #include "../05_Stage/Stage.h"
 #include "../03_Enemy/EnemyLow.h"
+#include "../02_Player/Coin.h"
 
 enum State
 {
@@ -12,17 +13,18 @@ enum State
 	Available  //タレットを解放した状態
 };
 
+class GameContext;
 class Turret
 {
 public:
 	Turret() = default;
 	~Turret() = default;
 
-	void Init();
+	void Init(PlayerController* _player, EnemyLow* _enemy, Coin* _coin);
 	void Reset(Vec3 startPosition);
-	void Update(float deltaTime, PlayerController& player,EnemyLow& enemy);
-	void BrokenUpdate(PlayerController& player);                     //タレットを解放していないときのUpdate
-	void AvailableUpdate(float deltaTime, EnemyLow enemy);  //タレットを解放しているときのUpdate
+	void Update(float deltaTime);
+	void BrokenUpdate();                    //タレットを解放していないときのUpdate
+	void AvailableUpdate(float deltaTime);  //タレットを解放しているときのUpdate
 	void Draw() const;
 
 	void SetPosition(Vec3 pos) { position = pos; }
@@ -45,5 +47,11 @@ private:
 
 	float shotIntervalTimer{ 0.0f };
 	float shotIntervalTime{ 2.0f };
+
+	int turretCoin{ 100 };  //タレットの解放に必要なコインの数
+
+	PlayerController* player{ nullptr };
+	EnemyLow* enemy{ nullptr };
+	Coin* coin{ nullptr };
 };
 
