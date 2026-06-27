@@ -29,8 +29,12 @@ private:
 	float pitch{ 0.0f };
 	float radius{ 10.0f };
 	bool isGrounded{ true };
+	bool isReload{ false };
 	int bulletCount{ 0 };
 	int ammoCount{ 0 };
+	float reloadTimer{ 0.0f };
+
+	int ammoFont{ -1 };
 
 	DxPlus::Vec2Int currentMouse{ 0,0 };
 	DxPlus::Vec2Int prevMouse{ 0,0 };

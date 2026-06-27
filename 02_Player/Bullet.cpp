@@ -23,7 +23,7 @@ void Bullet::Update(float deltaTime)
 	if (!isActive)return;
 
 	position += velocity * deltaTime;
-	life -= 1 * deltaTime;
+	life -= deltaTime;
 
 	if (life <= 0)
 		isActive = false;
