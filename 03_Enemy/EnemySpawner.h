@@ -1,7 +1,9 @@
 #pragma once
+#include <array>
 #include "../03_Enemy/EnemyLow.h"
-#include <vector>
+
 #include "../05_Stage/EnemyRoot.h"
+
 
 class EnemySpawner
 {
@@ -12,11 +14,15 @@ public:
 	void Update(float deltaTime);
 	void Draw() const;
 
+	void DecAliveEnemyCount()
+	{
+		aliveEnemyCount--;
+	}
+
 private:
 	static const int MAX_ENEMY_COUNT = 7;
 
 	std::array<EnemyLow, MAX_ENEMY_COUNT> enemyCollection;
-	EnemyRoot enemyRoot;
 	int aliveEnemyCount = 0;
 };
 

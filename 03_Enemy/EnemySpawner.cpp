@@ -1,11 +1,13 @@
 #include "EnemySpawner.h"
 #include "../05_Stage/EnemyRoot.h"
+#include "../03_Enemy/EnemyLow.h"
 
 void EnemySpawner::Init(EnemyRoot* enR)
 {
 	for (auto& e : enemyCollection)
 	{
 		e.Init(enR);
+		e.BindEnemySpawner(this);
 	}
 }
 
@@ -29,6 +31,7 @@ void EnemySpawner::Draw() const
 		e.Draw();
 	}
 }
+
 
 void EnemySpawner::SpawnEnemy()
 {

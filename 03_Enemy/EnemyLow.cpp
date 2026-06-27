@@ -19,10 +19,11 @@ void EnemyLow::BodyLine() const
 
 
 	//position.yは固定
-	constexpr float RADIUS = 50.0f;
+	constexpr float SPIN_RADIUS = 50.0f;
+	constexpr float CAPSULE_RADIUS = 20.0f;
 
-	float sinSpin = std::sinf(animTimer) * RADIUS;
-	float cosSpin = std::cosf(animTimer) * RADIUS;
+	float sinSpin = std::sinf(animTimer) * SPIN_RADIUS;
+	float cosSpin = std::cosf(animTimer) * SPIN_RADIUS;
 	DxLib::DrawCapsule3D
 	(
 		//半分の2倍
@@ -34,14 +35,14 @@ void EnemyLow::BodyLine() const
 
 		DxConv::ToVECTOR({ position.x +  sinSpin, position.y + height, position.z + cosSpin }),
 		DxConv::ToVECTOR({position.x, position.y, position.z}),
-		50, 16, GetColor(255, 255, 0), GetColor(255, 0, 0), true
+		CAPSULE_RADIUS, 16, GetColor(255, 255, 0), GetColor(255, 0, 0), true
 	);
 
 	DxLib::DrawCapsule3D
 	(
 		DxConv::ToVECTOR({ position.x - sinSpin, position.y + height, position.z - cosSpin }),
 		DxConv::ToVECTOR(position),
-		50, 16, GetColor(255, 255, 0), GetColor(255, 0, 0), true
+		CAPSULE_RADIUS, 16, GetColor(255, 255, 0), GetColor(255, 0, 0), true
 	);
 
 
@@ -53,15 +54,14 @@ void EnemyLow::BodyLine() const
 
 }
 
-
-
 void EnemyLow::Init(EnemyRoot* enRoot)
 {
 	radius = 100.0f;
 	height = 60.0f;
-	enemyRoot_p = enRoot;
+	isAlive = false;
+	pEnemyRoot = enRoot;
 
-	if (!enemyRoot_p)
+	if (!pEnemyRoot)
 	{
 		DxPlus::Utils::FatalError(L"null Ptr enemyRoot_p");
 		return;
@@ -70,62 +70,66 @@ void EnemyLow::Init(EnemyRoot* enRoot)
 
 void EnemyLow::Reset()
 {
-	position = { 0,0,0 };
 	moveDir = Vec3(0.0f, 0.0f, 0.0f);
-	moveSpeed = 100.0f;
+	moveSpeed = 70.0f;
 	rootTargetIndex = 0;
 
+	if (pEnemyRoot)
+	{
+		position = pEnemyRoot->GetNextStartPos();
+		rootTargetPoint = pEnemyRoot->GetCorePos();
+		moveDir = (rootTargetPoint - position).Normalized();
+	}
+	
 	isAlive = true;
-
 }
 
 void EnemyLow::Update(float deltaTime)
 {
 	if (!isAlive) { return; }
 
-	animTimer += 10.0f * deltaTime;
-
-	const float  DISTANCE_LIMIT = 10.0f;
-
-	if (!enemyRoot_p)
+	if (!pEnemyRoot)
 	{
 		DxPlus::Utils::FatalError(L"Null Ptr");
 		return;
 	}
 
-	const size_t ROOT_ARRAY_SIZE = enemyRoot_p->GetRootPointsLength();
+	float rootTargetPointDistance = (rootTargetPoint - position).Length();
 
-	float distance = (rootTargetPoint - position).Length();
-
-	//目的地に近づいたらrootTargetIndexを更新
-	if (distance <= DISTANCE_LIMIT)
+	//目的ポイントに到達
+	if (rootTargetPointDistance <= DISTANCE_LIMIT)
 	{
+		const size_t ROOT_ARRAY_SIZE = pEnemyRoot->GetRootPointsLength();
+
 		rootTargetIndex = std::min(rootTargetIndex + 1, ROOT_ARRAY_SIZE);
 
-		//レングス以上ならコアに到達処理...NULL確認しないと警告が出る
-		if (rootTargetIndex < ROOT_ARRAY_SIZE)
-		{
-			if (enemyRoot_p)
-			{
-				rootTargetPoint = enemyRoot_p->GetTargetPos(rootTargetIndex);
-				//移動方向の確定
-				moveDir = (rootTargetPoint - position).Normalized();
-			}
-		
-		}
-		else
+		//目的ポイント == コア　だった時
+		if(rootTargetIndex >= ROOT_ARRAY_SIZE)
 		{
 			isAlive = false;
+
+			if(pEnemySpawner){ pEnemySpawner->DecAliveEnemyCount(); }
+
+			return;
 		}
 
-		Debug().Log("TargetPos", rootTargetPoint);
-		Debug().Log("MMs", moveDir);
-		Debug().Log("RootTargetIdx = ", static_cast<int>(rootTargetIndex));
+		//目的ポイント != コア　だった時
+		if (pEnemyRoot)
+		{
+			rootTargetPoint = pEnemyRoot->GetTargetPos(rootTargetIndex);
 
+			//移動方向の更新
+			moveDir = (rootTargetPoint - position).Normalized();
+		}
 	}
 
+	Debug().Log("TargetPos", rootTargetPoint);
+
+	Debug().Log("RootTargetIdx = ", static_cast<int>(rootTargetIndex));
 
 	position += moveDir * moveSpeed * deltaTime;
+
+	animTimer += 10.0f * deltaTime;
 }
 
 
