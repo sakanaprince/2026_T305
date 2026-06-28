@@ -1,5 +1,5 @@
 #pragma once
-#include "DxPlus.h"
+#include "../DxPlus/DxPlus.h"
 
 namespace Const
 {
@@ -39,4 +39,10 @@ namespace Const
 	//===== ゲーム内共通 =====
 	constexpr int FPS_CAP = 480;
 	constexpr float EPS = 1e-3f;
+
+	//===== タレット関連 =====
+	static constexpr int TURRET_COUNT = 4;
+	static constexpr float TULLET_RELEASEDISTANCE = 200.0f;
+	static constexpr float TULLET_SHOTRANGE = 2220.0f;
+	static constexpr int ARROW_COUNT = 10;
 }
