@@ -50,7 +50,9 @@ private:
 	float shotIntervalTimer{ 0.0f };
 	float shotIntervalTime{ 2.0f };
 
-	int turretCoin{ 100 };  //タレットの解放に必要なコインの数
+	int turretCoin{ 100 };   //タレットの解放に必要なコインの数
+	int spritePrice{ -1 };   //値段を表示する画像
+	bool isPriceDraw{ false };  //値段を表示するかどうか
 
 	PlayerController* player{ nullptr };
 	EnemyLow* enemy{ nullptr };

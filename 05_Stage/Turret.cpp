@@ -21,6 +21,8 @@ void Turret::Init(PlayerController* _player, EnemyLow* _enemy, Coin* _coin)
 	{
 		a.Init();
 	}
+
+	spritePrice = RM().GetSprite(ResourceKeys::Sprite_TurretPrice);
 }
 
 void Turret::Reset(Vec3 startPosition)
@@ -29,6 +31,7 @@ void Turret::Reset(Vec3 startPosition)
 	scale = { 1.0f,1.0f,1.0f };
 	yaw = 0.0f;
 	state = State::Broken;
+	isPriceDraw = false;
 
 	for (auto& a : arrow)
 	{
@@ -38,7 +41,6 @@ void Turret::Reset(Vec3 startPosition)
 
 void Turret::Update(float deltaTime)
 {
-	Debug().Log("Coin", coin->GetCoin());
 	switch (state)
 	{
 	case Broken:
@@ -56,11 +58,21 @@ void Turret::BrokenUpdate()
 {
 	Vec3 toPlayer = player->GetPosition() - position;
 	float dir = toPlayer.Length();
-	if (dir <= Const::TULLET_RELEASEDISTANCE && CheckHitKey(KEY_INPUT_0) && coin->GetCoin() >= turretCoin)
+	if (dir <= Const::TULLET_RELEASEDISTANCE)
 	{
-		coin->MinusCoin(turretCoin);
-		modelTurretHandle = modelTurret;
-		state = State::Available;
+		isPriceDraw = true;
+
+		if (CheckHitKey(KEY_INPUT_0) && coin->GetCoin() >= turretCoin)
+		{
+			coin->MinusCoin(turretCoin);
+			modelTurretHandle = modelTurret;
+			state = State::Available;
+			isPriceDraw = false;
+		}
+	}
+	else
+	{
+		isPriceDraw = false;
 	}
 }
 
@@ -79,10 +91,11 @@ void Turret::AvailableUpdate(float deltaTime)
 	float dirZ = toPlayer.LengthIndividual(toPlayer.z);
 
 	if (dirX > Const::TULLET_SHOTRANGE || dirZ > Const::TULLET_SHOTRANGE) { return; }
-    shotIntervalTimer -= deltaTime;
-	
+
 	toPlayer = toPlayer.Normalized();
 	yaw = std::atan2(toPlayer.x, toPlayer.z);
+
+    shotIntervalTimer -= deltaTime;
 	
 	if (shotIntervalTimer <= 0.0f)
 	{
@@ -112,5 +125,10 @@ void Turret::Draw() const
 		if (!a.IsActive()) { continue; }
 
 		a.Draw();
+	}
+
+	if (isPriceDraw)
+	{
+		DrawRotaGraph3D(position.x, position.y + 70, position.z, 0.05, 0, spritePrice, true);
 	}
 }

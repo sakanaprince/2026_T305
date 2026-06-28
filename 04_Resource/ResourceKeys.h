@@ -6,6 +6,8 @@ namespace ResourceKeys
 {
     // ===== Textures / Grids =====
     inline constexpr const wchar_t* Sprite_TitleBG = L"SpriteTitleBG";
+    inline constexpr const wchar_t* Sprite_Coin = L"SpriteCoin";
+    inline constexpr const wchar_t* Sprite_TurretPrice = L"SpriteTurretPrice";
 
     // ===== Models =====
     inline constexpr const wchar_t* Model_Stage = L"ModelStage";
