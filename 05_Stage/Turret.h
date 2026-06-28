@@ -30,6 +30,8 @@ public:
 	void SetPosition(Vec3 pos) { position = pos; }
 	Vec3 GetPosition() const { return position; }
 
+	Vec3 GetScale() { return scale; }
+
 	float GetYaw() const { return yaw; }
 
 private:
