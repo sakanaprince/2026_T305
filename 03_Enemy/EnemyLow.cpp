@@ -4,6 +4,7 @@
 #include "../07_Math/Vector3.h"
 #include "../DxPlus/DxPlus.h"
 
+#include "../03_Enemy/EnemySpawner.h"
 #include "../08_Debug/DebugUI.h"
 void EnemyLow::BodyLine() const
 {
@@ -73,6 +74,7 @@ void EnemyLow::Reset()
 	moveDir = Vec3(0.0f, 0.0f, 0.0f);
 	moveSpeed = 70.0f;
 	rootTargetIndex = 0;
+	currentHp = Const::ENEMY_LOW_MAXHP * 20;
 
 	if (pEnemyRoot)
 	{
@@ -203,6 +205,20 @@ void EnemyLow::DrawDebug() const
 		if (i % 6 == 0) { MyDrawCircle(bottom0, top0); }
 	}
 	
+}
+
+void EnemyLow::TakeDamage(int amount)
+{
+	amount = std::max(amount, 0);
+	currentHp = std::max(currentHp - amount, 0);
+
+	if(currentHp == 0)
+	{
+		isAlive = false;
+
+		if (pEnemySpawner) { pEnemySpawner->DecAliveEnemyCount(); }
+	}
+
 }
 
 

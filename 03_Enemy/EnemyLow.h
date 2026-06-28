@@ -12,6 +12,8 @@ public:
 	void Draw() const override;
 	void DrawDebug()const override;
 
+	void TakeDamage(int amount) override;
+
 	/// <summary>
 	/// GameContext‚Å•R‚Ã‚¯‚Ä‚à‚ç‚¤
 	/// </summary>
@@ -23,6 +25,5 @@ private:
 	
 	const float  DISTANCE_LIMIT = 10.0f;
 	EnemySpawner* pEnemySpawner{ nullptr };
-
 };
 

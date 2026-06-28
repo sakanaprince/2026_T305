@@ -1,5 +1,5 @@
 #pragma once
-#include "DxPlus.h"
+#include "../DxPlus/DxPlus.h"
 
 namespace Const
 {
@@ -32,6 +32,8 @@ namespace Const
 	constexpr float RELOAD_TIME{ 1.5f };
 
 	//===== 敵関連 =====
+	constexpr size_t MAX_ENEMY_COUNT{ 7 };
+	const int ENEMY_LOW_MAXHP{ 3 };
 
 	//===== 物理関連 =====
 	constexpr float GRAVITY{ 2000.0f };
@@ -39,4 +41,10 @@ namespace Const
 	//===== ゲーム内共通 =====
 	constexpr int FPS_CAP = 480;
 	constexpr float EPS = 1e-3f;
+
+	//===== タレット関連 =====
+	static constexpr int TURRET_COUNT = 4;
+	static constexpr float TULLET_RELEASEDISTANCE = 200.0f;
+	static constexpr float TULLET_SHOTRANGE = 2220.0f;
+	static constexpr int ARROW_COUNT = 10;
 }
