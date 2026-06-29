@@ -6,6 +6,7 @@ namespace ResourceKeys
 {
     // ===== Textures / Grids =====
     inline constexpr const wchar_t* Sprite_TitleBG = L"SpriteTitleBG";
+    inline constexpr const wchar_t* Sprite_GameOverBG = L"SpriteGameOverBG";
     inline constexpr const wchar_t* Sprite_Coin = L"SpriteCoin";
     inline constexpr const wchar_t* Sprite_TurretPrice = L"SpriteTurretPrice";
 
@@ -20,5 +21,5 @@ namespace ResourceKeys
     // ===== Musics / Sounds =====
 
     // ===== Fonts =====
-    inline constexpr const wchar_t* Font_Title = L"Bitcount Light";
+    inline constexpr const wchar_t* Font_ManufacturingConsent = L"Manufacturing Consent";
 }
