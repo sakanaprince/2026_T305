@@ -15,7 +15,7 @@ public:
 	void TakeDamage(int amount) override;
 
 	/// <summary>
-	/// GameContext�ŕR�Â��Ă��炤
+	/// GameContext‚Å•R‚Ã‚¯‚Ä‚à‚ç‚¤
 	/// </summary>
 	void BindEnemySpawner(EnemySpawner* enSpawner) { pEnemySpawner = enSpawner; }
 

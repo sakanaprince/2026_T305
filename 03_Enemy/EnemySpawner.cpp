@@ -14,6 +14,14 @@ void EnemySpawner::Init(EnemyRoot* enR)
 
 void EnemySpawner::Update(float deltaTime)
 {
+	spawnTimer += deltaTime;
+
+	if (spawnTimer >= spawnDuration)
+	{
+		SpawnEnemy();
+		spawnTimer = 0;
+	}
+
 	for (auto& e : enemyCollection)
 	{
 		if (!e.IsAlive()) { continue; }
@@ -35,7 +43,7 @@ void EnemySpawner::Draw() const
 
 void EnemySpawner::SpawnEnemy()
 {
-	if (aliveEnemyCount > MAX_ENEMY_COUNT){	return; }
+	if (aliveEnemyCount > Const::MAX_ENEMY_COUNT){	return; }
 
 	//非アクティブな敵が存在しないならreturn
 	for (auto& e : enemyCollection)
