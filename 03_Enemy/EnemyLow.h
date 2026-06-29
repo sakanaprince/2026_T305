@@ -15,7 +15,7 @@ public:
 	void TakeDamage(int amount) override;
 
 	/// <summary>
-	/// GameContext�ŕR�Â��Ă��炤
+	/// GameContext‚Å•R‚Ã‚¯‚Ä‚à‚ç‚¤
 	/// </summary>
 	void BindEnemySpawner(EnemySpawner* enSpawner) { pEnemySpawner = enSpawner; }
 
@@ -23,7 +23,15 @@ private:
 	void BodyLine() const ;
 	float animTimer{ 0.0f };
 	
-	const float  DISTANCE_LIMIT = 10.0f;
+	const float  DISTANCE_LIMIT{ 10.0f };
 	EnemySpawner* pEnemySpawner{ nullptr };
+
+	float damageReactionTimer{ 0.0f };
+	const float DAMAGE_REACTION_TIME{ 0.08f };
+	bool isDamageReaction{ false };
+
+	float killedReactionTimer{ 0.0f };
+	const float KILLED_REACTION_TIME{ 0.2f };
+	bool isKilledReaction{ false };
 };
 

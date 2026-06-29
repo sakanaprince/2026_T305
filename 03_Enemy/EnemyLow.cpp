@@ -9,45 +9,61 @@
 void EnemyLow::BodyLine() const
 {
 	constexpr float skin = 30.0f;
-	//’†S‚Ìc–_
+
+	float sizeMagnification = 1.0f;
+
+
+	if (isKilledReaction)
+	{
+		sizeMagnification = killedReactionTimer / KILLED_REACTION_TIME;
+	}
+	else if (isDamageReaction)
+	{
+		DxLib::SetDrawBlendMode(DX_BLENDMODE_MUL, 64);
+		//1ã‚¹ã‚¿ãƒ¼ãƒˆ0ã«ãªã£ã¦ã„ã
+		constexpr float damageReactionSize = 1.1f;
+		sizeMagnification = 1.0f + damageReactionSize * (damageReactionTimer / DAMAGE_REACTION_TIME);
+	}
+
+
+	//ä¸­å¿ƒã®ç¸¦æ£’
 	DxLib::DrawCapsule3D
 	(
-		DxConv::ToVECTOR({ position.x, position.y + skin, position.z }),
-		DxConv::ToVECTOR({ position.x, position.y + height, position.z }),
+		DxConv::ToVECTOR({ position.x , (position.y + skin) , position.z }),
+		DxConv::ToVECTOR({ position.x , (position.y + height), position.z  }),
 	
-		50, 16, GetColor(255, 255, 255), GetColor(255, 0, 0), true
+		50 * sizeMagnification, 16, GetColor(250, 250, 250), GetColor(255, 0, 0), true
 	);
 
 
-	//position.y‚ÍŒÅ’è
+	//position.yã¯å›ºå®š
 	constexpr float SPIN_RADIUS = 50.0f;
 	constexpr float CAPSULE_RADIUS = 20.0f;
 
-	float sinSpin = std::sinf(animTimer) * SPIN_RADIUS;
-	float cosSpin = std::cosf(animTimer) * SPIN_RADIUS;
+	const float sinSpin = std::sinf(animTimer) * SPIN_RADIUS;
+	const float cosSpin = std::cosf(animTimer) * SPIN_RADIUS;
 	DxLib::DrawCapsule3D
 	(
-		//”¼•ª‚Ì2”{
+		//åŠåˆ†ã®2å€
 		//( 0 ~ 50 - 25) * 1 = 25
 		//( 0 ~ 50 - 25) * 2 =  50
-		//-250 ~ 250@‚Ì’l‚ğg‚¢‚½‚¢Asin‚Æ‚©‚Ì‚®‚é‚®‚é„‰ñ‚·‚é‚â‚Â‚Å
-		//sin‚Æ‚©cos‚Í -1‚©‚ç1‚ğ‚®‚é‚®‚é‚·‚é‚Æ‚¢‚¤«¿‚ğg‚Á‚Ä—‘z‚ğ•\Œ»‚µ‚Ä‚¢‚é
-		
-
+		//-250 ~ 250ã€€ã®å€¤ã‚’ä½¿ã„ãŸã„ã€sinã¨ã‹ã®ãã‚‹ãã‚‹å·¡å›ã™ã‚‹ã‚„ã¤ã§
+		//sinã¨ã‹cosã¯ -1ã‹ã‚‰1ã‚’ãã‚‹ãã‚‹ã™ã‚‹ã¨ã„ã†æ€§è³ªã‚’ä½¿ã£ã¦ç†æƒ³ã‚’è¡¨ç¾ã—ã¦ã„ã‚‹
 		DxConv::ToVECTOR({ position.x +  sinSpin, position.y + height, position.z + cosSpin }),
 		DxConv::ToVECTOR({position.x, position.y, position.z}),
-		CAPSULE_RADIUS, 16, GetColor(255, 255, 0), GetColor(255, 0, 0), true
+		CAPSULE_RADIUS * sizeMagnification, 16, GetColor(255, 255, 0), GetColor(0, 0, 0), true
 	);
 
 	DxLib::DrawCapsule3D
 	(
 		DxConv::ToVECTOR({ position.x - sinSpin, position.y + height, position.z - cosSpin }),
 		DxConv::ToVECTOR(position),
-		CAPSULE_RADIUS, 16, GetColor(255, 255, 0), GetColor(255, 0, 0), true
+		CAPSULE_RADIUS * sizeMagnification, 16, GetColor(255, 255, 0), GetColor(0, 0, 0), true
 	);
 
+	DxLib::SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 
-	////’†S‚Ìœ‘g‚İ“I‚È
+	////ä¸­å¿ƒã®éª¨çµ„ã¿çš„ãª
 	//DxLib::DrawCapsule3D(
 	//	DxConv::ToVECTOR({ position.x , position.y, position.z }),
 	//	DxConv::ToVECTOR({ position.x - 250, position.y + 250, position.z - 50 }),
@@ -76,6 +92,11 @@ void EnemyLow::Reset()
 	rootTargetIndex = 0;
 	currentHp = Const::ENEMY_LOW_MAXHP * 20;
 
+	damageReactionTimer = 0.0f;
+	isDamageReaction = false;
+	killedReactionTimer = 0.0f;
+	isKilledReaction = false;
+
 	if (pEnemyRoot)
 	{
 		position = pEnemyRoot->GetNextStartPos();
@@ -96,16 +117,38 @@ void EnemyLow::Update(float deltaTime)
 		return;
 	}
 
-	float rootTargetPointDistance = (rootTargetPoint - position).Length();
+	if (isKilledReaction)
+	{
+		if (killedReactionTimer > 0.0f)
+		{
+			killedReactionTimer -= deltaTime;
+			return;
+		}
 
-	//–Ú“Iƒ|ƒCƒ“ƒg‚É“’B
+		isAlive = false;
+	}
+
+	if (isDamageReaction)
+	{
+		if (damageReactionTimer > 0.0f)
+		{
+			damageReactionTimer -= deltaTime;
+			return;
+		}
+
+		isDamageReaction = false;
+	}
+
+	const float rootTargetPointDistance = (rootTargetPoint - position).Length();
+
+	//ç›®çš„ãƒã‚¤ãƒ³ãƒˆã«åˆ°é”
 	if (rootTargetPointDistance <= DISTANCE_LIMIT)
 	{
 		const size_t ROOT_ARRAY_SIZE = pEnemyRoot->GetRootPointsLength();
 
 		rootTargetIndex = std::min(rootTargetIndex + 1, ROOT_ARRAY_SIZE);
 
-		//–Ú“Iƒ|ƒCƒ“ƒg == ƒRƒA@‚¾‚Á‚½
+		//ç›®çš„ãƒã‚¤ãƒ³ãƒˆ == ã‚³ã‚¢ã€€ã ã£ãŸæ™‚
 		if(rootTargetIndex >= ROOT_ARRAY_SIZE)
 		{
 			isAlive = false;
@@ -115,19 +158,15 @@ void EnemyLow::Update(float deltaTime)
 			return;
 		}
 
-		//–Ú“Iƒ|ƒCƒ“ƒg != ƒRƒA@‚¾‚Á‚½
+		//ç›®çš„ãƒã‚¤ãƒ³ãƒˆ != ã‚³ã‚¢ã€€ã ã£ãŸæ™‚
 		if (pEnemyRoot)
 		{
 			rootTargetPoint = pEnemyRoot->GetTargetPos(rootTargetIndex);
 
-			//ˆÚ“®•ûŒü‚ÌXV
+			//ç§»å‹•æ–¹å‘ã®æ›´æ–°
 			moveDir = (rootTargetPoint - position).Normalized();
 		}
 	}
-
-	Debug().Log("TargetPos", rootTargetPoint);
-
-	Debug().Log("RootTargetIdx = ", static_cast<int>(rootTargetIndex));
 
 	position += moveDir * moveSpeed * deltaTime;
 
@@ -152,10 +191,10 @@ void EnemyLow::DrawDebug() const
 	const int division = 24;
 	const unsigned int color = DxLib::GetColor(255, 255, 0);
 
-	const float bottomY = position.y;//‘«Œ³
-	const float topY = position.y + height; //Šî€+g’·
+	const float bottomY = position.y;//è¶³å…ƒ
+	const float topY = position.y + height; //åŸºæº–+èº«é•·
 
-	//‰~‚ğ•`‚­ˆ—‚ğ‚±‚±‚Å‹¤’Ê‚É
+	//å††ã‚’æãå‡¦ç†ã‚’ã“ã“ã§å…±é€šã«
 	auto MyDrawCircle = [color](Vec3 a, Vec3 b)
 		{
 			DxLib::DrawLine3D(
@@ -197,11 +236,11 @@ void EnemyLow::DrawDebug() const
 			bottom1.z
 		};
 
-		//‰º‚Ì‰~
+		//ä¸‹ã®å††
 		MyDrawCircle(bottom0, bottom1);
-		//ã‚Ì‰~
+		//ä¸Šã®å††
 		MyDrawCircle(top0, top1);
-		//cü
+		//ç¸¦ç·š
 		if (i % 6 == 0) { MyDrawCircle(bottom0, top0); }
 	}
 	
@@ -209,12 +248,18 @@ void EnemyLow::DrawDebug() const
 
 void EnemyLow::TakeDamage(int amount)
 {
+	if (isKilledReaction) { return; }
+
 	amount = std::max(amount, 0);
 	currentHp = std::max(currentHp - amount, 0);
 
-	if(currentHp == 0)
+	damageReactionTimer = DAMAGE_REACTION_TIME;
+	isDamageReaction = true;
+
+	if(currentHp == 0 && !isKilledReaction)
 	{
-		isAlive = false;
+		isKilledReaction = true;
+		killedReactionTimer = KILLED_REACTION_TIME;
 
 		if (pEnemySpawner) { pEnemySpawner->DecAliveEnemyCount(); }
 	}
