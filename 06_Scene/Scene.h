@@ -37,6 +37,9 @@ protected:
     Scene* nextScene = nullptr;
     bool finished = false;
 
+    //タイトルやリザルトシーンの文字の色
+    const int textColor = DxLib::GetColor(255, 255, 0);
+
 private:
     DxPlus::FadeController fade;
 };

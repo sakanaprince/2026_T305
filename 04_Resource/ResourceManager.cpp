@@ -11,9 +11,10 @@ ResourceManager& ResourceManager::GetInstance()
 void ResourceManager::LoadAll()
 {
     LoadSprite(ResourceKeys::Sprite_TitleBG, L"TitleBG.png");
+    LoadSprite(ResourceKeys::Sprite_GameOverBG, L"GameOverBG.png");
     LoadSprite(ResourceKeys::Sprite_Coin, L"Coin.png");
     LoadSprite(ResourceKeys::Sprite_TurretPrice, L"TurretPrice.png");
-    LoadFont(ResourceKeys::Font_Title, L"./Data/Fonts/Bitcount/static/Bitcount-Light.ttf");
+    LoadFont(ResourceKeys::Font_ManufacturingConsent, L"./Data/Fonts/Manufacturing_Consent/ManufacturingConsent-Regular.ttf");
     LoadModel(ResourceKeys::Model_Stage, L"Stage.mv1");
     LoadModel(ResourceKeys::Model_Turret, L"Turret.mv1");
     LoadModel(ResourceKeys::Model_BrokenTurret, L"BrokenTurret.mv1");
