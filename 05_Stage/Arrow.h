@@ -24,6 +24,10 @@ public:
 	//矢が使用されているかどうか
 	bool IsActive() const { return isActive; }
 
+	//矢のダメージ
+	int GetArrowDamage() const { return arrowDamage; }
+	void SetArrowDamage(int damage) { arrowDamage = damage; }
+
 private:
 	int modelHandle{ -1 };
 
@@ -36,6 +40,8 @@ private:
 
 	float lifeTimer{ 0.0f };
 	float lifeTime{ 2.0f };
+
+	int arrowDamage{ 1 };
 
 	Collision::Sphere sphereArrow;
 };

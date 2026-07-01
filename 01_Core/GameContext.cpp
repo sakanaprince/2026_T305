@@ -56,7 +56,7 @@ void GameContext::Update(float deltaTime)
     {
         b.Update(deltaTime);
     }
-    player.Update(deltaTime);  
+    player.Update(deltaTime, stage);  
     //enemy.Update(deltaTime);
     enemySpawner.Update(deltaTime);
 
@@ -65,23 +65,8 @@ void GameContext::Update(float deltaTime)
         t.Update(deltaTime);
     }
 
-    for (int i = 0; i < Const::MAX_ENEMY_COUNT; i++)
-    {
-        EnemyLow& en = enemySpawner.GetEnemy(i);
-
-        if (!en.IsAlive()) { continue; }
-
-        for (auto& b : bullets)
-        {
-            if (!b.IsActive()) { continue; }
-
-            if (Collision::IsHitSphereSphere(en.GetSphere(), b.GetRadius()))
-            {
-                en.TakeDamage(1);
-            }
-
-        }
-    }
+    CollisionEnemyBullet();
+    CollisionEnemyArrow();
 }
 
 void GameContext::Draw() const
@@ -111,4 +96,52 @@ void GameContext::Draw() const
     int fontSize = 50;
     SetFontSize(fontSize);
     DrawFormatString(DxPlus::CLIENT_WIDTH * 0.5f - fontSize + 10, 50, GetColor(0, 0, 0), L"%.0f", limit_Timer);
+}
+
+void GameContext::CollisionEnemyBullet()
+{
+    for (int i = 0; i < Const::MAX_ENEMY_COUNT; i++)
+    {
+        EnemyLow& en = enemySpawner.GetEnemy(i);
+
+        if (!en.IsAlive()) { continue; }
+
+        for (auto& b : bullets)
+        {
+            if (!b.IsActive()) { continue; }
+
+            if (Collision::IsHitSphereSphere(en.GetSphere(), b.GetRadius()))
+            {
+                en.TakeDamage(1);
+            }
+
+        }
+    }
+}
+
+void GameContext::CollisionEnemyArrow()
+{
+    for (int i = 0; i < Const::MAX_ENEMY_COUNT; i++)
+    {
+        EnemyLow& en = enemySpawner.GetEnemy(i);
+
+        if (!en.IsAlive()) { continue; }
+
+        for (auto& t : turrets)
+        {
+            if (t.IsBroken()) { continue; }
+
+            for (int i = 0; i < Const::ARROW_COUNT; i++)
+            {
+                Arrow arrow = t.GetArrows(i);
+                if (!arrow.IsActive()) { continue; }
+
+                if (Collision::IsHitSphereSphere(en.GetSphere(), arrow.GetSphereArrow()))
+                {
+                    en.TakeDamage(arrow.GetArrowDamage());
+                }
+            }
+
+        }
+    }
 }
