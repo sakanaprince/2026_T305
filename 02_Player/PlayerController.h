@@ -6,9 +6,9 @@
 #include "../07_Math/Vector3.h"
 
 struct Capsule {
-	Vec3 foot;     // ‰º‘¤‚Ì‹…‚Ì’†S
-	Vec3 head;     // ã‘¤‚Ì‹…‚Ì’†S
-	float radius;  // ƒJƒvƒZƒ‹‚Ì”¼Œa
+	Vec3 foot;     // ä¸‹å´ã®çƒã®ä¸­å¿ƒ
+	Vec3 head;     // ä¸Šå´ã®çƒã®ä¸­å¿ƒ
+	float radius;  // ã‚«ãƒ—ã‚»ãƒ«ã®åŠå¾„
 
 	Capsule() = default;
 
@@ -33,24 +33,22 @@ public:
 		bullets = b;
 		bulletCount = count;
 	}
-	//ƒvƒŒƒCƒ„[‚ÌˆÊ’u‚ğæ“¾
+	//ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®ä½ç½®ã‚’å–å¾—
 	const Vec3& GetPosition() const { return position; }
-	//ƒvƒŒƒCƒ„[‚ÌHP‚ğæ“¾
+	//ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®HPã‚’å–å¾—
 	const int GetHp() const { return hp; }
-	//ƒ_ƒ[ƒW‚ğ“n‚µ‚Ä‚»‚Ì•ª‚ğHP‚©‚çˆø‚­
+	//ãƒ€ãƒ¡ãƒ¼ã‚¸ã‚’æ¸¡ã—ã¦ãã®åˆ†ã‚’HPã‹ã‚‰å¼•ã
 	void TakeDamage(const int damage) { hp -= damage; }
-	//c’e”‚ğæ“¾
+	//æ®‹å¼¾æ•°ã‚’å–å¾—
 	const int GetAmmoCount() const { return ammoCount; }
 
 	void Init();
 	void Reset();
 	void Update(float deltaTime, Stage& stage);
-	void Step(float deltaTime, const class Stage& stage);
+	void Step(float deltaTime, const class Stage& stage, const Vec3& moveVec);
 	void Draw() const;
 
 private:
-	Capsule capsule{};
-
 	Vec3 position{ 0.0f,0.0f,0.0f };
 	Vec3 velocity{ 0.0f,0.0f,0.0f };
 	Vec3 forward{ 0.0f,0.0f,0.0f };
