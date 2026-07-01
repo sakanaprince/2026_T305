@@ -5,10 +5,14 @@
 #include "../05_Stage/EnemyRoot.h"
 
 #include "../10_Physics/Collision.h"
+
+class EnemySpawner;
+
 class Entity
 {
 public:
     Entity() = default;
+
 
     //基底クラスのもんだいが直ったら、initでプレイヤーを受けとる
 
@@ -21,6 +25,11 @@ public:
 
     void SetPosition(const Vec3& pos) { position = pos; }
 
+    /// <summary>
+    /// GameContextで紐づけてもらう
+    /// </summary>
+    void BindEnemySpawner(EnemySpawner* enSpawner) { pEnemySpawner = enSpawner; }
+
 
     //＝＝＝＝おそらく敵しか使わないもの＝＝＝＝＝＝＝
     void SetEnemyRoot_pointer(EnemyRoot* enRoot) { pEnemyRoot = enRoot; }
@@ -30,9 +39,10 @@ public:
     
     //アクセサー
 
-    virtual void Init(EnemyRoot* enRoot) = 0;
-    virtual void Reset(const Vec3& startPosition, float startYaw) {};
-    virtual void Update(float deltaTime) {};
+    //ほんとは純粋仮想関数にしたいけど、配列を作る時にエラーが
+    virtual void Init(EnemyRoot* enRoot) {};
+    virtual void Reset() { MessageBox(NULL, L"なぜ基底クラスのResetを呼ぶのか", L"", FALSE); };
+    virtual void Update(float deltaTime) { MessageBox(NULL, L"なぜ基底クラスのUpdateを呼ぶのか", L"", FALSE); };
     virtual void Draw()const {};
     virtual void DrawDebug()const {}; //判定の可視化とか で
     virtual void Release() {}; 
@@ -57,14 +67,53 @@ protected:
     float radius{ 60.0f };
     float height{ 100.0f };
 
+    void KilledReactionUpdate(float deltaTime)
+    {
+        if (killedReactionTimer > 0.0f)
+        {
+            killedReactionTimer -= deltaTime;
+            return;
+        }
+
+        isAlive = false;
+    }
+
+    void DamageReactionUpdate(float deltaTime)
+    {
+        if (damageReactionTimer > 0.0f)
+        {
+            damageReactionTimer -= deltaTime;
+            return;
+        }
+
+        isDamageReaction = false;
+    }
+
+    virtual void StepGround(float deltaTime) ;
+
+    //ポインターまとめ
     PlayerController* playerCont{ nullptr };
+    EnemySpawner* pEnemySpawner{ nullptr };
+    EnemyRoot* pEnemyRoot{nullptr};
 
 
 
     //＝＝＝＝おそらく敵しか使わないもの＝＝＝＝＝＝＝
-    EnemyRoot* pEnemyRoot{nullptr};
     Vec3 rootTargetPoint{ 0.0f, 0.0f, 0.0f };
     size_t rootTargetIndex{ 0 };
+
+    virtual void BodyLine()const {};
+    float animTimer{ 0.0f };
+
+    const float  ROOTPOINT_DISTANCE_LIMIT{ 10.0f };
+
+    float damageReactionTimer{ 0.0f };
+    const float DAMAGE_REACTION_TIME{ 0.08f };
+    bool isDamageReaction{ false };
+
+    float killedReactionTimer{ 0.0f };
+    const float KILLED_REACTION_TIME{ 0.2f };
+    bool isKilledReaction{ false };
     //＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
 };
 
