@@ -3,20 +3,23 @@
 // =============================
 #include "GameContext.h"
 #include "../08_Debug/DebugUI.h"
+#include "../06_Scene/Scene.h"
+#include "../06_Scene/SceneManager.h"
 
 void GameContext::Init()
 {
     enemyRoot.Init();
-    enemy.Init(&enemyRoot);
+    enemy.SetPlayerPointer(&player);
+    enemySpawner.Init(&enemyRoot);
+    //enemy.Init(&enemyRoot);
     player.Init();
-    player.SetBulletPointer(bullets, Const::BULLET_COUNT);
+    player.SetBulletPointer(bullets, Const::AMMO_MAX);
     stage.Init();
-
+    coin.Init();
     for (auto& t : turrets)
     {
         t.Init(&player, &enemy, &coin);
     }
-    enemy.SetPlayerPointer(&player);
 }
 
 void GameContext::Reset()
@@ -34,7 +37,7 @@ void GameContext::Reset()
     }
     stage.Reset();
 
-    enemy.Reset({ 500,500,500 }, 0);
+    enemy.Reset();
 
     turrets[0].Reset({ 1030,260, 870 });
     turrets[1].Reset({ -1170, 260, 870 });
@@ -42,6 +45,7 @@ void GameContext::Reset()
     turrets[3].Reset({ 1030, 260, -1340 });
 
     coin.Reset();
+    core.Reset();
 }
 
 void GameContext::Update(float deltaTime)
@@ -53,11 +57,30 @@ void GameContext::Update(float deltaTime)
         b.Update(deltaTime);
     }
     player.Update(deltaTime);  
-    enemy.Update(deltaTime);
+    //enemy.Update(deltaTime);
+    enemySpawner.Update(deltaTime);
 
     for (auto& t : turrets)
     {
         t.Update(deltaTime);
+    }
+
+    for (int i = 0; i < Const::MAX_ENEMY_COUNT; i++)
+    {
+        EnemyLow& en = enemySpawner.GetEnemy(i);
+
+        if (!en.IsAlive()) { continue; }
+
+        for (auto& b : bullets)
+        {
+            if (!b.IsActive()) { continue; }
+
+            if (Collision::IsHitSphereSphere(en.GetSphere(), b.GetRadius()))
+            {
+                en.TakeDamage(1);
+            }
+
+        }
     }
 }
 
@@ -66,7 +89,8 @@ void GameContext::Draw() const
     // 画面をクリア
     DxLib::ClearDrawScreen();
 
-    enemy.Draw();
+    //enemy.Draw();
+    enemySpawner.Draw();
     stage.Draw();
     for (auto& t : turrets)
     {
@@ -75,6 +99,7 @@ void GameContext::Draw() const
     for (auto& b : bullets) {
         b.Draw();
     }
+    coin.Draw();
     player.Draw();
 
     //制限時間の描画
