@@ -242,6 +242,11 @@ void PlayerController::Step(float deltaTime, const class Stage& stage, const Vec
             position.y = nextY;
             isGrounded = false;
         }
+        else
+        {
+            // 下方向に何も床がない
+            isGrounded = false;
+        }
     }
     else
     {
