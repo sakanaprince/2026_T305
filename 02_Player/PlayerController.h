@@ -18,13 +18,13 @@ public:
 		bullets = b;
 		bulletCount = count;
 	}
-	//ƒvƒŒƒCƒ„[‚ÌˆÊ’u‚ğæ“¾
+	//ï¿½vï¿½ï¿½ï¿½Cï¿½ï¿½ï¿½[ï¿½ÌˆÊ’uï¿½ï¿½ï¿½æ“¾
 	const Vec3& GetPosition() const { return position; }
-	//ƒvƒŒƒCƒ„[‚ÌHP‚ğæ“¾
+	//ï¿½vï¿½ï¿½ï¿½Cï¿½ï¿½ï¿½[ï¿½ï¿½HPï¿½ï¿½ï¿½æ“¾
 	const int GetHp() const { return hp; }
-	//ƒ_ƒ[ƒW‚ğ“n‚µ‚Ä‚»‚Ì•ª‚ğHP‚©‚çˆø‚­
+	//ï¿½_ï¿½ï¿½ï¿½[ï¿½Wï¿½ï¿½nï¿½ï¿½ï¿½Ä‚ï¿½ï¿½Ì•ï¿½ï¿½ï¿½HPï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	void TakeDamage(const int damage) { hp -= damage; }
-	//c’e”‚ğæ“¾
+	//ï¿½cï¿½eï¿½ï¿½ï¿½ï¿½ï¿½æ“¾
 	const int GetAmmoCount() const { return ammoCount; }
 
 	void Init();

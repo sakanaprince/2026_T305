@@ -5,11 +5,13 @@
 #include "../02_Player/Bullet.h"
 #include "../02_Player/Coin.h"
 #include "../03_Enemy/EnemyLow.h"
+#include "../03_Enemy/EnemySpawner.h"
 #include "../05_Stage/Stage.h"
 #include "../05_Stage/Turret.h"
 #include "../05_Stage/EnemyRoot.h"
 #include "../08_Debug/Grid.h"
 #include "../99_Utility/Const.h"
+#include "../05_Stage/Core.h"
 
 class GameContext
 {
@@ -23,17 +25,20 @@ public:
     void Draw() const;
 
     float GetLimit_Timer() { return limit_Timer; }
+    Core GetCore() const { return core; }
 
 private:
     PlayerController player;
     EnemyLow enemy;
     EnemyRoot enemyRoot;
+    EnemySpawner enemySpawner;
     Stage stage;
     Turret turret;
     CameraController camera;
-    Bullet bullets[Const::BULLET_COUNT];
+    Bullet bullets[Const::AMMO_MAX];
     Grid grid;
     Coin coin;
+    Core core;
 
     std::vector<std::unique_ptr<Entity>> entities;
 
