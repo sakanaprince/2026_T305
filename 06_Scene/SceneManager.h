@@ -3,7 +3,7 @@
 #include "../01_Core/GameContext.h"
 #include "TitleScene.h"
 #include "GameScene.h"
-#include "ResultScene.h"
+#include "../06_Scene/GameOverScene.h"
 #include "../08_Debug/DebugUI.h"
 #include "../99_Utility/Const.h"
 
@@ -45,7 +45,7 @@ private:
     GameContext gameContext;
     TitleScene  titleScene{ &gameContext };
     GameScene   gameScene{ &gameContext };
-    ResultScene resultScene{ &gameContext };
+    GameOverScene gameOverScene{ &gameContext };
 
     Scene* scene = nullptr; // åªç›ÇÃÉVÅ[Éì
 

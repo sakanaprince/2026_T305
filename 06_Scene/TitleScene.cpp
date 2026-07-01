@@ -6,8 +6,9 @@
 void TitleScene::Init()
 {
 //    frameCount = 0;
-    fontHandle = RM().GetFont(ResourceKeys::Font_Title);
+    fontHandle = RM().GetFont(ResourceKeys::Font_ManufacturingConsent);
     backGroundHandle = RM().GetSprite(ResourceKeys::Sprite_TitleBG);
+    buttonColor = buttonNormalColor;
     StartFadeIn();
 
     DxLib::SetMouseDispFlag(TRUE);
@@ -40,10 +41,9 @@ void TitleScene::Render() const
 {
     DxPlus::Sprite::Draw(backGroundHandle);
 
-    const int black = DxLib::GetColor(0, 0, 0);
     DxPlus::Text::DrawString(L"Tower Difense",
         { DxPlus::CLIENT_WIDTH * 0.5f, DxPlus::CLIENT_HEIGHT * 0.35f },
-        black, DxPlus::Text::TextAlign::MIDDLE_CENTER, { 2,2 }, 0, fontHandle);
+        black, DxPlus::Text::TextAlign::MIDDLE_CENTER, { 4,4 }, 0, fontHandle);
 
     DrawBox
     (
@@ -53,8 +53,7 @@ void TitleScene::Render() const
         true
     );
 
-    const int yellow = DxLib::GetColor(255, 255, 0);
     DxPlus::Text::DrawString(L"Game Start",
-        { DxPlus::CLIENT_WIDTH * 0.5f, DxPlus::CLIENT_HEIGHT * 0.75f },
-        yellow, DxPlus::Text::TextAlign::MIDDLE_CENTER, { 1,1 }, 0, fontHandle);
+        { text_StartX, text_StartY },
+        textColor, DxPlus::Text::TextAlign::MIDDLE_CENTER, { 2,2 }, 0, fontHandle);
 }

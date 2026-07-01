@@ -25,7 +25,7 @@ void Bullet::Update(float deltaTime)
 	life -= deltaTime;
 
 	if (life <= 0)
-		isActive = false;
+		DeActivate();
 }
 
 void Bullet::Draw() const
@@ -37,8 +37,8 @@ void Bullet::Draw() const
 		GetColor(255, 255, 0), GetColor(255, 255, 0), TRUE);
 
 	//’eŠÛ‚ÌŽc‘œ(ü)
-	Vec3 tail = bullet.centerPos - velocity.Normalized() * 10;
-	DrawLine3D(DxConv::ToVECTOR(bullet.centerPos), DxConv::ToVECTOR(tail), GetColor(255, 200, 50));
+	Vec3 tail = bullet.centerPos - velocity.Normalized() * 20;
+	DrawLine3D(DxConv::ToVECTOR(bullet.centerPos), DxConv::ToVECTOR(tail), GetColor(255, 0, 0));
 }
 
 void Bullet::Fire(const Vec3& pos, const Vec3& dir)

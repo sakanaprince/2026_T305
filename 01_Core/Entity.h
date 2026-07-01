@@ -38,7 +38,11 @@ public:
     virtual void Release() {}; 
 
 
+
+    virtual void TakeDamage(int amount) {};
+
 protected:
+    int currentHp;
     Vec3 position;
     Vec3 velocity;
     Vec3 scale;
