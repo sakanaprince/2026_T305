@@ -3,11 +3,12 @@
 #include "../01_Core/GameContext.h"
 #include "TitleScene.h"
 #include "GameScene.h"
-#include "../06_Scene/GameOverScene.h"
+#include "GameOverScene.h"
+#include "GameClearScene.h"
 #include "../08_Debug/DebugUI.h"
 #include "../99_Utility/Const.h"
 
-enum class SceneID { Title, Game, Result };
+enum class SceneID { Title, Game, GameOver, GameClear };
 
 class SceneManager
 {
@@ -46,6 +47,7 @@ private:
     TitleScene  titleScene{ &gameContext };
     GameScene   gameScene{ &gameContext };
     GameOverScene gameOverScene{ &gameContext };
+    GameClearScene gameClearScene{ &gameContext };
 
     Scene* scene = nullptr; // åªç›ÇÃÉVÅ[Éì
 

@@ -27,6 +27,7 @@ void SceneManager::Init()
     titleScene.SetGameContext(&gameContext);
     gameScene.SetGameContext(&gameContext);
     gameOverScene.SetGameContext(&gameContext);
+    gameClearScene.SetGameContext(&gameContext);
 
     scene = &titleScene; // 最初のシーン
 }
@@ -55,9 +56,10 @@ Scene* SceneManager::GetScene(SceneID id)
 {
     switch (id)
     {
-        case SceneID::Title:    return &titleScene;
-        case SceneID::Game:     return &gameScene;
-        case SceneID::Result:   return &gameOverScene;
+        case SceneID::Title:      return &titleScene;
+        case SceneID::Game:       return &gameScene;
+        case SceneID::GameOver:   return &gameOverScene;
+        case SceneID::GameClear:  return &gameClearScene;
     }
     return &titleScene;
 }
