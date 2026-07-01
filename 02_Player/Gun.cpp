@@ -20,7 +20,7 @@ void Gun::Reset()
 
 void Gun::Update(float deltaTime)
 {
-	//ƒ}ƒEƒXƒzƒC[ƒ‹‚Åe‚Ìí—Ş‚ÌØ‚è‘Ö‚¦
+	//ï¿½}ï¿½Eï¿½Xï¿½zï¿½Cï¿½[ï¿½ï¿½ï¿½Åeï¿½Ìï¿½Ş‚ÌØ‚ï¿½Ö‚ï¿½
 	int wheelRot = GetMouseWheelRotVol();
 	currentGunType += wheelRot;
 	if (currentGunType < 0) currentGunType = 2;

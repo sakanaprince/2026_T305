@@ -10,7 +10,7 @@ enum GunType {
 class Gun
 {
 public:
-	//Œ»İ‚Ìe‚Ìí—Ş‚ğæ“¾
+	//ï¿½ï¿½ï¿½İ‚Ìeï¿½Ìï¿½Ş‚ï¿½ï¿½æ“¾
 	const int GetGunType() const { return currentGunType; }
 
 	void Init();
