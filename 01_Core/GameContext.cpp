@@ -102,17 +102,16 @@ void GameContext::CollisionEnemyBullet()
 {
     for (int i = 0; i < Const::MAX_ENEMY_COUNT; i++)
     {
-        EnemyLow& en = enemySpawner.GetEnemy(i);
-
-        if (!en.IsAlive()) { continue; }
+        auto& en = enemySpawner.GetEnemy(i);
+        if (!en) { continue; }
 
         for (auto& b : bullets)
         {
             if (!b.IsActive()) { continue; }
 
-            if (Collision::IsHitSphereSphere(en.GetSphere(), b.GetRadius()))
+            if (Collision::IsHitSphereSphere(en->GetSphere(), b.GetBulletSpere()))
             {
-                en.TakeDamage(1);
+                en->TakeDamage(1);
             }
 
         }
@@ -123,9 +122,8 @@ void GameContext::CollisionEnemyArrow()
 {
     for (int i = 0; i < Const::MAX_ENEMY_COUNT; i++)
     {
-        EnemyLow& en = enemySpawner.GetEnemy(i);
-
-        if (!en.IsAlive()) { continue; }
+        auto& en = enemySpawner.GetEnemy(i);
+        if (!en) { continue; }
 
         for (auto& t : turrets)
         {
@@ -133,12 +131,13 @@ void GameContext::CollisionEnemyArrow()
 
             for (int i = 0; i < Const::ARROW_COUNT; i++)
             {
-                Arrow arrow = t.GetArrows(i);
+                Arrow& arrow = t.GetArrows(i);
                 if (!arrow.IsActive()) { continue; }
 
-                if (Collision::IsHitSphereSphere(en.GetSphere(), arrow.GetSphereArrow()))
+                if (Collision::IsHitSphereSphere(en->GetSphere(), arrow.GetSphereArrow()))
                 {
-                    en.TakeDamage(arrow.GetArrowDamage());
+                    en->TakeDamage(arrow.GetArrowDamage());
+                    arrow.Kill();
                 }
             }
 
