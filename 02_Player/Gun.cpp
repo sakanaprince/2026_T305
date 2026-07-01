@@ -6,18 +6,44 @@
 void Gun::Init()
 {
 	pistolModel = RM().GetModel(ResourceKeys::Model_Pistol);
+	rifleModel = RM().GetModel(ResourceKeys::Model_Rifle);
+	shotgunModel = RM().GetModel(ResourceKeys::Model_Shotgun);
 }
 
 void Gun::Reset()
 {
-	position = { 0.0f,0.0f,0.0f };
+	position = { 100.0f,50.0f,0.0f };
 	scale = { 0.0f,0.0f,0.0f };
+
+	currentGunType = { 0 };
+}
+
+void Gun::Update(float deltaTime)
+{
+	//�}�E�X�z�C�[���ŏe�̎�ނ̐؂�ւ�
+	int wheelRot = GetMouseWheelRotVol();
+	currentGunType += wheelRot;
+	if (currentGunType < 0) currentGunType = 2;
+	if (currentGunType > 2) currentGunType = 0;
 }
 
 void Gun::Draw() const
 {
-	if (pistolModel < 0) return;
+	if (pistolModel < 0 || rifleModel < 0 || shotgunModel < 0) return;
 
-	MV1SetPosition(pistolModel, DxConv::ToVECTOR(position));
-	MV1DrawModel(pistolModel);
+	switch (currentGunType)
+	{
+	case 0:
+		MV1SetPosition(pistolModel, DxConv::ToVECTOR(position));
+		MV1DrawModel(pistolModel);
+		break;
+	case 1:
+		MV1SetPosition(rifleModel, DxConv::ToVECTOR(position));
+		MV1DrawModel(rifleModel);
+		break;
+	case 2:
+		MV1SetPosition(shotgunModel, DxConv::ToVECTOR(position));
+		MV1DrawModel(shotgunModel);
+		break;
+	}
 }

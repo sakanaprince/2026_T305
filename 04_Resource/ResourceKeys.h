@@ -13,6 +13,8 @@ namespace ResourceKeys
     inline constexpr const wchar_t* Model_Stage = L"ModelStage";
     inline constexpr const wchar_t* Model_Player = L"ModelPlayer";
     inline constexpr const wchar_t* Model_Pistol = L"ModelPistol";
+    inline constexpr const wchar_t* Model_Rifle = L"ModelRifle";
+    inline constexpr const wchar_t* Model_Shotgun = L"ModelShotgun";
     inline constexpr const wchar_t* Model_Turret = L"ModelTurret";
     inline constexpr const wchar_t* Model_BrokenTurret = L"ModelBrokenTurret";
     inline constexpr const wchar_t* Model_NotArrowTurret = L"ModelNotArrowTurret";

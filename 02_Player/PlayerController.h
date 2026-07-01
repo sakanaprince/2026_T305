@@ -1,15 +1,10 @@
 #pragma once
 #include "../DxPlus/DxPlus.h"
 #include "CameraController.h"
+#include "Gun.h"
 #include "Bullet.h"
 #include "../05_Stage/Stage.h"
 #include "../07_Math/Vector3.h"
-
-enum GunType {
-	Pistol,
-	Rifle,
-	Shotgun,
-};
 
 class PlayerController
 {
@@ -18,13 +13,13 @@ public:
 		bullets = b;
 		bulletCount = count;
 	}
-	//ï¿½vï¿½ï¿½ï¿½Cï¿½ï¿½ï¿½[ï¿½ÌˆÊ’uï¿½ï¿½ï¿½æ“¾
+	//ƒvƒŒƒCƒ„[‚ÌˆÊ’u‚ğæ“¾
 	const Vec3& GetPosition() const { return position; }
-	//ï¿½vï¿½ï¿½ï¿½Cï¿½ï¿½ï¿½[ï¿½ï¿½HPï¿½ï¿½ï¿½æ“¾
+	//ƒvƒŒƒCƒ„[‚ÌHP‚ğæ“¾
 	const int GetHp() const { return hp; }
-	//ï¿½_ï¿½ï¿½ï¿½[ï¿½Wï¿½ï¿½nï¿½ï¿½ï¿½Ä‚ï¿½ï¿½Ì•ï¿½ï¿½ï¿½HPï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+	//ƒ_ƒ[ƒW‚ğ“n‚µ‚Ä‚»‚Ì•ª‚ğHP‚©‚çˆø‚­
 	void TakeDamage(const int damage) { hp -= damage; }
-	//ï¿½cï¿½eï¿½ï¿½ï¿½ï¿½ï¿½æ“¾
+	//c’e”‚ğæ“¾
 	const int GetAmmoCount() const { return ammoCount; }
 
 	void Init();
@@ -45,7 +40,6 @@ private:
 	bool isReload{ false };
 
 	int hp{ 0 };
-	int currentGunType{ 0 };
 
 	int bulletCount{ 0 };
 	int ammoCount{ 0 };
@@ -59,5 +53,6 @@ private:
 	DxPlus::Vec2Int prevMouse{ 0,0 };
 
 	CameraController camera;
+	Gun gun;
 	Bullet* bullets = nullptr;
 };

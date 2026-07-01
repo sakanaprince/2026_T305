@@ -7,12 +7,13 @@ void PlayerController::Init()
 {
 	gunFont = CreateFontToHandle(NULL, 50, 3, DX_FONTTYPE_ANTIALIASING);
     reloadFont = CreateFontToHandle(NULL, 25, 2, DX_FONTTYPE_ANTIALIASING);
+
+    gun.Init();
 }
 
 void PlayerController::Reset()
 {
-	position = { 0.0f,50.0f,0.0f };
-	capsule = Capsule(position, Const::PLAYER_EYE_POSITION, Const::PLAYER_RADIUS);
+	position = { 0.0f,0.0f,0.0f };
 	velocity = { 0.0f,0.0f,0.0f };
 	forward = { 0.0f,0.0f,0.0f };
 	right = { 0.0f,0.0f,0.0f };
@@ -23,42 +24,43 @@ void PlayerController::Reset()
 	isReload = { false };
 
     hp = { Const::PLAYER_MAX_HP };
-    currentGunType = { 0 };
 
 	reloadTimer = { Const::RELOAD_TIME };
 	ammoCount = { Const::AMMO_MAX };
+
+    gun.Reset();
 }
 
 void PlayerController::Update(float deltaTime, Stage& stage)
 {
-	// ï¿½}ï¿½Eï¿½Xï¿½ÌŒï¿½ï¿½İ’nï¿½ï¿½ï¿½æ“¾
+	// ƒ}ƒEƒX‚ÌŒ»İ’n‚ğæ“¾
 	GetMousePoint(&currentMouse.x, &currentMouse.y);
 
-	// ï¿½ï¿½ï¿½Eï¿½Eï¿½ã‰ºï¿½ï¿½]
+	// ¶‰EEã‰º‰ñ“]
 	yaw -= (currentMouse.x - prevMouse.x) * Const::ROTATE_RAD_PAR_PIXEL;
 	pitch -= (currentMouse.y - prevMouse.y) * Const::ROTATE_RAD_PAR_PIXEL;
 	pitch = std::clamp(pitch, Const::PITC_MIN, Const::PITC_MAX);
 	prevMouse = currentMouse;
 
-	// ï¿½vï¿½ï¿½ï¿½Cï¿½ï¿½ï¿½[ï¿½Ì‘Oï¿½Eï¿½Eï¿½ï¿½ï¿½ï¿½ï¿½xï¿½Nï¿½gï¿½ï¿½
+	// ƒvƒŒƒCƒ„[‚Ì‘OE‰E•ûŒüƒxƒNƒgƒ‹
 	forward = { cos(yaw), 0.0f, sin(yaw) };
 	right = { -forward.z, 0.0f, forward.x };
 
 	float playerSpeed = CheckHitKey(KEY_INPUT_LSHIFT) ? Const::PLAYER_DASH_SPEED : Const::PLAYER_WALK_SPEED;
 
-	// positionï¿½ğ’¼Ú“ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Aï¿½ï¿½ï¿½Ìƒtï¿½ï¿½ï¿½[ï¿½ï¿½ï¿½Ìuï¿½ï¿½ï¿½Í‚É‚ï¿½é…ï¿½ï¿½ï¿½Ú“ï¿½ï¿½xï¿½Nï¿½gï¿½ï¿½ï¿½vï¿½ï¿½ï¿½vï¿½Zï¿½ï¿½ï¿½ï¿½
+	// position‚ğ’¼Ú“®‚©‚³‚¸A‚±‚ÌƒtƒŒ[ƒ€‚Ìu“ü—Í‚É‚æ‚é…•½ˆÚ“®ƒxƒNƒgƒ‹v‚ğŒvZ‚·‚é
 	Vec3 moveVec = { 0.0f, 0.0f, 0.0f };
 	if (CheckHitKey(KEY_INPUT_W)) moveVec += forward;
 	if (CheckHitKey(KEY_INPUT_S)) moveVec -= forward;
 	if (CheckHitKey(KEY_INPUT_A)) moveVec += right;
-	if (CheckHitKey(KEY_INPUT_D)) moveVec += right;
+	if (CheckHitKey(KEY_INPUT_D)) moveVec -= right;
 
-	// ï¿½Î‚ßˆÚ“ï¿½ï¿½Å‚ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È‚ï¿½È‚ï¿½ï¿½æ‚¤ï¿½Éï¿½ï¿½Kï¿½ï¿½ï¿½ï¿½ï¿½Ä‘ï¿½ï¿½xï¿½ï¿½ï¿½|ï¿½ï¿½ï¿½ï¿½
+	// Î‚ßˆÚ“®‚Å‚à‘¬‚­‚È‚ç‚È‚¢‚æ‚¤‚É³‹K‰»‚µ‚Ä‘¬“x‚ğŠ|‚¯‚é
 	if (moveVec.LengthSq() > Const::EPS) {
 		moveVec = moveVec.Normalized() * playerSpeed;
 	}
 
-	// ï¿½Xï¿½yï¿½[ï¿½Xï¿½Lï¿½[ï¿½ÅƒWï¿½ï¿½ï¿½ï¿½ï¿½v
+	// ƒXƒy[ƒXƒL[‚ÅƒWƒƒƒ“ƒv
 	if (CheckHitKey(KEY_INPUT_SPACE) && isGrounded) {
 		velocity.y = Const::PLAYER_JUMP_FORCE;
 		isGrounded = false;
@@ -69,18 +71,18 @@ void PlayerController::Update(float deltaTime, Stage& stage)
 
     Step(deltaTime, stage, moveVec);
 
-	// ï¿½ï¿½ï¿½_ï¿½Ìï¿½ï¿½ï¿½ï¿½ÉXï¿½V
+	// ‹“_‚Ì‚‚³‚ÉXV
 	Vec3 eye = position + Vec3(0, Const::PLAYER_EYE_POSITION, 0);
 
-	// ï¿½Jï¿½ï¿½ï¿½ï¿½ï¿½ÌXï¿½Vï¿½iï¿½ï¿½ï¿½nï¿½ï¿½ï¿½Ä‚ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½tï¿½ï¿½ï¿½[ï¿½ï¿½ï¿½ï¿½ï¿½sï¿½ï¿½ï¿½ï¿½ï¿½j
+	// ƒJƒƒ‰‚ÌXVi’…’n‚µ‚Ä‚à³‚µ‚­–ˆƒtƒŒ[ƒ€Às‚³‚ê‚éj
 	camera.UpdateFromPlayer(eye, yaw, pitch);
 
-	// ï¿½ï¿½ï¿½ï¿½ï¿½[ï¿½hï¿½ï¿½ï¿½ï¿½
+	// ƒŠƒ[ƒh”»’è
 	if (!isReload && (CheckHitKey(KEY_INPUT_R) || ammoCount <= 0)) {
 		isReload = true;
 	}
 
-	// ï¿½ï¿½ï¿½ï¿½ï¿½[ï¿½hï¿½ï¿½ï¿½Ìï¿½ï¿½ï¿½
+	// ƒŠƒ[ƒh’†‚Ìˆ—
 	if (isReload) {
 		reloadTimer -= deltaTime;
 		if (reloadTimer <= 0.0f) {
@@ -91,13 +93,10 @@ void PlayerController::Update(float deltaTime, Stage& stage)
 		return;
 	}
 
-    //ï¿½}ï¿½Eï¿½Xï¿½zï¿½Cï¿½[ï¿½ï¿½ï¿½Åeï¿½Ìï¿½Ş‚ÌØ‚ï¿½Ö‚ï¿½
-    int wheelRot = GetMouseWheelRotVol();
-    currentGunType += wheelRot;
-    if (currentGunType < 0) currentGunType = 2;
-    if (currentGunType > 2) currentGunType = 0;
+    //e‚Ìí—Ş‚ÌØ‚è‘Ö‚¦
+    gun.Update(deltaTime);
 
-	// ï¿½eï¿½Û‚Ì”ï¿½ï¿½ï¿½
+	// ’eŠÛ‚Ì”­Ë
 	static int prevMouseInput = 0;
 	int nowMouse = GetMouseInput();
 	bool leftDown = (nowMouse & MOUSE_INPUT_LEFT) && !(prevMouseInput & MOUSE_INPUT_LEFT);
@@ -118,16 +117,16 @@ void PlayerController::Update(float deltaTime, Stage& stage)
 
 void PlayerController::Step(float deltaTime, const class Stage& stage, const Vec3& moveVec)
 {
-    // ===== ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ÌˆÚ“ï¿½ï¿½Æ•Ç”ï¿½ï¿½ï¿½ =====
-    constexpr int MAX_SLIDE_COUNT = 3;  // ï¿½Ç‚ÌŠpï¿½Åï¿½ï¿½ï¿½Ü‚ÅŠï¿½ï¿½ç‚¹ï¿½ï¿½
-    constexpr float FLOOR_Y = 0.5f;     // ï¿½ï¿½ï¿½ï¿½Èï¿½È‚ç°ï¿½Æ‚ï¿½ï¿½Äˆï¿½ï¿½ï¿½
-    constexpr float SLIDE_UP_Y = 0.01f; // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ÌŠï¿½ï¿½ï¿½ï¿½Å‚ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½l
-    constexpr float STEP_LIMIT_HEIGHT = 1.5f; // ï¿½ï¿½ï¿½zï¿½ï¿½ï¿½ï¿½ï¿½ï¿½iï¿½ï¿½ï¿½Ìï¿½ï¿½ï¿½
+    // ===== …•½•ûŒü‚ÌˆÚ“®‚Æ•Ç”»’è =====
+    constexpr int MAX_SLIDE_COUNT = 3;  // •Ç‚ÌŠp‚Å”‰ñ‚Ü‚ÅŠŠ‚ç‚¹‚é
+    constexpr float FLOOR_Y = 0.5f;     // ‚±‚êˆÈã‚È‚ç°‚Æ‚µ‚Äˆµ‚¤
+    constexpr float SLIDE_UP_Y = 0.01f; // ãŒü‚«‚ÌŠŠ‚è‚ğ‘Å‚¿Á‚·‚µ‚«‚¢’l
+    constexpr float STEP_LIMIT_HEIGHT = 1.5f; // æ‚è‰z‚¦‚ç‚ê‚é’i·‚Ì‚‚³
     constexpr float SLOPE_LIMIT_HEIGHT = 0.7f;
 
     const int stageHandle = stage.GetModelHandle();
 
-    // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ÌˆÚ“ï¿½ï¿½ï¿½
+    // …•½•ûŒü‚ÌˆÚ“®—Ê
     Vec3 horizontal = moveVec * deltaTime;
     float moveLen = horizontal.Length();
 
@@ -135,17 +134,17 @@ void PlayerController::Step(float deltaTime, const class Stage& stage, const Vec
     {
         Vec3 dir = horizontal.Normalized();
 
-        // ï¿½Ç‚É“ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½cï¿½ï¿½ÌˆÚ“ï¿½ï¿½ï¿½Ç‚É‰ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ÖŠï¿½ï¿½ç‚¹ï¿½ï¿½
+        // •Ç‚É“–‚½‚Á‚½‚çc‚è‚ÌˆÚ“®‚ğ•Ç‚É‰ˆ‚¤•ûŒü‚ÖŠŠ‚ç‚¹‚é
         for (int i = 0; i < MAX_SLIDE_COUNT && moveLen > Const::EPS; ++i)
         {
-            // 2ï¿½{ï¿½ï¿½Rayï¿½Ì’ï¿½ï¿½Åuï¿½ï¿½Ôï¿½Oï¿½Å“ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Õ“Ëƒfï¿½[ï¿½^ï¿½vï¿½ï¿½ï¿½Lï¿½^ï¿½ï¿½ï¿½ï¿½Ïï¿½
+            // 2–{‚ÌRay‚Ì’†‚Åuˆê”Ôè‘O‚Å“–‚½‚Á‚½Õ“Ëƒf[ƒ^v‚ğ‹L˜^‚·‚é•Ï”
             Physics::RayHit closestHit{};
             bool isHitAny = false;
 
-            // ï¿½`ï¿½Fï¿½bï¿½Nï¿½ï¿½ï¿½ï¿½2ï¿½Â‚Ìï¿½ï¿½ï¿½ï¿½iï¿½ï¿½ï¿½ï¿½: 5.0f / ï¿½ï¿½: ï¿½ï¿½ï¿½ï¿½è­ï¿½ï¿½ï¿½ï¿½ï¿½j
+            // ƒ`ƒFƒbƒN‚·‚é2‚Â‚Ì‚‚³i‘«Œ³: 5.0f / ‹¹: “ª‚æ‚è­‚µ‰ºj
             float rayHeights[] = { 5.0f, Const::PLAYER_EYE_POSITION - 5.0f };
 
-            // 2ï¿½{ï¿½ï¿½Rayï¿½ï¿½ï¿½ï¿½ï¿½[ï¿½vï¿½Å”ï¿½Î‚ï¿½
+            // 2–{‚ÌRay‚ğƒ‹[ƒv‚Å”ò‚Î‚·
             for (float h : rayHeights)
             {
                 Vec3 start = position + Vec3::Up() * h;
@@ -154,7 +153,7 @@ void PlayerController::Step(float deltaTime, const class Stage& stage, const Vec
 
                 if (Physics::Raycast(stageHandle, start, end, tempHit))
                 {
-                    // ï¿½Åï¿½ï¿½É“ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Aï¿½Ü‚ï¿½ï¿½Í‚ï¿½ï¿½ï¿½Ü‚Å‚ÌÕ“Ë‚ï¿½ï¿½ï¿½ï¿½ï¿½Oï¿½È‚ï¿½Xï¿½V
+                    // Å‰‚É“–‚½‚Á‚½A‚Ü‚½‚Í‚±‚ê‚Ü‚Å‚ÌÕ“Ë‚æ‚è‚àè‘O‚È‚çXV
                     if (!isHitAny || tempHit.distance < closestHit.distance)
                     {
                         closestHit = tempHit;
@@ -163,7 +162,7 @@ void PlayerController::Step(float deltaTime, const class Stage& stage, const Vec
                 }
             }
 
-            // 1ï¿½{ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä‚ï¿½ï¿½È‚ï¿½ï¿½Aï¿½Ü‚ï¿½ï¿½Íï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ì–Ê‚È‚ç‚»ï¿½Ì‚Ü‚Üiï¿½ï¿½
+            // 1–{‚à“–‚½‚Á‚Ä‚¢‚È‚¢A‚Ü‚½‚Í°ˆµ‚¢‚Ì–Ê‚È‚ç‚»‚Ì‚Ü‚Üi‚Ş
             if (!isHitAny || closestHit.normal.y >= FLOOR_Y)
             {
                 position += dir * moveLen;
@@ -171,7 +170,7 @@ void PlayerController::Step(float deltaTime, const class Stage& stage, const Vec
                 break;
             }
 
-            // ï¿½ï¿½ï¿½ï¿½È~ï¿½Ì”ï¿½ï¿½ï¿½ÍAï¿½ï¿½ï¿½Ìuhitï¿½vï¿½ï¿½ï¿½uclosestHitï¿½vï¿½É’uï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½é‚¾ï¿½ï¿½
+            // ‚±‚êˆÈ~‚Ì”»’è‚ÍAŒ³‚Ìuhitv‚ğuclosestHitv‚É’u‚«Š·‚¦‚é‚¾‚¯
             float allowed = closestHit.distance - Const::PLAYER_STAGE_RADIUS;
             allowed = std::clamp(allowed, 0.0f, moveLen);
 
@@ -184,12 +183,12 @@ void PlayerController::Step(float deltaTime, const class Stage& stage, const Vec
                 break;
             }
 
-            // ï¿½cï¿½ï¿½ÌˆÚ“ï¿½ï¿½ï¿½Ç‚É‰ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö•ÏŠï¿½ï¿½ï¿½ï¿½ï¿½
+            // c‚è‚ÌˆÚ“®‚ğ•Ç‚É‰ˆ‚¤•ûŒü‚Ö•ÏŠ·‚·‚é
             Vec3 remain = dir * moveLen;
             Vec3 normal = closestHit.normal.Normalized();
             Vec3 slide = remain - normal * Vec3::Dot(remain, normal);
 
-            // ï¿½sï¿½ï¿½ï¿½Rï¿½Éï¿½Ö“oï¿½éŠŠï¿½ï¿½Í–hï¿½ï¿½
+            // •s©‘R‚Éã‚Ö“o‚éŠŠ‚è‚Í–h‚®
             if (slide.y >= SLIDE_UP_Y)
             {
                 slide.y = 0.0f;
@@ -207,11 +206,11 @@ void PlayerController::Step(float deltaTime, const class Stage& stage, const Vec
         }
     }
 
-    // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ÌˆÚ“ï¿½ï¿½Æã‰ºï¿½ï¿½ï¿½ï¿½
+    // ‚’¼•ûŒü‚ÌˆÚ“®‚Æã‰º”»’è
     float dy = velocity.y * deltaTime;
     float nextY = position.y + dy;
 
-    // ï¿½ã¸ï¿½ï¿½ï¿½Í“Vï¿½ï¿½Æ‚Ì”ï¿½ï¿½ï¿½ï¿½ï¿½sï¿½ï¿½
+    // ã¸’†‚Í“Vˆä‚Æ‚Ì”»’è‚ğs‚¤
     if (dy > 0.0f)
     {
         isGrounded = false;
@@ -219,7 +218,7 @@ void PlayerController::Step(float deltaTime, const class Stage& stage, const Vec
         Physics::RayHit hit{};
         Vec3 headPos = position + Vec3::Up() * Const::PLAYER_EYE_POSITION;
 
-        // ï¿½Vï¿½ï¿½É“ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Aï¿½ï¿½ï¿½ÌˆÊ’uï¿½Åã¸ï¿½ï¿½ï¿½~ï¿½ß‚ï¿½
+        // “Vˆä‚É“–‚½‚Á‚½‚çA‚»‚ÌˆÊ’u‚Åã¸‚ğ~‚ß‚é
         if (Physics::RaycastUp(stage.GetModelHandle(), headPos, dy, hit))
         {
             position.y = hit.point.y - (Const::PLAYER_EYE_POSITION);
@@ -228,10 +227,10 @@ void PlayerController::Step(float deltaTime, const class Stage& stage, const Vec
         }
     }
 
-    // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ÌˆÚ“ï¿½
+    // ‚’¼•ûŒü‚ÌˆÚ“®
     position.y += dy;
 
-    // RaycastDown ï¿½Åï¿½ï¿½ï¿½Tï¿½ï¿½
+    // RaycastDown ‚Å°‚ğ’T‚·
     Physics::RayHit hit{};
     Vec3 rayOrigin = position + Vec3::Up() * Const::PLAYER_EYE_POSITION;
     float rayLength = Const::PLAYER_EYE_POSITION + fabsf(dy) + 10.0f;
@@ -240,7 +239,7 @@ void PlayerController::Step(float deltaTime, const class Stage& stage, const Vec
     {
         float groundY = hit.point.y;
 
-        // ï¿½ï¿½ï¿½ÌˆÊ’uï¿½ï¿½ï¿½ï¿½ï¿½ï¿½è‰ºï¿½È‚ç°ï¿½ÉŒÅ’ï¿½
+        // Ÿ‚ÌˆÊ’u‚ª°‚æ‚è‰º‚È‚ç°‚ÉŒÅ’è
         if (nextY <= groundY)
         {
             position.y = groundY;
@@ -255,7 +254,7 @@ void PlayerController::Step(float deltaTime, const class Stage& stage, const Vec
     }
     else
     {
-        // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Â‚ï¿½ï¿½ï¿½È‚ï¿½ ï¿½ï¿½ ï¿½ï¿½
+        // °‚ªŒ©‚Â‚©‚ç‚È‚¢ ¨ ‹ó’†
         position.y = nextY;
         isGrounded = false;
     }
@@ -263,18 +262,18 @@ void PlayerController::Step(float deltaTime, const class Stage& stage, const Vec
 
 void PlayerController::Draw() const
 {
-    //ï¿½vï¿½ï¿½ï¿½Cï¿½ï¿½ï¿½[ï¿½ÌƒXï¿½eï¿½[ï¿½Wï¿½Æ‚Ì“ï¿½ï¿½ï¿½ï¿½è”»ï¿½ï¿½Ì”ï¿½ï¿½a
+    //ƒvƒŒƒCƒ„[‚ÌƒXƒe[ƒW‚Æ‚Ì“–‚½‚è”»’è‚Ì”¼Œa
 	DrawCylinder3D(DxConv::ToVECTOR(position), DxConv::ToVECTOR(position + Vec3(0, Const::PLAYER_EYE_POSITION, 0)),
 		Const::PLAYER_STAGE_RADIUS, 12, GetColor(0, 255, 0), GetColor(0, 255, 0), FALSE);
 
-    //ï¿½vï¿½ï¿½ï¿½Cï¿½ï¿½ï¿½[ï¿½Ì“Gï¿½Æ‚Ì“ï¿½ï¿½ï¿½ï¿½è”»ï¿½ï¿½Ì”ï¿½ï¿½a
+    //ƒvƒŒƒCƒ„[‚Ì“G‚Æ‚Ì“–‚½‚è”»’è‚Ì”¼Œa
     DrawCylinder3D(DxConv::ToVECTOR(position), DxConv::ToVECTOR(position + Vec3(0, Const::PLAYER_EYE_POSITION, 0)),
         Const::PLAYER_ENEMY_RADIUS, 12, GetColor(0, 0, 255), GetColor(0, 0, 255), FALSE);
 
-	//ï¿½Jï¿½ï¿½ï¿½ï¿½ï¿½Ìƒï¿½ï¿½eï¿½Bï¿½Nï¿½ï¿½ï¿½Ì•`ï¿½ï¿½
+	//ƒJƒƒ‰‚ÌƒŒƒeƒBƒNƒ‹‚Ì•`‰æ
 	camera.ReticleDraw();
 
-	//ï¿½Eï¿½ï¿½ï¿½Écï¿½eï¿½ï¿½ï¿½Ì•\ï¿½ï¿½
+	//‰E‰º‚Éc’e”‚Ì•\¦
 	wchar_t buf[32];
 	swprintf(buf, 32, L"%d/%d", ammoCount, Const::AMMO_MAX);
 	int textWidth = GetDrawStringWidthToHandle(buf, wcslen(buf), gunFont);
@@ -285,19 +284,20 @@ void PlayerController::Draw() const
 	DrawFormatStringToHandle(x - textWidth - 20, y - 60, GetColor(255, 255, 255), gunFont,
 		L"%d/%d", GetAmmoCount(), Const::AMMO_MAX);
 
-    //ï¿½ï¿½ï¿½İ‚Ìeï¿½Ìï¿½Ş‚ï¿½\ï¿½ï¿½
+    //Œ»İ‚Ìe‚Ìí—Ş‚ğ•\¦
     const wchar_t* gunName = L"";
+    int gt = gun.GetGunType();
 
-    switch (currentGunType)
+    switch (gt)
     {
     case GunType::Pistol:
-        gunName = L"ï¿½nï¿½ï¿½ï¿½hï¿½Kï¿½ï¿½";
+        gunName = L"ƒnƒ“ƒhƒKƒ“";
         break;
     case GunType::Rifle:
-        gunName = L"ï¿½ï¿½ï¿½Cï¿½tï¿½ï¿½";
+        gunName = L"ƒ‰ƒCƒtƒ‹";
         break;
     case GunType::Shotgun:
-        gunName = L"ï¿½Vï¿½ï¿½ï¿½bï¿½gï¿½Kï¿½ï¿½";
+        gunName = L"ƒVƒ‡ƒbƒgƒKƒ“";
         break;
     }
 
@@ -306,7 +306,9 @@ void PlayerController::Draw() const
 
     DrawFormatStringToHandle(x - textWidth - 10, y - 120, GetColor(255, 255, 255), gunFont, L"%s", gunName);
 
-	//ï¿½ï¿½ï¿½ï¿½ï¿½[ï¿½hï¿½ï¿½ï¿½Ì•\ï¿½ï¿½
+    gun.Draw();
+
+	//ƒŠƒ[ƒh’†‚Ì•\¦
 	if (isReload) {
         DrawFormatStringToHandle(x / 2 - 55, y / 2 + 15, GetColor(255, 200, 0), reloadFont, L"RELOADING...");
 	}

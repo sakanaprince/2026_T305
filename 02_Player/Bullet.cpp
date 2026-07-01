@@ -10,7 +10,7 @@ void Bullet::Init()
 
 void Bullet::Reset()
 {
-	bullet.radius = { 5.0f };
+	bullet.radius = { 3.0f };
 	velocity = { 0.0f,0.0f,0.0f };
 	maxLife = { 2.0f };
 	life = { maxLife };
@@ -35,10 +35,6 @@ void Bullet::Draw() const
 	//íeä€(ãÖ)
 	DrawSphere3D(DxConv::ToVECTOR(bullet.centerPos), bullet.radius, 8,
 		GetColor(255, 255, 0), GetColor(255, 255, 0), TRUE);
-
-	//íeä€ÇÃécëú(ê¸)
-	Vec3 tail = bullet.centerPos - velocity.Normalized() * 20;
-	DrawLine3D(DxConv::ToVECTOR(bullet.centerPos), DxConv::ToVECTOR(tail), GetColor(255, 0, 0));
 }
 
 void Bullet::Fire(const Vec3& pos, const Vec3& dir)
