@@ -18,7 +18,7 @@ void GameContext::Init()
     coin.Init();
     for (auto& t : turrets)
     {
-        t.Init(&player, &enemy, &coin);
+        t.Init(&player, &enemySpawner, &coin);
     }
 }
 

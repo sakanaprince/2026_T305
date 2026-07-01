@@ -33,7 +33,6 @@ private:
     EnemyRoot enemyRoot;
     EnemySpawner enemySpawner;
     Stage stage;
-    Turret turret;
     CameraController camera;
     Bullet bullets[Const::AMMO_MAX];
     Grid grid;
