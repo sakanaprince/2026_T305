@@ -36,6 +36,10 @@ namespace Const
 	constexpr float RELOAD_TIME{ 1.5f };
 
 	//===== ìGä÷òA =====
+	constexpr int ENEMY_LOW_MAXHP{ 3 };
+	constexpr int MAX_ENEMY_COUNT{ 20 };
+	constexpr int MAX_SAME_ENEMY_POOL_COUNT{ 10 };
+
 
 	//===== ï®óùä÷òA =====
 	constexpr float GRAVITY{ 2000.0f };
