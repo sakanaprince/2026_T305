@@ -14,7 +14,7 @@ private:
 public:
 	const bool IsActive() const { return isActive; }
 	void DeActivate() { isActive = false; }
-	const Collision::Sphere GetRadius() const { return bullet; }
+	const Collision::Sphere GetBulletSpere() const { return bullet; }
 
 	void Init();
 	void Reset();
