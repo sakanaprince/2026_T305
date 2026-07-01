@@ -5,7 +5,8 @@ void CameraController::Reset(const Vec3& pos)
 	eye = pos;
 	target = { 0.0f,0.0f,0.0f };
 	up = { 0.0f,1.0f,0.0f };
-	forward = { 0.0f,0.0f,1.0f };
+	forward = { 0.0f,0.0f,0.0f };
+	right = { 0.0f,0.0f,0.0f };
 }
 
 //プレイヤーの位置・向きからカメラを更新する
@@ -22,6 +23,7 @@ void CameraController::UpdateFromPlayer(const Vec3& playerEye, float yaw, float 
 
 	//カメラの前方向ベクトル
 	forward = { cosYaw * cosPitch,sinPitch,sinYaw * cosPitch };
+	right = { forward.z, 0.0f, -forward.x };
 
 	//注視点 = 視点 + 前方向
 	target = eye + forward;

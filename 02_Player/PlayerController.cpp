@@ -94,7 +94,8 @@ void PlayerController::Update(float deltaTime, Stage& stage)
 	}
 
     //銃の種類の切り替え
-    gun.Update(deltaTime);
+    gun.Update();
+    gun.UpdateFromCamera(position, camera.GetForward(), camera.GetRight(), camera.GetUp());
 
 	// 弾丸の発射
 	static int prevMouseInput = 0;
@@ -273,6 +274,8 @@ void PlayerController::Draw() const
 	//カメラのレティクルの描画
 	camera.ReticleDraw();
 
+    gun.Draw();
+
 	//右下に残弾数の表示
 	wchar_t buf[32];
 	swprintf(buf, 32, L"%d/%d", ammoCount, Const::AMMO_MAX);
@@ -305,8 +308,6 @@ void PlayerController::Draw() const
     textWidth = GetDrawStringWidthToHandle(buf, wcslen(buf), gunFont);
 
     DrawFormatStringToHandle(x - textWidth - 10, y - 120, GetColor(255, 255, 255), gunFont, L"%s", gunName);
-
-    gun.Draw();
 
 	//リロード中の表示
 	if (isReload) {

@@ -10,7 +10,10 @@ public:
 	CameraController() = default;
 
 	const Vec3& GetEye() const { return eye; }
+	const Vec3& GetTarget() const { return target; }
+	const Vec3& GetUp() const { return up; }
 	const Vec3& GetForward() const { return forward; }
+	const Vec3& GetRight() const { return right; }
 
 	void Reset(const Vec3& pos);
 
@@ -29,4 +32,6 @@ private:
 	Vec3 up{ 0.0f,1.0f,0.0f };
 	//‘O•ûŒü
 	Vec3 forward{ 0.0f,0.0f,0.0f };
+	//‰E•ûŒü
+	Vec3 right{ 0.0f,0.0f,0.0f };
 };
