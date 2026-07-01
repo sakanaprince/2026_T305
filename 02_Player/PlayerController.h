@@ -5,25 +5,10 @@
 #include "../05_Stage/Stage.h"
 #include "../07_Math/Vector3.h"
 
-struct Capsule {
-	Vec3 foot;     // 下側の球の中心
-	Vec3 head;     // 上側の球の中心
-	float radius;  // カプセルの半径
-
-	Capsule() = default;
-
-	Capsule(const Vec3& pos, float height, float r)
-	{
-		radius = r;
-		foot = pos;
-		head = pos + Vec3(0, height, 0);
-	}
-
-	void Update(const Vec3& pos, float height)
-	{
-		foot = pos;
-		head = pos + Vec3(0, height, 0);
-	}
+enum GunType {
+	Pistol,
+	Rifle,
+	Shotgun,
 };
 
 class PlayerController
@@ -33,13 +18,13 @@ public:
 		bullets = b;
 		bulletCount = count;
 	}
-	//プレイヤーの位置を取得
+	//�v���C���[�̈ʒu���擾
 	const Vec3& GetPosition() const { return position; }
-	//プレイヤーのHPを取得
+	//�v���C���[��HP���擾
 	const int GetHp() const { return hp; }
-	//ダメージを渡してその分をHPから引く
+	//�_���[�W��n���Ă��̕���HP�������
 	void TakeDamage(const int damage) { hp -= damage; }
-	//残弾数を取得
+	//�c�e�����擾
 	const int GetAmmoCount() const { return ammoCount; }
 
 	void Init();
@@ -55,14 +40,19 @@ private:
 	Vec3 right{ 0.0f,0.0f,0.0f };
 	float yaw{ 0.0f };
 	float pitch{ 0.0f };
+
 	bool isGrounded{ true };
 	bool isReload{ false };
+
 	int hp{ 0 };
+	int currentGunType{ 0 };
+
 	int bulletCount{ 0 };
 	int ammoCount{ 0 };
 	float reloadTimer{ 0.0f };
 
 	int ammoFont{ -1 };
+	int gunFont{ -1 };
 	int reloadFont{ -1 };
 
 	DxPlus::Vec2Int currentMouse{ 0,0 };
