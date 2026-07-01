@@ -34,10 +34,12 @@ public:
 
 	float GetYaw() const { return yaw; }
 
-	Arrow GetArrows(int i) const { return arrows[i]; }
+	bool IsBroken() const { return state == State::Broken; }  //ƒ^ƒŒƒbƒg‚ª”j‰ó‚³‚ê‚Ä‚¢‚é‚©‚Ç‚¤‚©
+
+	Arrow GetArrows(int i) const { return arrows[i]; }  //w’è‚³‚ê‚½”Ô†‚ÌArrow‚ğ•Ô‚·
 
 private:
-	Vec3 GetNearbyEnemy();
+	Vec3 GetNearbyEnemy();  //‹ß‚­‚É‚¢‚é“G‚ğ’T‚·
 
 	int modelTurret{ -1 };
 	int modelBrokenTurret{ -1 };

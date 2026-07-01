@@ -28,6 +28,9 @@ public:
     Core GetCore() const { return core; }
 
 private:
+    void CollisionEnemyBullet();
+    void CollisionEnemyArrow();
+
     PlayerController player;
     EnemyLow enemy;
     EnemyRoot enemyRoot;
