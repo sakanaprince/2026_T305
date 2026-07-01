@@ -6,6 +6,7 @@
 void PlayerController::Init()
 {
 	ammoFont = CreateFontToHandle(NULL, 48, 3, DX_FONTTYPE_ANTIALIASING);
+    reloadFont = CreateFontToHandle(NULL, 25, 2, DX_FONTTYPE_ANTIALIASING);
 }
 
 void PlayerController::Reset()
@@ -198,6 +199,7 @@ void PlayerController::Step(float deltaTime, const class Stage& stage, const Vec
 
     // 垂直方向の移動と上下判定
     float dy = velocity.y * deltaTime;
+    float nextY = position.y + dy;
 
     // 上昇中は天井との判定を行う
     if (dy > 0.0f)
@@ -219,42 +221,38 @@ void PlayerController::Step(float deltaTime, const class Stage& stage, const Vec
     // 垂直方向の移動
     position.y += dy;
 
-    // 落下中または停止中は地面との判定を行う
-    if (dy <= 0.0f)
+    // RaycastDown で床を探す
+    Physics::RayHit hit{};
+    Vec3 rayOrigin = position + Vec3::Up() * Const::PLAYER_EYE_POSITION;
+    float rayLength = Const::PLAYER_EYE_POSITION + fabsf(dy) + 10.0f;
+
+    if (Physics::RaycastDown(stage.GetModelHandle(), rayOrigin, rayLength, hit))
     {
-        Physics::RayHit hit{};
-        Vec3 rayOrigin = position + Vec3::Up() * 10.0f;
-        float rayLength = 10.0f - dy + 2.0f;
+        float groundY = hit.point.y;
 
-        if (Physics::RaycastDown(stage.GetModelHandle(), rayOrigin, rayLength, hit))
+        // 次の位置が床より下なら床に固定
+        if (nextY <= groundY)
         {
-            if (position.y <= hit.point.y + STEP_LIMIT_HEIGHT + Const::EPS)
-            {
-                position.y = hit.point.y;
-
-                if (hit.normal.y < SLOPE_LIMIT_HEIGHT)
-                {
-                    isGrounded = false;
-                    Vec3 slideDirection = Vec3(hit.normal.x, 0.0f, hit.normal.z).Normalized();
-                    float slideAmount = Const::GRAVITY * deltaTime;
-                    position += slideDirection * slideAmount;
-                }
-                else
-                {
-                    velocity.y = 0.0f;
-                    isGrounded = true;
-                }
-            }
-            else
-            {
-                isGrounded = false;
-            }
+            position.y = groundY;
+            velocity.y = 0.0f;
+            isGrounded = true;
+        }
+        else
+        {
+            position.y = nextY;
+            isGrounded = false;
         }
         else
         {
             // 下方向に何も床がない
             isGrounded = false;
         }
+    }
+    else
+    {
+        // 床が見つからない → 空中
+        position.y = nextY;
+        isGrounded = false;
     }
 }
 
@@ -285,7 +283,7 @@ void PlayerController::Draw() const
 
 	//リロード中の表示
 	if (isReload) {
-		DrawString(DxPlus::CLIENT_WIDTH / 2 - 40, DxPlus::CLIENT_HEIGHT / 2 + 15, 
-			L"RELOADING...", GetColor(255, 200, 0));
+        DrawFormatStringToHandle(DxPlus::CLIENT_WIDTH / 2 - 55, DxPlus::CLIENT_HEIGHT / 2 + 15,
+            GetColor(255, 200, 0), reloadFont, L"RELOADING...");
 	}
 }

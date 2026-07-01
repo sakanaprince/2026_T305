@@ -63,6 +63,7 @@ private:
 	float reloadTimer{ 0.0f };
 
 	int ammoFont{ -1 };
+	int reloadFont{ -1 };
 
 	DxPlus::Vec2Int currentMouse{ 0,0 };
 	DxPlus::Vec2Int prevMouse{ 0,0 };
