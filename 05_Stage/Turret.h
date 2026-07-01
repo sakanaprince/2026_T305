@@ -4,7 +4,7 @@
 #include "../05_Stage/Arrow.h"
 #include "../99_Utility/Const.h"
 #include "../05_Stage/Stage.h"
-#include "../03_Enemy/EnemyLow.h"
+#include "../03_Enemy/EnemySpawner.h"
 #include "../02_Player/Coin.h"
 
 enum State
@@ -20,7 +20,7 @@ public:
 	Turret() = default;
 	~Turret() = default;
 
-	void Init(PlayerController* _player, EnemyLow* _enemy, Coin* _coin);
+	void Init(PlayerController* _player, EnemySpawner* _enemySpawner, Coin* _coin);
 	void Reset(Vec3 startPosition);
 	void Update(float deltaTime);
 	void BrokenUpdate();                    //タレットを解放していないときのUpdate
@@ -34,7 +34,11 @@ public:
 
 	float GetYaw() const { return yaw; }
 
+	Arrow GetArrows(int i) const { return arrows[i]; }
+
 private:
+	Vec3 GetNearbyEnemy();
+
 	int modelTurret{ -1 };
 	int modelBrokenTurret{ -1 };
 	int modelNotArrowTurret{ -1 };
@@ -45,7 +49,7 @@ private:
 	float yaw{ 0.0f };
 	State state{ State::Broken };
 
-	Arrow arrow[Const::ARROW_COUNT];
+	Arrow arrows[Const::ARROW_COUNT];
 
 	float shotIntervalTimer{ 0.0f };
 	float shotIntervalTime{ 2.0f };
@@ -55,7 +59,7 @@ private:
 	bool isPriceDraw{ false };  //値段を表示するかどうか
 
 	PlayerController* player{ nullptr };
-	EnemyLow* enemy{ nullptr };
+	EnemySpawner* enemySpawner{ nullptr };
 	Coin* coin{ nullptr };
 };
 
