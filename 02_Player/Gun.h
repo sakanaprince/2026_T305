@@ -10,20 +10,25 @@ enum GunType {
 class Gun
 {
 public:
-	//ï¿½ï¿½ï¿½İ‚Ìeï¿½Ìï¿½Ş‚ï¿½ï¿½æ“¾
+	//Œ»İ‚Ìe‚Ìí—Ş‚ğæ“¾
 	const int GetGunType() const { return currentGunType; }
 
 	void Init();
 	void Reset();
-	void Update(float deltaTime);
+	void Update();
+	void UpdateFromCamera(const Vec3& camPos, const Vec3& forward, const Vec3& right, const Vec3& up);
 	void Draw() const;
 
 private:
 	Vec3 position{ 0,0,0 };
 	Vec3 scale{ 0,0,0 };
+	Vec3 angle{ 0,0,0 };
+
+	float forwardMag{ 0.0f };
 
 	int currentGunType{ 0 };
 
+	int ModelHandle{ -1 };
 	int pistolModel{ -1 };
 	int rifleModel{ -1 };
 	int shotgunModel{ -1 };

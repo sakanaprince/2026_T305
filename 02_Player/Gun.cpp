@@ -12,38 +12,64 @@ void Gun::Init()
 
 void Gun::Reset()
 {
-	position = { 100.0f,50.0f,0.0f };
+	position = { 0.0f,0.0f,0.0f };
 	scale = { 0.0f,0.0f,0.0f };
+	angle = { 0.0f,0.0f,0.0f };
 
 	currentGunType = { 0 };
 }
 
-void Gun::Update(float deltaTime)
+void Gun::Update()
 {
-	//ï¿½}ï¿½Eï¿½Xï¿½zï¿½Cï¿½[ï¿½ï¿½ï¿½Åeï¿½Ìï¿½Ş‚ÌØ‚ï¿½Ö‚ï¿½
+	//ƒ}ƒEƒXƒzƒC[ƒ‹‚Åe‚Ìí—Ş‚ÌØ‚è‘Ö‚¦
 	int wheelRot = GetMouseWheelRotVol();
 	currentGunType += wheelRot;
 	if (currentGunType < 0) currentGunType = 2;
 	if (currentGunType > 2) currentGunType = 0;
+
+	switch (currentGunType)
+	{
+	case GunType::Pistol:
+		ModelHandle = pistolModel;
+		forwardMag = 80.0f;
+		break;
+	case GunType::Rifle:
+		ModelHandle = rifleModel;
+		forwardMag = 120.0f;
+		break;
+	case GunType::Shotgun:
+		ModelHandle = shotgunModel;
+		forwardMag = 100.0f;
+		break;
+	}
+}
+
+void Gun::UpdateFromCamera(const Vec3& playerPos, const Vec3& forward, const Vec3& right, const Vec3& up)
+{
+	Vec3 offset = forward * forwardMag + right * 25.0f + up * 50.0f;
+
+	position = playerPos + offset;
+
+	// ˆÊ’u{‰ñ“]‚Ìs—ñ‚ğì‚é
+	MATRIX mat = MGetIdent();
+
+	// ‰ñ“]
+	mat.m[0][0] = right.x;   mat.m[0][1] = right.y;   mat.m[0][2] = right.z;
+	mat.m[1][0] = up.x;      mat.m[1][1] = up.y;      mat.m[1][2] = up.z;
+	mat.m[2][0] = forward.x; mat.m[2][1] = forward.y; mat.m[2][2] = forward.z;
+
+	// ˆÊ’u
+	mat.m[3][0] = position.x;
+	mat.m[3][1] = position.y;
+	mat.m[3][2] = position.z;
+
+	// ƒ‚ƒfƒ‹‚É“K—p
+	MV1SetMatrix(ModelHandle, mat);
 }
 
 void Gun::Draw() const
 {
-	if (pistolModel < 0 || rifleModel < 0 || shotgunModel < 0) return;
+	if (ModelHandle < 0) return;
 
-	switch (currentGunType)
-	{
-	case 0:
-		MV1SetPosition(pistolModel, DxConv::ToVECTOR(position));
-		MV1DrawModel(pistolModel);
-		break;
-	case 1:
-		MV1SetPosition(rifleModel, DxConv::ToVECTOR(position));
-		MV1DrawModel(rifleModel);
-		break;
-	case 2:
-		MV1SetPosition(shotgunModel, DxConv::ToVECTOR(position));
-		MV1DrawModel(shotgunModel);
-		break;
-	}
+	MV1DrawModel(ModelHandle);
 }
