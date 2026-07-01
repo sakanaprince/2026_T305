@@ -1,15 +1,12 @@
 #pragma once
 #include "../DxPlus/DxPlus.h"
+#include "../03_Enemy/EnemySpawner.h"
 
 namespace Const
 {
 	//===== プレイヤー関連 =====
-	//プレイヤーの最大HP
-	constexpr int PLAYER_MAX_HP{ 10 };
-	//プレイヤーのステージとの当たり判定の半径
-	constexpr float PLAYER_STAGE_RADIUS{ 130.0f };
-	//プレイヤーの敵との当たり判定の半径
-	constexpr float PLAYER_ENEMY_RADIUS{ 50.0f };
+	//プレイヤーの半径
+	constexpr float PLAYER_RADIUS{ 5.0f };
 	//歩き中の移動速度
 	constexpr float PLAYER_WALK_SPEED{ 200.0f };
 	//ダッシュ中の移動速度
@@ -17,7 +14,7 @@ namespace Const
 	//ジャンプの高さ
 	constexpr float PLAYER_JUMP_FORCE{ 1000.0f };
 	//プレイヤーの視界の高さ
-	constexpr float PLAYER_EYE_POSITION{ 80.0f };
+	constexpr float PLAYER_EYE_POSITION{ 70.0f };
 
 	//===== カメラ関連 =====
 	//カメラ感度
@@ -31,11 +28,19 @@ namespace Const
 	//最大弾数
 	constexpr int AMMO_MAX{ 16 };
 	//弾速
-	constexpr float BULLET_SPEED{ 4000.0f };
+	constexpr float BULLET_SPEED{ 2000.0f };
 	//リロード時間
 	constexpr float RELOAD_TIME{ 1.5f };
 
 	//===== 敵関連 =====
+	//敵の種類ごとのプールの数
+	constexpr size_t MAX_SAME_ENEMY_POOL_COUNT{ 10 };
+
+	//画面に存在できる敵の最大人数
+	constexpr size_t MAX_ENEMY_COUNT{20};
+
+
+	const int ENEMY_LOW_MAXHP{ 3 };
 
 	//===== 物理関連 =====
 	constexpr float GRAVITY{ 2000.0f };
