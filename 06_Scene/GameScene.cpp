@@ -31,21 +31,17 @@ void GameScene::Update(float deltaTime)
         SetMousePoint(DxPlus::CLIENT_WIDTH - 1, mouseY);
     }
 
-#ifndef NDEBUG
-    using namespace DxPlus::Input;
-    int buttonDown = GetButtonDown(PLAYER1);
-    if (buttonDown & BUTTON_SELECT)
-    {
-        Scene* resultScene = SceneManager::GetInstance().GetScene(SceneID::Result);
-        SetNextScene(resultScene);
-        return;
-    }
-#endif
-
     if (gameContext->GetCore().GetHP() <= 0)
     {
-        Scene* resultScene = SceneManager::GetInstance().GetScene(SceneID::Result);
-        SetNextScene(resultScene);
+        Scene* gameClearScene = SceneManager::GetInstance().GetScene(SceneID::GameOver);
+        SetNextScene(gameClearScene);
+        return;
+    }
+
+    if (gameContext->GetLimit_Timer() <= 0)
+    {
+        Scene* gameClearScene = SceneManager::GetInstance().GetScene(SceneID::GameClear);
+        SetNextScene(gameClearScene);
         return;
     }
 }

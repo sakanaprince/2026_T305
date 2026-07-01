@@ -5,7 +5,6 @@
 
 void GameOverScene::Init()
 {
-    DxLib::SetBackgroundColor(0, 0, 0);
     fontHandle = RM().GetFont(ResourceKeys::Font_ManufacturingConsent);
     backGroundHandle = RM().GetSprite(ResourceKeys::Sprite_GameOverBG);
     DxLib::SetMouseDispFlag(TRUE);
@@ -53,15 +52,6 @@ void GameOverScene::Update(float deltaTime)
     else
     {
         buttonContinueColor = buttonNormalColor;
-    }
-
-    using namespace DxPlus::Input;
-    if (GetButtonDown(PLAYER1) & BUTTON_START)
-    {
-        Scene* titleScene = 
-            SceneManager::GetInstance().GetScene(SceneID::Title);
-        SetNextScene(titleScene);
-        return;
     }
 }
 
