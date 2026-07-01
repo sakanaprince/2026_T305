@@ -36,8 +36,7 @@ void Arrow::Update(float deltaTime)
 	//ŠÔŒo‰ß‚Åíœ
 	if (lifeTimer <= 0)
 	{
-		Debug().Log("Kill");
-		isActive = false;
+		Kill();
 	}
 }
 
@@ -61,7 +60,7 @@ void Arrow::LaunchArrow(Vec3 forward, float deltaTime, Turret& turret)
 	velocity = forward;
 	position = turret.GetPosition();
 	//–î‚Ì”­ËˆÊ’u’²®
-	position.y += turret.GetScale().y * 18.0f;
+	position.y += turret.GetScale().y * 40.0f;
 
 	//“–‚½‚è”»’è‚ÌˆÊ’uİ’è
 	sphereArrow.centerPos = position + velocity * (scale.z * 20);

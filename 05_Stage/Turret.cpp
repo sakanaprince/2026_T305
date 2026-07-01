@@ -137,11 +137,11 @@ Vec3 Turret::GetNearbyEnemy()
 
 	for (int i = 0; i < Const::MAX_ENEMY_COUNT; i++)
 	{
-		EnemyLow enemy = enemySpawner->GetEnemy(i);
+		auto& enemy = enemySpawner->GetEnemy(i);
 
-		if (!enemy.IsAlive()) { continue; }
+		if (!enemy->IsAlive()) { continue; }
 
-		Vec3 toEnemy = enemy.GetPosition() - position;
+		Vec3 toEnemy = enemy->GetPosition() - position;
 
 		//X‚ÆZ‚Ì‹——£‚ðŒÂ•Ê‚ÅŽæ“¾
 		float dirX = toEnemy.LengthIndividual(toEnemy.x);

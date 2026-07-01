@@ -16,13 +16,14 @@ public:
 	void Draw() const;
 
 	//当たり判定を返す関数
-	Collision::Sphere GetSphereArrow() { return sphereArrow; }
+	Collision::Sphere GetSphereArrow() const { return sphereArrow; }
 
 	//矢の発射時の関数
 	void LaunchArrow(Vec3 forward, float deltaTime, Turret& turret);
 
 	//矢が使用されているかどうか
 	bool IsActive() const { return isActive; }
+	void Kill() { isActive = false; }
 
 	//矢のダメージ
 	int GetArrowDamage() const { return arrowDamage; }

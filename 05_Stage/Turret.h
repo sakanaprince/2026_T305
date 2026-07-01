@@ -36,7 +36,7 @@ public:
 
 	bool IsBroken() const { return state == State::Broken; }  //タレットが破壊されているかどうか
 
-	Arrow GetArrows(int i) const { return arrows[i]; }  //指定された番号のArrowを返す
+	Arrow& GetArrows(int i) { return arrows[i]; }  //指定された番号のArrowを返す
 
 private:
 	Vec3 GetNearbyEnemy();  //近くにいる敵を探す
