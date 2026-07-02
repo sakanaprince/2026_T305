@@ -63,7 +63,6 @@ private:
 	float spawnTimer{ 0.0f };
 	const float spawnDuration{ 5.0f };
 
-
 	int spawnedCount{ 0 };
 
 	float initLimitTimer{ 0 };
