@@ -52,6 +52,7 @@ void EnemyQuick::Update(float deltaTime)
 	if (isKilledReaction)
 	{
 		KilledReactionUpdate(deltaTime);
+		explosion.Update(deltaTime);
 		return;
 	}
 
@@ -71,6 +72,7 @@ void EnemyQuick::Draw() const
 	if (!isAlive) { return; }
 
 	BodyLine();
+	explosion.Draw();
 }
 
 void EnemyQuick::DrawDebug() const
@@ -78,24 +80,6 @@ void EnemyQuick::DrawDebug() const
 	DrawSphere3D( DxConv::ToVECTOR(GetSphere().centerPos), radius, 16, GetColor(255, 0, 0), GetColor(255, 0, 0), false);
 }
 
-void EnemyQuick::TakeDamage(int amount)
-{
-	if (isKilledReaction) { return; }
-
-	amount = std::max(amount, 0);
-	currentHp = std::max(currentHp - amount, 0);
-
-	damageReactionTimer = DAMAGE_REACTION_TIME;
-	isDamageReaction = true;
-
-	if (currentHp == 0 && !isKilledReaction)
-	{
-		isKilledReaction = true;
-		killedReactionTimer = KILLED_REACTION_TIME;
-
-		if (pEnemySpawner) { pEnemySpawner->DecAliveEnemyCount(); }
-	}
-}
 
 void EnemyQuick::BodyLine() const
 {

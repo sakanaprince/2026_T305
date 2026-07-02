@@ -12,11 +12,9 @@ public:
 	void Draw() const override;
 	void DrawDebug()const override;
 
-	void TakeDamage(int amount) override;
-
 
 private:
 	void BodyLine()const override;
-	
+	const int initHp{ 10 };
 };
 

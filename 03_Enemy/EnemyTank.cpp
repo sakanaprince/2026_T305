@@ -51,6 +51,7 @@ void EnemyTank::Update(float deltaTime)
 
 	if (isKilledReaction)
 	{
+		explosion.Update(deltaTime);
 		KilledReactionUpdate(deltaTime);
 		return;
 	}
@@ -71,30 +72,12 @@ void EnemyTank::Draw() const
 	if (!isAlive) { return; }
 
 	BodyLine();
+	explosion.Draw();
 }
 
 void EnemyTank::DrawDebug() const
 {
 	DrawSphere3D(DxConv::ToVECTOR(GetSphere().centerPos), hitSphereRadius, 16, GetColor(255, 0, 0), GetColor(255, 0, 0), false);
-}
-
-void EnemyTank::TakeDamage(int amount)
-{
-	if (isKilledReaction) { return; }
-
-	amount = std::max(amount, 0);
-	currentHp = std::max(currentHp - amount, 0);
-
-	damageReactionTimer = DAMAGE_REACTION_TIME;
-	isDamageReaction = true;
-
-	if (currentHp == 0 && !isKilledReaction)
-	{
-		isKilledReaction = true;
-		killedReactionTimer = KILLED_REACTION_TIME;
-
-		if (pEnemySpawner) { pEnemySpawner->DecAliveEnemyCount(); }
-	}
 }
 
 void EnemyTank::BodyLine() const

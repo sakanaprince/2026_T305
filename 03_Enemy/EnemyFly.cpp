@@ -80,24 +80,7 @@ void EnemyFly::DrawDebug() const
 	DrawSphere3D(DxConv::ToVECTOR(GetSphere().centerPos), hitSphereRadius, 16, GetColor(255, 0, 0), GetColor(255, 0, 0), false);
 }
 
-void EnemyFly::TakeDamage(int amount)
-{
-	if (isKilledReaction) { return; }
 
-	amount = std::max(amount, 0);
-	currentHp = std::max(currentHp - amount, 0);
-
-	damageReactionTimer = DAMAGE_REACTION_TIME;
-	isDamageReaction = true;
-
-	if (currentHp == 0 && !isKilledReaction)
-	{
-		isKilledReaction = true;
-		killedReactionTimer = KILLED_REACTION_TIME;
-
-		if (pEnemySpawner) { pEnemySpawner->DecAliveEnemyCount(); }
-	}
-}
 
 void EnemyFly::BodyLine() const
 {
@@ -129,7 +112,7 @@ void EnemyFly::BodyLine() const
 	//position.y‚ÍŒÅ’è
 	constexpr float SPIN_RADIUS = 70.0f;
 	constexpr float CAPSULE_RADIUS = 40.0f;
-	constexpr float spinSpeedBoost = 9.0f;
+	constexpr float spinSpeedBoost = 6.0f;
 
 	const float sinSpin = std::sinf(animTimer * spinSpeedBoost) * SPIN_RADIUS;
 	const float cosSpin = std::cosf(animTimer * spinSpeedBoost) * SPIN_RADIUS;
@@ -152,8 +135,6 @@ void EnemyFly::BodyLine() const
 		DxConv::ToVECTOR({ position.x, position.y + height, position.z }),
 		CAPSULE_RADIUS * sizeMagnification, 16, GetColor(0, 155, 0), GetColor(255, 255, 0), true
 	);
-
-	DrawSphere3D(DxConv::ToVECTOR(GetSphere().centerPos), 10.0f, 16, GetColor(255, 0, 0), GetColor(255, 0, 0),false);
 
 	DxLib::SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 }
