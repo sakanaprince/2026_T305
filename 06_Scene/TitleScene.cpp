@@ -8,7 +8,13 @@ void TitleScene::Init()
 //    frameCount = 0;
     fontHandle = RM().GetFont(ResourceKeys::Font_ManufacturingConsent);
     backGroundHandle = RM().GetSprite(ResourceKeys::Sprite_TitleBG);
-    buttonColor = buttonNormalColor;
+    tutorial_PurposeHandle = RM().GetSprite(ResourceKeys::Sprite_TutorialPurpose);
+    tutorial_TurretHandle = RM().GetSprite(ResourceKeys::Sprite_TutorialTurret);
+    titleButtonColor = buttonNormalColor;
+    tutorialButtonColor = buttonNormalColor;
+    nextButtonColor = buttonNormalColor;
+    returnButtonColor = buttonNormalColor;
+    mouseIntervalTimer = mouseInterval;
     StartFadeIn();
 
     DxLib::SetMouseDispFlag(TRUE);
@@ -20,40 +26,195 @@ void TitleScene::Update(float deltaTime)
     int mouseX, mouseY;
     GetMousePoint(&mouseX, &mouseY);
 
-    if (mouseX >= posX_1 && mouseX <= posX_2 && mouseY >= posY_1 && mouseY <= pos_Y2)
+    if (tutorial == Tutorial::Title)
     {
-        buttonColor = buttonOnMouseColor;
-
-        if (GetMouseInput() & MOUSE_INPUT_LEFT)
+        if (ButtonCheckHit(mouseX, mouseY, titlePosX_1, titlePosX_2, titlePosY_1, titlePosY_2, titleButtonColor))
         {
+            //タイトルボタンの判定
             Scene* gameScene = SceneManager::GetInstance().GetScene(SceneID::Game);
             SetNextScene(gameScene);
             return;
+
         }
+
+        //チュートリアルボタンの判定
+        if (ButtonCheckHit(mouseX, mouseY, tutorialPosX_1, tutorialPosX_2, tutorialPosY_1, tutorialPosY_2, tutorialButtonColor))
+        {
+            tutorial = Tutorial::Purpose;
+        }
+
     }
     else
     {
-        buttonColor = buttonNormalColor;
+        mouseIntervalTimer -= deltaTime;
+
+        if (ButtonCheckHit(mouseX, mouseY, nextPosX_1, nextPosX_2, nextPosY_1, nextPosY_2, nextButtonColor))
+        {
+            switch (tutorial)
+            {
+            case Purpose:
+                tutorial = Tutorial::Operation;
+                break;
+            case Operation:
+                tutorial = Tutorial::Turret;
+                break;
+            case Turret:
+                tutorial = Tutorial::Title;
+                titleButtonColor = buttonNormalColor;
+                break;
+            default:
+                tutorial = Tutorial::Title;
+                titleButtonColor = buttonNormalColor;
+                break;
+            }
+            mouseIntervalTimer = mouseInterval;
+        }
+
+
+        if (ButtonCheckHit(mouseX, mouseY, returnPosX_1, returnPosX_2, returnPosY_1, returnPosY_2, returnButtonColor))
+        {
+            switch (tutorial)
+            {
+            case Purpose:
+                tutorial = Tutorial::Title;
+                titleButtonColor = buttonNormalColor;
+                break;
+            case Operation:
+                tutorial = Tutorial::Purpose;
+                break;
+            case Turret:
+                tutorial = Tutorial::Operation;
+                break;
+            default:
+                tutorial = Tutorial::Title;
+                titleButtonColor = buttonNormalColor;
+                break;
+            }
+            mouseIntervalTimer = mouseInterval;
+        }
     }
 }
 
 void TitleScene::Render() const
 {
+    switch (tutorial)
+    {
+    case Title:
+        TitleRender();
+        break;
+    case Purpose:
+        TutorialPurposeRender();
+        break;
+    case Operation:
+        TutorialOperation();
+        break;
+    case Turret:
+        TutorialTurret();
+        break;
+    }
+
+    //チュートリアル画面の時は常に画面左下と右下にボタンを表示する
+    if (tutorial != Tutorial::Title)
+    {
+        DrawBox
+        (
+            nextPosX_1, nextPosY_1,
+            nextPosX_2, nextPosY_2,
+            nextButtonColor,
+            true
+        );
+
+        DxPlus::Text::DrawString(L"Next",
+            { text_NextX, text_NextY },
+            textColor, DxPlus::Text::TextAlign::MIDDLE_CENTER, { 2,2 }, 0, fontHandle);
+
+        DrawBox
+        (
+            returnPosX_1, returnPosY_1,
+            returnPosX_2, returnPosY_2,
+            returnButtonColor,
+            true
+        );
+
+        DxPlus::Text::DrawString(L"Return",
+            { text_returnX, text_returnY },
+            textColor, DxPlus::Text::TextAlign::MIDDLE_CENTER, { 2,2 }, 0, fontHandle);
+    }
+}
+
+bool TitleScene::ButtonCheckHit(int mouseX, int mouseY, float posX_1, float posX_2, float posY_1, float posY_2, int& buttonColor)
+{
+    if (mouseX >= posX_1 && mouseX <= posX_2 && mouseY >= posY_1 && mouseY <= posY_2)
+    {
+        buttonColor = buttonOnMouseColor;
+
+        if (GetMouseInput() & MOUSE_INPUT_LEFT)
+        {
+            return (tutorial == Tutorial::Title) ? true : mouseIntervalTimer <= 0 ? true : false;
+        }
+    }
+    else
+    {
+        buttonColor = buttonNormalColor;
+        return false;
+    }
+}
+
+void TitleScene::TitleRender() const
+{
     DxPlus::Sprite::Draw(backGroundHandle);
 
-    DxPlus::Text::DrawString(L"Tower Difense",
+    DxPlus::Text::DrawString(L"Castle Defense",
         { DxPlus::CLIENT_WIDTH * 0.5f, DxPlus::CLIENT_HEIGHT * 0.35f },
         black, DxPlus::Text::TextAlign::MIDDLE_CENTER, { 4,4 }, 0, fontHandle);
 
     DrawBox
     (
-        posX_1, posY_1,
-        posX_2, pos_Y2,
-        buttonColor,
+        titlePosX_1, titlePosY_1,
+        titlePosX_2, titlePosY_2,
+        titleButtonColor,
         true
     );
 
     DxPlus::Text::DrawString(L"Game Start",
         { text_StartX, text_StartY },
         textColor, DxPlus::Text::TextAlign::MIDDLE_CENTER, { 2,2 }, 0, fontHandle);
+
+
+    DrawBox
+    (
+        tutorialPosX_1, tutorialPosY_1,
+        tutorialPosX_2, tutorialPosY_2,
+        tutorialButtonColor,
+        true
+    );
+
+    DxPlus::Text::DrawString(L"Tutorial",
+        { text_TutorialX, text_TutorialY },
+        textColor, DxPlus::Text::TextAlign::MIDDLE_CENTER, { 2,2 }, 0, fontHandle);
+}
+
+void TitleScene::TutorialPurposeRender() const
+{
+    DxPlus::Sprite::Draw(tutorial_PurposeHandle);
+
+    DxPlus::Text::DrawString(L"迫りくる敵からコアを守れ！！！",
+        { DxPlus::CLIENT_WIDTH * 0.5f, 100 },
+        textColor, DxPlus::Text::TextAlign::MIDDLE_CENTER, { 3,3 }, 0);
+}
+
+void TitleScene::TutorialOperation() const
+{
+    DxPlus::Text::DrawString(L"移動：WASD　ダッシュ：左Shift　ジャンプ：Space\n\n射撃：左クリック　リロード：R　武器切り替え：マウスホイール",
+        { DxPlus::CLIENT_WIDTH * 0.5f, DxPlus::CLIENT_HEIGHT * 0.35f },
+        textColor, DxPlus::Text::TextAlign::MIDDLE_CENTER, { 2,2 }, 0);
+}
+
+void TitleScene::TutorialTurret() const
+{
+    DxPlus::Sprite::Draw(tutorial_TurretHandle);
+
+    DxPlus::Text::DrawString(L"敵を倒すとお金が手に入る。\n手に入ったお金でタレットを修理しよう！！！",
+        { DxPlus::CLIENT_WIDTH * 0.5f, 100 },
+        textColor, DxPlus::Text::TextAlign::MIDDLE_CENTER, { 3,3 }, 0);
 }

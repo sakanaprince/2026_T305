@@ -13,6 +13,8 @@ void ResourceManager::LoadAll()
     LoadSprite(ResourceKeys::Sprite_TitleBG, L"TitleBG.png");
     LoadSprite(ResourceKeys::Sprite_GameOverBG, L"GameOverBG.png");
     LoadSprite(ResourceKeys::Sprite_GameClearBG, L"GameClearBG.png");
+    LoadSprite(ResourceKeys::Sprite_TutorialPurpose, L"Tutorial_Purpose.png");
+    LoadSprite(ResourceKeys::Sprite_TutorialTurret, L"Tutorial_Turret.png");
     LoadSprite(ResourceKeys::Sprite_Coin, L"Coin.png");
     LoadSprite(ResourceKeys::Sprite_TurretPrice, L"TurretPrice.png");
     LoadFont(ResourceKeys::Font_ManufacturingConsent, L"./Data/Fonts/Manufacturing_Consent/ManufacturingConsent-Regular.ttf");
