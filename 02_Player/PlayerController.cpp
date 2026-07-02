@@ -26,7 +26,9 @@ void PlayerController::Reset()
     hp = { Const::PLAYER_MAX_HP };
 
 	reloadTimer = { Const::RELOAD_TIME };
-	ammoCount = { Const::AMMO_MAX };
+	pistolAmmo = { Const::PISTOL_MAGAZIN_MAX };
+	rifleAmmo = { Const::RIFLE_MAGAZIN_MAX };
+	shotgunAmmo = { Const::SHOTGUN_MAGAZIN_MAX };
 
     gun.Reset();
 }
@@ -78,7 +80,7 @@ void PlayerController::Update(float deltaTime, Stage& stage)
 	camera.UpdateFromPlayer(eye, yaw, pitch);
 
 	// リロード判定
-	if (!isReload && (CheckHitKey(KEY_INPUT_R) || ammoCount <= 0)) {
+	if (!isReload && (CheckHitKey(KEY_INPUT_R) || pistolAmmo <= 0)) {
 		isReload = true;
 	}
 
@@ -86,14 +88,14 @@ void PlayerController::Update(float deltaTime, Stage& stage)
 	if (isReload) {
 		reloadTimer -= deltaTime;
 		if (reloadTimer <= 0.0f) {
-			ammoCount = Const::AMMO_MAX;
+			pistolAmmo = Const::AMMO_MAX;
 			reloadTimer = Const::RELOAD_TIME;
 			isReload = false;
 		}
 		return;
 	}
 
-    //銃の種類の切り替え
+    // 銃の種類の切り替え
     gun.Update();
     gun.UpdateFromCamera(position, camera.GetForward(), camera.GetRight(), camera.GetUp());
 
@@ -102,12 +104,12 @@ void PlayerController::Update(float deltaTime, Stage& stage)
 	int nowMouse = GetMouseInput();
 	bool leftDown = (nowMouse & MOUSE_INPUT_LEFT) && !(prevMouseInput & MOUSE_INPUT_LEFT);
 
-	if (leftDown && ammoCount > 0) {
+	if (leftDown && pistolAmmo > 0) {
 		for (int i = 0; i < Const::AMMO_MAX; i++) {
 			if (!bullets[i].IsActive()) {
 				Vec3 pos = camera.GetEye() + camera.GetForward() * 20.0f;
 				Vec3 dir = camera.GetForward();
-				ammoCount--;
+				pistolAmmo--;
 				bullets[i].Fire(pos, dir);
 				break;
 			}
@@ -276,33 +278,39 @@ void PlayerController::Draw() const
 
     gun.Draw();
 
-	//右下に残弾数の表示
-	wchar_t buf[32];
-	swprintf(buf, 32, L"%d/%d", ammoCount, Const::AMMO_MAX);
-	int textWidth = GetDrawStringWidthToHandle(buf, wcslen(buf), gunFont);
-
-	int x = DxPlus::CLIENT_WIDTH;
-	int y = DxPlus::CLIENT_HEIGHT;
-
-	DrawFormatStringToHandle(x - textWidth - 20, y - 60, GetColor(255, 255, 255), gunFont,
-		L"%d/%d", GetAmmoCount(), Const::AMMO_MAX);
-
     //現在の銃の種類を表示
     const wchar_t* gunName = L"";
     int gt = gun.GetGunType();
+    wchar_t ammoBuf[32];
 
     switch (gt)
     {
     case GunType::Pistol:
         gunName = L"ハンドガン";
+        swprintf(ammoBuf, 32, L"%d/%d", pistolAmmo, Const::PISTOL_MAGAZIN_MAX);
         break;
+
     case GunType::Rifle:
         gunName = L"ライフル";
+        swprintf(ammoBuf, 32, L"%d/%d", rifleAmmo, Const::RIFLE_MAGAZIN_MAX);
         break;
+
     case GunType::Shotgun:
         gunName = L"ショットガン";
+        swprintf(ammoBuf, 32, L"%d/%d", shotgunAmmo, Const::SHOTGUN_MAGAZIN_MAX);
         break;
     }
+
+	//右下に残弾数の表示
+	wchar_t buf[32];
+	swprintf(buf, 32, L"%s", ammoBuf);
+	int textWidth = GetDrawStringWidthToHandle(buf, wcslen(buf), gunFont);
+
+	int x = DxPlus::CLIENT_WIDTH;
+	int y = DxPlus::CLIENT_HEIGHT;
+
+	DrawFormatStringToHandle(x - textWidth - 20, y - 60, GetColor(255, 255, 255)
+        , gunFont, L"%s", ammoBuf);
 
     swprintf(buf, 32, L"%s", gunName);
     textWidth = GetDrawStringWidthToHandle(buf, wcslen(buf), gunFont);

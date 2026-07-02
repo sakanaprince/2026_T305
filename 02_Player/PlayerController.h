@@ -23,14 +23,12 @@ public:
 		return s;
 	}
 
-	//ƒvƒŒƒCƒ„[‚ÌˆÊ’u‚ğæ“¾
+	//ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®ä½ç½®ã‚’å–å¾—
 	const Vec3& GetPosition() const { return position; }
-	//ƒvƒŒƒCƒ„[‚ÌHP‚ğæ“¾
+	//ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®HPã‚’å–å¾—
 	const int GetHp() const { return hp; }
-	//ƒ_ƒ[ƒW‚ğ“n‚µ‚Ä‚»‚Ì•ª‚ğHP‚©‚çˆø‚­
+	//ãƒ€ãƒ¡ãƒ¼ã‚¸ã‚’æ¸¡ã—ã¦ãã®åˆ†ã‚’HPã‹ã‚‰å¼•ã
 	void TakeDamage(const int damage) { hp -= damage; }
-	//c’e”‚ğæ“¾
-	const int GetAmmoCount() const { return pistolAmmo; }
 
 	void Init();
 	void Reset();
@@ -53,7 +51,6 @@ private:
 
 	int bulletCount{ 0 };
 
-	int currentGunAmmo{ 0 };
 	int pistolAmmo{ 0 };
 	int rifleAmmo{ 0 };
 	int shotgunAmmo{ 0 };

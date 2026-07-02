@@ -24,7 +24,8 @@ private:
 	Vec3 scale{ 0,0,0 };
 	Vec3 angle{ 0,0,0 };
 
-	float forwardMag{ 0.0f };
+	float forwardNum{ 0.0f };
+	float muzzleNum{ 0.0f };
 
 	int currentGunType{ 0 };
 

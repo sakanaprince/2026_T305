@@ -31,22 +31,26 @@ void Gun::Update()
 	{
 	case GunType::Pistol:
 		ModelHandle = pistolModel;
-		forwardMag = 80.0f;
+		forwardNum = 80.0f;
+		muzzleNum = 100.0f;
 		break;
 	case GunType::Rifle:
 		ModelHandle = rifleModel;
-		forwardMag = 120.0f;
+		forwardNum = 120.0f;
+		muzzleNum = 100.0f;
 		break;
 	case GunType::Shotgun:
 		ModelHandle = shotgunModel;
-		forwardMag = 100.0f;
+		forwardNum = 100.0f;
+		muzzleNum = 100.0f;
 		break;
 	}
 }
 
 void Gun::UpdateFromCamera(const Vec3& playerPos, const Vec3& forward, const Vec3& right, const Vec3& up)
 {
-	Vec3 offset = forward * forwardMag + right * 25.0f + up * 50.0f;
+	Vec3 offset = forward * forwardNum + right * 40.0f + up * 50.0f;
+	Vec3 muzzlePos = { 0,0,0 };
 
 	position = playerPos + offset;
 
