@@ -2,19 +2,21 @@
 #include "../01_Core/Entity.h"
 
 
+
 class EnemyLow final : public Entity
 {
 public:
- 
-	void Init() override;
+	void Init(EnemyRoot* enRoot, PlayerController* pc) override;
+	void Reset();
 	void Update(float deltaTime) override;
 	void Draw() const override;
 	void DrawDebug()const override;
 
+	void TakeDamage(int amount) override;
 
 
 private:
-	void BodyLine() const ;
-	float animTimer{ 0.0f };
+	void BodyLine()const override;
+	
 };
 

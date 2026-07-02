@@ -29,7 +29,7 @@ void Stage::Draw() const
 	MV1DrawModel(modelHandle);
 }
 
-float Stage::GetGroundHeight(const Vec3& pos)
+float Stage::GetGroundHeight(const Vec3& pos) const
 {
 	Physics::RayHit hit;
 	float maxDist = 1000.0f;

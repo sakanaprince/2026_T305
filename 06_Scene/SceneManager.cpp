@@ -10,7 +10,7 @@ void SceneManager::Init()
     const int h = DxPlus::CLIENT_HEIGHT;
 
     DxPlus::Initialize(w, h, runConfig.windowed);
-    DxLib::SetMouseDispFlag(TRUE);
+
 
 #ifndef NDEBUG
     // Debug のときだけ、さらに windowed のときだけ DebugUI を許可
@@ -26,7 +26,8 @@ void SceneManager::Init()
 
     titleScene.SetGameContext(&gameContext);
     gameScene.SetGameContext(&gameContext);
-    resultScene.SetGameContext(&gameContext);
+    gameOverScene.SetGameContext(&gameContext);
+    gameClearScene.SetGameContext(&gameContext);
 
     scene = &titleScene; // 最初のシーン
 }
@@ -55,42 +56,50 @@ Scene* SceneManager::GetScene(SceneID id)
 {
     switch (id)
     {
-        case SceneID::Title:    return &titleScene;
-        case SceneID::Game:     return &gameScene;
-        case SceneID::Result:   return &resultScene;
+        case SceneID::Title:      return &titleScene;
+        case SceneID::Game:       return &gameScene;
+        case SceneID::GameOver:   return &gameOverScene;
+        case SceneID::GameClear:  return &gameClearScene;
     }
     return &titleScene;
 }
 
 void SceneManager::Run()
 {
+    //現在シーンのInit()を呼ぶ
     if (scene) scene->Init();
+
+    //ゲーム中の処理
+    //DxPlusだとFPSの設定ができる。if (DxLib::ProcessMessage() != 0)これでも動く。
     while (DxPlus::GameLoop(true))
     {
+
+        //入力を受け取るための処理
         DxPlus::Input::Update();
 
         if (scene)
         {
             DxLib::ClearDrawScreen();
 
-            //DxPlus::Debug::SetString(L"大阪情報コンピュータ専門学校（OIC）");
-            //DxPlus::Debug::SetString(L"３ＤゲームプログラミングⅠ");
-            //DxPlus::Debug::SetString(L"07_Sample");
-            //DxPlus::Debug::SetString(L"");
-
             float deltaTime = DxPlus::GetDeltaTime();
             scene->Drive(deltaTime);
             scene->Render();
 
+            //フェードが終了しているかどうか
             if (scene->IsFinished())
             {
+                //現在シーンのEnd()を呼ぶ
                 scene->End();
 
+                //次のシーンの設定
                 Scene* next = scene->GetNextScene();
+                //今のシーンで設定していたNextSceneをnullにする
                 scene->SetNextScene(nullptr);
 
+                //次のシーンが存在してたら現在のシーンを次のシーンにする
                 if (!next) { DxLib::ScreenFlip(); break; }
                 SetScene(next);
+                //Init()を呼ぶ(SetScene()でsceneにnextを入れてるからsceneでも可)
                 next->Init();
             }
 

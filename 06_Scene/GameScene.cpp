@@ -8,6 +8,10 @@ void GameScene::Init()
     DxLib::SetBackgroundColor(32, 32, 32);
     gameContext->Reset();
 
+    //マウスを消すかの設定
+    DxLib::SetMouseDispFlag(FALSE);
+    SetMousePoint(DxPlus::CLIENT_WIDTH * 0.5f, DxPlus::CLIENT_HEIGHT * 0.5f);
+
     StartFadeIn();
 }
 
@@ -15,13 +19,29 @@ void GameScene::Update(float deltaTime)
 {
     gameContext->Update(deltaTime);
 
-    using namespace DxPlus::Input;
-    int buttonDown = GetButtonDown(PLAYER1);
-    if (buttonDown & BUTTON_SELECT)
+    int mouseX;
+    int mouseY;
+    GetMousePoint(&mouseX, &mouseY);
+    if (mouseX >= DxPlus::CLIENT_WIDTH - 1)
     {
-        Scene* resultScene = SceneManager::GetInstance().GetScene(SceneID::Result);
-        SetNextScene(resultScene);
-        finished = true;    // フェード無しの場合は finished を true にしておく必要あり
+        SetMousePoint(0, mouseY);
+    }
+    else if (mouseX <= 0)
+    {
+        SetMousePoint(DxPlus::CLIENT_WIDTH - 1, mouseY);
+    }
+
+    if (gameContext->GetCore().GetHP() <= 0)
+    {
+        Scene* gameClearScene = SceneManager::GetInstance().GetScene(SceneID::GameOver);
+        SetNextScene(gameClearScene);
+        return;
+    }
+
+    if (gameContext->GetLimit_Timer() <= 0)
+    {
+        Scene* gameClearScene = SceneManager::GetInstance().GetScene(SceneID::GameClear);
+        SetNextScene(gameClearScene);
         return;
     }
 }

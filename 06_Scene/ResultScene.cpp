@@ -5,9 +5,10 @@
 
 void ResultScene::Init()
 {
-    DxLib::SetBackgroundColor(128, 64, 0);
+    DxLib::SetBackgroundColor(0, 0, 0);
     fontHandle = RM().GetFont(ResourceKeys::Font_Title);
-    StartFadeIn(0.0f);
+    DxLib::SetMouseDispFlag(TRUE);
+    StartFadeIn();
 }
 
 void ResultScene::Update(float deltaTime)
@@ -20,15 +21,12 @@ void ResultScene::Update(float deltaTime)
         Scene* titleScene = 
             SceneManager::GetInstance().GetScene(SceneID::Title);
         SetNextScene(titleScene);
-        StartFadeOut();
         return;
     }
 }
 
 void ResultScene::Render() const
 {
-    gameContext->Draw();
-
     const int white = DxLib::GetColor(255, 255, 255);
     DxPlus::Text::DrawString(L"Result Scene",
         { DxPlus::CLIENT_WIDTH * 0.5f, DxPlus::CLIENT_HEIGHT * 0.25f },

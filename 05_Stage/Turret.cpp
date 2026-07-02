@@ -5,7 +5,7 @@
 #include "../08_Debug/DebugUI.h"
 #include "../99_Utility/Const.h"
 
-void Turret::Init()
+void Turret::Init(PlayerController* _player, EnemySpawner* _enemySpawner, Coin* _coin)
 {
 	modelBrokenTurret = RM().GetModel(ResourceKeys::Model_BrokenTurret);
 	modelTurret = RM().GetModel(ResourceKeys::Model_Turret);
@@ -13,11 +13,16 @@ void Turret::Init()
 	MV1SetScale(modelTurret, DxConv::ToVECTOR(scale));
 	modelTurretHandle = modelBrokenTurret;
 
+	player = _player;
+	enemySpawner = _enemySpawner;
+	coin   = _coin;
 
-	for (auto& a : arrow)
+	for (auto& a : arrows)
 	{
 		a.Init();
 	}
+
+	spritePrice = RM().GetSprite(ResourceKeys::Sprite_TurretPrice);
 }
 
 void Turret::Reset(Vec3 startPosition)
@@ -26,66 +31,76 @@ void Turret::Reset(Vec3 startPosition)
 	scale = { 1.0f,1.0f,1.0f };
 	yaw = 0.0f;
 	state = State::Broken;
+	isPriceDraw = false;
 
-	for (auto& a : arrow)
+	for (auto& a : arrows)
 	{
 		a.Reset();
 	}
 }
 
-void Turret::Update(float deltaTime, PlayerController& player, EnemyLow& enemy)
+void Turret::Update(float deltaTime)
 {
 	switch (state)
 	{
 	case Broken:
-		BrokenUpdate(player);
+		BrokenUpdate();
 		break;
 	case Available:
-		AvailableUpdate(deltaTime, enemy);
+		AvailableUpdate(deltaTime);
 		break;
 	default:
 		break;
 	}
 }
 
-void Turret::BrokenUpdate(PlayerController& player)
+void Turret::BrokenUpdate()
 {
-	Vec3 toPlayer = player.GetPosition() - position;
+	Vec3 toPlayer = player->GetPosition() - position;
 	float dir = toPlayer.Length();
-	if (dir <= Const::TULLET_RELEASEDISTANCE && CheckHitKey(KEY_INPUT_0))
+	if (dir <= Const::TULLET_RELEASEDISTANCE)
 	{
-		modelTurretHandle = modelTurret;
-		state = State::Available;
+		isPriceDraw = true;
+
+		if (CheckHitKey(KEY_INPUT_RETURN) && coin->GetCoin() >= turretCoin)
+		{
+			coin->MinusCoin(turretCoin);
+			modelTurretHandle = modelTurret;
+			state = State::Available;
+			isPriceDraw = false;
+		}
+	}
+	else
+	{
+		isPriceDraw = false;
 	}
 }
 
-void Turret::AvailableUpdate(float deltaTime, EnemyLow enemy)
+void Turret::AvailableUpdate(float deltaTime)
 {	
-	for (auto& a : arrow)
+	for (auto& a : arrows)
 	{
 		if (!a.IsActive()) { continue; }
 
 		a.Update(deltaTime);
 	}
 
-	Vec3 toPlayer = enemy.GetPosition() - position;
+	Vec3 toEnemy = GetNearbyEnemy();
 
-	float dirX = toPlayer.LengthIndividual(toPlayer.x);
-	float dirZ = toPlayer.LengthIndividual(toPlayer.z);
+	if (toEnemy.Length() <= 0) { return; }
 
-	if (dirX > Const::TULLET_SHOTRANGE || dirZ > Const::TULLET_SHOTRANGE) { return; }
+	toEnemy = toEnemy.Normalized();
+	yaw = std::atan2(toEnemy.x, toEnemy.z);
+
     shotIntervalTimer -= deltaTime;
-	
-	toPlayer = toPlayer.Normalized();
-	yaw = std::atan2(toPlayer.x, toPlayer.z);
 	
 	if (shotIntervalTimer <= 0.0f)
 	{
-		for (auto& a : arrow)
+		for (auto& a : arrows)
 		{
 			if (a.IsActive()) { continue; }
 
-			a.LaunchArrow(toPlayer, deltaTime, *this);
+			a.LaunchArrow(toEnemy, deltaTime, *this);
 			Debug().Log(u8"矢が発射された");
 			break;
 		}
@@ -102,10 +117,46 @@ void Turret::Draw() const
 	MV1SetRotationXYZ(modelTurretHandle, DxConv::ToVECTOR({ 0.0f, yaw, 0.0f }));
 	MV1DrawModel(modelTurretHandle);
 
-	for (auto& a : arrow)
+	for (auto& a : arrows)
 	{
 		if (!a.IsActive()) { continue; }
 
 		a.Draw();
 	}
+
+	if (isPriceDraw)
+	{
+		DrawRotaGraph3D(position.x, position.y + 70, position.z, 0.05, 0, spritePrice, true);
+	}
+}
+
+Vec3 Turret::GetNearbyEnemy()
+{
+	float minDir = std::numeric_limits<float>::infinity();
+	Vec3 targetEnemy = { 0.0f,0.0f,0.0f };
+
+	for (int i = 0; i < enemySpawner->GetEnemyCollectionSize(); i++)
+	{
+		auto& enemy = enemySpawner->GetEnemy(i);
+
+		if (!enemy->IsAlive()) { continue; }
+
+		Vec3 toEnemy = enemy->GetPosition() - position;
+
+		//XとZの距離を個別で取得
+		float dirX = toEnemy.LengthIndividual(toEnemy.x);
+		float dirZ = toEnemy.LengthIndividual(toEnemy.z);
+
+		//XとZどちらかが遠い場合はターゲットにしない
+		if (dirX > Const::TULLET_SHOTRANGE || dirZ > Const::TULLET_SHOTRANGE) { continue; }
+
+		float length = toEnemy.Length();
+		if (length <= minDir)
+		{
+			targetEnemy = toEnemy;
+			minDir = length;
+		}
+	}
+
+	return targetEnemy;
 }

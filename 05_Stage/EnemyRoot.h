@@ -10,9 +10,15 @@ public:
 	void Init();
 	void DebugDraw() const;
 	[[nodiscard]] Vec3 GetTargetPos(const size_t idx) const;
-	[[nodiscard]] size_t GetRootPointsLength() const { return std::size(rootPoints); }
+	[[nodiscard]] Vec3 GetNextStartPos();
+	[[nodiscard]] const Vec3 GetCorePos() const { return corePos_kari; }
+	[[nodiscard]] size_t GetRootPointsLength() const { return std::size(startPoints); }
 
 private:
-	std::array<Vec3, 5> rootPoints;
+	static constexpr size_t START_POINT_AMOUNT = 2;
+	std::array<Vec3, START_POINT_AMOUNT> startPoints;
+	Vec3 corePos_kari{ -110,0,-200 };
+
+	size_t startIdx{ 0 };
 };
 
