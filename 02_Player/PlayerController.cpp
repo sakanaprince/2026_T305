@@ -26,6 +26,7 @@ void PlayerController::Reset()
     hp = { Const::PLAYER_MAX_HP };
 
     fireTimer = { 0.0f };
+    fireInterval = { Const::PISTOL_FIRE_INTERVAL };
 	reloadTimer = { Const::RELOAD_TIME };
 
     currentGunType = { 0 };
@@ -85,9 +86,13 @@ void PlayerController::Update(float deltaTime, Stage& stage)
 	// カメラの更新
 	camera.UpdateFromPlayer(eye, yaw, pitch);
 
+    // 銃の種類の切り替え
+    gun.Update();
+    gun.UpdateFromCamera(position, camera.GetForward(), camera.GetRight(), camera.GetUp());
+
 	// リロード判定
     if (!isReload && (CheckHitKey(KEY_INPUT_R) || 
-        pistolAmmo < 0 || rifleAmmo < 0 || shotgunAmmo < 0)) {
+        pistolAmmo <= 0 || rifleAmmo <= 0 || shotgunAmmo <= 0)) {
         isReload = true;
     }
 
@@ -101,10 +106,10 @@ void PlayerController::Update(float deltaTime, Stage& stage)
                 pistolAmmo = Const::PISTOL_MAGAZIN_MAX;
                 break;
             case GunType::Rifle:
-                rifleAmmo = Const::PISTOL_MAGAZIN_MAX;
+                rifleAmmo = Const::RIFLE_MAGAZIN_MAX;
                 break;
             case GunType::Shotgun:
-                shotgunAmmo = Const::PISTOL_MAGAZIN_MAX;
+                shotgunAmmo = Const::SHOTGUN_MAGAZIN_MAX;
                 break;
             }
 			reloadTimer = Const::RELOAD_TIME;
@@ -112,10 +117,6 @@ void PlayerController::Update(float deltaTime, Stage& stage)
 		}
 		return;
 	}
-
-    // 銃の種類の切り替え
-    gun.Update();
-    gun.UpdateFromCamera(position, camera.GetForward(), camera.GetRight(), camera.GetUp());
 
 	// 弾丸の発射
 	static int prevMouseInput = 0;
@@ -125,45 +126,52 @@ void PlayerController::Update(float deltaTime, Stage& stage)
     switch (currentGunType)
     {
     case GunType::Pistol:
-        fireTimer = Const::PISTOL_FIRE_INTERVAL;
+        fireInterval = Const::PISTOL_FIRE_INTERVAL;
         break;
     case GunType::Rifle:
-        fireTimer = Const::RIFLE_FIRE_INTERVAL;
+        fireInterval = Const::RIFLE_FIRE_INTERVAL;
         break;
     case GunType::Shotgun:
-        fireTimer = Const::SHOTGUN_FIRE_INTERVAL;
+        fireInterval = Const::SHOTGUN_FIRE_INTERVAL;
         break;
     }
 
     fireTimer -= deltaTime;
 
-	if (leftDown && fireTimer <= 0.0f) {
+	if (fireTimer <= 0.0f) {
         switch (currentGunType)
         {
         case GunType::Pistol:
-            if (pistolAmmo > 0)
+            if (leftDown && pistolAmmo > 0)
             {
                 FireBullet(camera.GetEye(), camera.GetForward());
                 pistolAmmo--;
-                fireTimer = Const::PISTOL_FIRE_INTERVAL;
+                fireTimer = fireInterval;
             }
             break;
 
         case GunType::Rifle:
-            if (rifleAmmo > 0)
+            if ((nowMouse & MOUSE_INPUT_LEFT) && rifleAmmo > 0)
             {
                 FireBullet(camera.GetEye(), camera.GetForward());
                 rifleAmmo--;
-                fireTimer = Const::RIFLE_FIRE_INTERVAL;
+                fireTimer = fireInterval;
             }
             break;
 
         case GunType::Shotgun:
-            if (shotgunAmmo > 0)
+            if (leftDown && shotgunAmmo > 0)
             {
-                FireBullet(camera.GetEye(), camera.GetForward());
+                Vec3 eyePos = camera.GetEye();
+                Vec3 forward = camera.GetForward();
+
+                for (int n = 0; n < Const::SHOTGUN_PELLET_COUNT; n++)
+                {
+                    Vec3 dir = RandomSpreadDirection(forward);
+                    FireBullet(eyePos, dir);
+                }
                 shotgunAmmo--;
-                fireTimer = Const::SHOTGUN_FIRE_INTERVAL;
+                fireTimer = fireInterval;
             }
             break;
         }
@@ -318,13 +326,13 @@ void PlayerController::Step(float deltaTime, Stage& stage, const Vec3& moveVec)
 
 void PlayerController::Draw() const
 {
-    //プレイヤーのステージとの当たり判定の半径
-	DrawCylinder3D(DxConv::ToVECTOR(position), DxConv::ToVECTOR(position + Vec3(0, Const::PLAYER_EYE_POSITION, 0)),
-		Const::PLAYER_STAGE_RADIUS, 12, GetColor(0, 255, 0), GetColor(0, 255, 0), FALSE);
+ //   //プレイヤーのステージとの当たり判定の半径
+	//DrawCylinder3D(DxConv::ToVECTOR(position), DxConv::ToVECTOR(position + Vec3(0, Const::PLAYER_EYE_POSITION, 0)),
+	//	Const::PLAYER_STAGE_RADIUS, 12, GetColor(0, 255, 0), GetColor(0, 255, 0), FALSE);
 
-    //プレイヤーの敵との当たり判定の半径
-    DrawCylinder3D(DxConv::ToVECTOR(position), DxConv::ToVECTOR(position + Vec3(0, Const::PLAYER_EYE_POSITION, 0)),
-        Const::PLAYER_ENEMY_RADIUS, 12, GetColor(0, 0, 255), GetColor(0, 0, 255), FALSE);
+ //   //プレイヤーの敵との当たり判定の半径
+ //   DrawCylinder3D(DxConv::ToVECTOR(position), DxConv::ToVECTOR(position + Vec3(0, Const::PLAYER_EYE_POSITION, 0)),
+ //       Const::PLAYER_ENEMY_RADIUS, 12, GetColor(0, 0, 255), GetColor(0, 0, 255), FALSE);
 
 	//カメラのレティクルの描画
 	camera.ReticleDraw();
@@ -361,8 +369,8 @@ void PlayerController::Draw() const
 	int x = DxPlus::CLIENT_WIDTH;
 	int y = DxPlus::CLIENT_HEIGHT;
 
-	DrawFormatStringToHandle(x - textWidth - 20, y - 60, GetColor(255, 255, 255)
-        , gunFont, L"%s", ammoBuf);
+	DrawFormatStringToHandle(x - textWidth - 20, y - 60, GetColor(255, 255, 255),
+        gunFont, L"%s", ammoBuf);
 
     swprintf(buf, 32, L"%s", gunName);
     textWidth = GetDrawStringWidthToHandle(buf, wcslen(buf), gunFont);
@@ -386,4 +394,29 @@ void PlayerController::FireBullet(const Vec3& eye, const Vec3& forward)
             break;
         }
     }
+}
+
+Vec3 PlayerController::RandomSpreadDirection(const Vec3& forward)
+{
+    // ランダム角度
+    float yawOffset = (GetRand(2000) / 1000.0f - 1.0f) * Const::SHOTGUN_SPREAD_ANGLE;
+    float pitchOffset = (GetRand(2000) / 1000.0f - 1.0f) * Const::SHOTGUN_SPREAD_ANGLE;
+
+    float yawRad = yawOffset * DX_PI / 180.0f;
+    float pitchRad = pitchOffset * DX_PI / 180.0f;
+
+    // forward を回転させる
+    Vec3 dir = forward;
+
+    // yaw 回転
+    float cy = cos(yawRad);
+    float sy = sin(yawRad);
+    dir = { dir.x * cy - dir.z * sy, dir.y, dir.x * sy + dir.z * cy };
+
+    // pitch 回転
+    float cp = cos(pitchRad);
+    float sp = sin(pitchRad);
+    dir = { dir.x, dir.y * cp - dir.z * sp, dir.y * sp + dir.z * cp };
+
+    return dir.Normalized();
 }
