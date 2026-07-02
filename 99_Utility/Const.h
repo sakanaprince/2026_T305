@@ -6,9 +6,9 @@ namespace Const
 	//===== プレイヤー関連 =====
 	//プレイヤーの最大HP
 	constexpr int PLAYER_MAX_HP{ 10 };
-	//プレイヤーのステージとの当たり判定の半径
+	//プレイヤーとステージとの当たり判定の半径
 	constexpr float PLAYER_STAGE_RADIUS{ 130.0f };
-	//プレイヤーの敵との当たり判定の半径
+	//プレイヤーと敵との当たり判定の半径
 	constexpr float PLAYER_ENEMY_RADIUS{ 50.0f };
 	//歩き中の移動速度
 	constexpr float PLAYER_WALK_SPEED{ 200.0f };
@@ -28,18 +28,26 @@ namespace Const
 	constexpr float PITC_MAX{ DxPlus::Deg2Rad * 89 };
 
 	//===== 弾丸関連 =====
-	//最大弾数
-	constexpr int AMMO_MAX{ 16 };
+	//弾丸の表示上限
+	constexpr int AMMO_MAX{ 30 };
+	//ピストルのマガジン容量
+	constexpr int PISTOL_MAGAZIN_MAX{ 16 };
+	//ライフルのマガジン容量
+	constexpr int RIFLE_MAGAZIN_MAX{ 30 };
+	//ショットガンのマガジン容量
+	constexpr int SHOTGUN_MAGAZIN_MAX{ 3 };
+	//ピストルの弾丸一発分のダメージ
+	constexpr int PISTOL_BULLET_DAMAGE{ 5 };
+	//ライフルの弾丸一発分のダメージ
+	constexpr int RIFLE_BULLET_DAMAGE{ 3 };
+	//ショットガンの弾丸一発分のダメージ
+	constexpr int SHOTGUN_BULLET_DAMAGE{ 2 };
 	//弾速
 	constexpr float BULLET_SPEED{ 4000.0f };
 	//リロード時間
 	constexpr float RELOAD_TIME{ 1.5f };
 
 	//===== 敵関連 =====
-	constexpr int ENEMY_LOW_MAXHP{ 3 };
-	constexpr int MAX_ENEMY_COUNT{ 20 };
-	constexpr int MAX_SAME_ENEMY_POOL_COUNT{ 10 };
-
 
 	//===== 物理関連 =====
 	constexpr float GRAVITY{ 2000.0f };
