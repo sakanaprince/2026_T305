@@ -9,6 +9,9 @@ void EnemyRoot::Init()
 	startPoints[0] = { -63, 0, 2000 };
 	startPoints[1] = { -63, 0 , -2000 };
 
+	//ÉSÅ[Éã
+	//startPoints[1] = { 0, 0, 0 };
+
 
 	//ìÆÇ≠î≈
 	//rootPoints[0] = { 0, 0, 0 };
