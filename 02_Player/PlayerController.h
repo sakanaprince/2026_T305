@@ -35,7 +35,9 @@ public:
 	void Update(float deltaTime, Stage& stage);
 	void Step(float deltaTime, Stage& stage, const Vec3& moveVec);
 	void Draw() const;
+
 	void FireBullet(const Vec3& eye, const Vec3& forward);
+	Vec3 RandomSpreadDirection(const Vec3& forward);
 
 private:
 	Vec3 position{ 0.0f,0.0f,0.0f };
