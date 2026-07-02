@@ -8,6 +8,8 @@ namespace ResourceKeys
     inline constexpr const wchar_t* Sprite_TitleBG = L"SpriteTitleBG";
     inline constexpr const wchar_t* Sprite_GameOverBG = L"SpriteGameOverBG";
     inline constexpr const wchar_t* Sprite_GameClearBG = L"SpriteGameClearBG";
+    inline constexpr const wchar_t* Sprite_TutorialPurpose = L"SpriteTutorialPurpose"; 
+    inline constexpr const wchar_t* Sprite_TutorialTurret = L"SpriteTutorialTurret ";
     inline constexpr const wchar_t* Sprite_Coin = L"SpriteCoin";
     inline constexpr const wchar_t* Sprite_TurretPrice = L"SpriteTurretPrice";
 
