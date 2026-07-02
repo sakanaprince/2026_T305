@@ -25,7 +25,10 @@ void PlayerController::Reset()
 
     hp = { Const::PLAYER_MAX_HP };
 
+    fireTimer = { 0.0f };
 	reloadTimer = { Const::RELOAD_TIME };
+
+    currentGunType = { 0 };
 	pistolAmmo = { Const::PISTOL_MAGAZIN_MAX };
 	rifleAmmo = { Const::RIFLE_MAGAZIN_MAX };
 	shotgunAmmo = { Const::SHOTGUN_MAGAZIN_MAX };
@@ -35,6 +38,9 @@ void PlayerController::Reset()
 
 void PlayerController::Update(float deltaTime, Stage& stage)
 {
+    //現在の銃の種類を取得
+    currentGunType = gun.GetGunType();
+
 	// マウスの現在地を取得
 	GetMousePoint(&currentMouse.x, &currentMouse.y);
 
@@ -76,19 +82,31 @@ void PlayerController::Update(float deltaTime, Stage& stage)
 	// 視点の高さに更新
 	Vec3 eye = position + Vec3(0, Const::PLAYER_EYE_POSITION, 0);
 
-	// カメラの更新（着地しても正しく毎フレーム実行される）
+	// カメラの更新
 	camera.UpdateFromPlayer(eye, yaw, pitch);
 
 	// リロード判定
-	if (!isReload && (CheckHitKey(KEY_INPUT_R) || pistolAmmo <= 0)) {
-		isReload = true;
-	}
+    if (!isReload && (CheckHitKey(KEY_INPUT_R) || 
+        pistolAmmo < 0 || rifleAmmo < 0 || shotgunAmmo < 0)) {
+        isReload = true;
+    }
 
 	// リロード中の処理
 	if (isReload) {
 		reloadTimer -= deltaTime;
 		if (reloadTimer <= 0.0f) {
-			pistolAmmo = Const::AMMO_MAX;
+            switch (currentGunType)
+            {
+            case GunType::Pistol:
+                pistolAmmo = Const::PISTOL_MAGAZIN_MAX;
+                break;
+            case GunType::Rifle:
+                rifleAmmo = Const::PISTOL_MAGAZIN_MAX;
+                break;
+            case GunType::Shotgun:
+                shotgunAmmo = Const::PISTOL_MAGAZIN_MAX;
+                break;
+            }
 			reloadTimer = Const::RELOAD_TIME;
 			isReload = false;
 		}
@@ -104,21 +122,56 @@ void PlayerController::Update(float deltaTime, Stage& stage)
 	int nowMouse = GetMouseInput();
 	bool leftDown = (nowMouse & MOUSE_INPUT_LEFT) && !(prevMouseInput & MOUSE_INPUT_LEFT);
 
-	if (leftDown && pistolAmmo > 0) {
-		for (int i = 0; i < Const::AMMO_MAX; i++) {
-			if (!bullets[i].IsActive()) {
-				Vec3 pos = camera.GetEye() + camera.GetForward() * 20.0f;
-				Vec3 dir = camera.GetForward();
-				pistolAmmo--;
-				bullets[i].Fire(pos, dir);
-				break;
-			}
-		}
+    switch (currentGunType)
+    {
+    case GunType::Pistol:
+        fireTimer = Const::PISTOL_FIRE_INTERVAL;
+        break;
+    case GunType::Rifle:
+        fireTimer = Const::RIFLE_FIRE_INTERVAL;
+        break;
+    case GunType::Shotgun:
+        fireTimer = Const::SHOTGUN_FIRE_INTERVAL;
+        break;
+    }
+
+    fireTimer -= deltaTime;
+
+	if (leftDown && fireTimer <= 0.0f) {
+        switch (currentGunType)
+        {
+        case GunType::Pistol:
+            if (pistolAmmo > 0)
+            {
+                FireBullet(camera.GetEye(), camera.GetForward());
+                pistolAmmo--;
+                fireTimer = Const::PISTOL_FIRE_INTERVAL;
+            }
+            break;
+
+        case GunType::Rifle:
+            if (rifleAmmo > 0)
+            {
+                FireBullet(camera.GetEye(), camera.GetForward());
+                rifleAmmo--;
+                fireTimer = Const::RIFLE_FIRE_INTERVAL;
+            }
+            break;
+
+        case GunType::Shotgun:
+            if (shotgunAmmo > 0)
+            {
+                FireBullet(camera.GetEye(), camera.GetForward());
+                shotgunAmmo--;
+                fireTimer = Const::SHOTGUN_FIRE_INTERVAL;
+            }
+            break;
+        }
 	}
 	prevMouseInput = nowMouse;
 }
 
-void PlayerController::Step(float deltaTime, const class Stage& stage, const Vec3& moveVec)
+void PlayerController::Step(float deltaTime, Stage& stage, const Vec3& moveVec)
 {
     // ===== 水平方向の移動と壁判定 =====
     constexpr int MAX_SLIDE_COUNT = 3;  // 壁の角で数回まで滑らせる
@@ -280,10 +333,9 @@ void PlayerController::Draw() const
 
     //現在の銃の種類を表示
     const wchar_t* gunName = L"";
-    int gt = gun.GetGunType();
     wchar_t ammoBuf[32];
 
-    switch (gt)
+    switch (currentGunType)
     {
     case GunType::Pistol:
         gunName = L"ハンドガン";
@@ -321,4 +373,17 @@ void PlayerController::Draw() const
 	if (isReload) {
         DrawFormatStringToHandle(x / 2 - 55, y / 2 + 15, GetColor(255, 200, 0), reloadFont, L"RELOADING...");
 	}
+}
+
+void PlayerController::FireBullet(const Vec3& eye, const Vec3& forward)
+{
+    for (int i = 0; i < bulletCount; i++)
+    {
+        if (!bullets[i].IsActive())
+        {
+            Vec3 pos = eye + forward * 20.0f;
+            bullets[i].Fire(pos, forward);
+            break;
+        }
+    }
 }

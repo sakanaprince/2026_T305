@@ -30,6 +30,12 @@ namespace Const
 	//===== 弾丸関連 =====
 	//弾丸の表示上限
 	constexpr int AMMO_MAX{ 30 };
+	//ピストルの発射間隔
+	constexpr float PISTOL_FIRE_INTERVAL{ 0.2 };
+	//ライフルの発射間隔
+	constexpr float RIFLE_FIRE_INTERVAL{ 0.05 };
+	//ショットガンの発射間隔
+	constexpr float SHOTGUN_FIRE_INTERVAL{ 0.5 };
 	//ピストルのマガジン容量
 	constexpr int PISTOL_MAGAZIN_MAX{ 16 };
 	//ライフルのマガジン容量
