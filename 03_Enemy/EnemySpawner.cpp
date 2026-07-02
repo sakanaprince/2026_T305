@@ -109,7 +109,7 @@ void EnemySpawner::Draw() const
 		e->Draw();
 	}
 	
-#ifndef DEBUG
+#ifdef _DEBUG
 	for (const auto& e : enemyCollection)
 	{
 		if (!e->IsAlive()) { continue; }
