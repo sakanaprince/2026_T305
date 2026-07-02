@@ -7,6 +7,7 @@
 #include "../10_Physics/Collision.h"
 
 class EnemySpawner;
+class Player;
 
 class Entity
 {
@@ -33,7 +34,7 @@ public:
 
     //＝＝＝＝おそらく敵しか使わないもの＝＝＝＝＝＝＝
     void SetEnemyRoot_pointer(EnemyRoot* enRoot) { pEnemyRoot = enRoot; }
-    void SetPlayerPointer(PlayerController* pc) { playerCont = pc; };
+    void SetPlayerPointer(PlayerController* pc) { pPlayer = pc; };
     void Kill(){ isAlive = false; }
     //＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
     
@@ -41,7 +42,7 @@ public:
 
     //ライフサイクル
     //ほんとは純粋仮想関数にしたいけど、配列を作る時にエラーが...え？直った。vectorにしたからかな
-    virtual void Init(EnemyRoot* enRoot) = 0;
+    virtual void Init(EnemyRoot* enRoot, PlayerController* pc) = 0;
     virtual void Reset() { MessageBox(NULL, L"なぜ基底クラスのResetを呼ぶのか", L"", FALSE); };
     virtual void Update(float deltaTime) { MessageBox(NULL, L"なぜ基底クラスのUpdateを呼ぶのか", L"", FALSE); };
     virtual void Draw()const {};
@@ -95,7 +96,7 @@ protected:
     virtual void StepGround(float deltaTime) ;
 
     //ポインターまとめ
-    PlayerController* playerCont{ nullptr };
+    PlayerController* pPlayer{ nullptr };
     EnemySpawner* pEnemySpawner{ nullptr };
     EnemyRoot* pEnemyRoot{nullptr};
 

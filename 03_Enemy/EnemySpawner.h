@@ -11,7 +11,7 @@ class EnemySpawner
 {
 public:
 	EnemySpawner() = default;
-	void Init(EnemyRoot* enR);
+	void Init(EnemyRoot* enRoot, PlayerController* pc);
 	void Update(float deltaTime);
 	void Draw() const;
 
