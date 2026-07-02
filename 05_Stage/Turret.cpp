@@ -62,7 +62,7 @@ void Turret::BrokenUpdate()
 	{
 		isPriceDraw = true;
 
-		if (CheckHitKey(KEY_INPUT_0) && coin->GetCoin() >= turretCoin)
+		if (CheckHitKey(KEY_INPUT_RETURN) && coin->GetCoin() >= turretCoin)
 		{
 			coin->MinusCoin(turretCoin);
 			modelTurretHandle = modelTurret;
@@ -135,7 +135,7 @@ Vec3 Turret::GetNearbyEnemy()
 	float minDir = std::numeric_limits<float>::infinity();
 	Vec3 targetEnemy = { 0.0f,0.0f,0.0f };
 
-	for (int i = 0; i < Const::MAX_ENEMY_COUNT; i++)
+	for (int i = 0; i < enemySpawner->GetEnemyCollectionSize(); i++)
 	{
 		auto& enemy = enemySpawner->GetEnemy(i);
 

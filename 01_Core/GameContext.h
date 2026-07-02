@@ -13,6 +13,8 @@
 #include "../99_Utility/Const.h"
 #include "../05_Stage/Core.h"
 
+#include <string>
+
 class GameContext
 {
 public:
@@ -28,11 +30,11 @@ public:
     Core GetCore() const { return core; }
 
 private:
+    void TimeLimit(float deltaTime);
     void CollisionEnemyBullet();
     void CollisionEnemyArrow();
 
     PlayerController player;
-    EnemyLow enemy;
     EnemyRoot enemyRoot;
     EnemySpawner enemySpawner;
     Stage stage;
@@ -49,4 +51,8 @@ private:
     //Žc‚èŽžŠÔŒv‘ª—p
     float limit_Timer{ 0 };
     float limit_Time{ 300 };
+    float limit_prevTime{ 0 };
+
+    int fontHandle{ -1 };
+    std::wstring text_Timer;
 };
