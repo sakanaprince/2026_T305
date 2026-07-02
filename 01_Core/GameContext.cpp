@@ -19,7 +19,7 @@ void GameContext::Init()
         t.Init(&player, &enemySpawner, &coin);
     }
     enemyRoot.Init();
-    enemySpawner.Init(&enemyRoot);
+    enemySpawner.Init(&enemyRoot,&player, this);
     bullets->Init();   
     player.Init();
     player.SetBulletPointer(bullets, Const::AMMO_MAX);
