@@ -9,7 +9,6 @@ public:
 	void Init(EnemyRoot* enRoot) override;
 	void Reset();
 	void Update(float deltaTime) override;
-	//void Step(float deltaTime) override;
 	void Draw() const override;
 	void DrawDebug()const override;
 

@@ -17,6 +17,7 @@ void Entity::StepGround(float deltaTime)
 		{
 			isAlive = false;
 
+			MessageBox(NULL, L"‚Æ‚¤‚½‚Â", L"", FALSE);
 			if (pEnemySpawner) { pEnemySpawner->DecAliveEnemyCount(); }
 
 			return;

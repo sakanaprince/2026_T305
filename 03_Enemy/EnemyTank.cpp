@@ -1,11 +1,12 @@
-#include "EnemyQuick.h"
+#include "EnemyTank.h"
 #include "../99_Utility/Const.h"
 #include "EnemySpawner.h"
 
-void EnemyQuick::Init(EnemyRoot* enRoot)
+void EnemyTank::Init(EnemyRoot * enRoot)
 {
-	radius = 80.0f;
-	height = 40.0f;
+	radius = 160.0f;
+	height = 70.0f;
+	hitSphereRadius = 100.0f;
 	isAlive = false;
 	pEnemyRoot = enRoot;
 
@@ -16,10 +17,10 @@ void EnemyQuick::Init(EnemyRoot* enRoot)
 	}
 }
 
-void EnemyQuick::Reset()
+void EnemyTank::Reset()
 {
 	moveDir = Vec3(0.0f, 0.0f, 0.0f);
-	moveSpeed = 300.0f;
+	moveSpeed = 20.0f;
 	rootTargetIndex = 0;
 	currentHp = initHp;
 
@@ -38,7 +39,7 @@ void EnemyQuick::Reset()
 	isAlive = true;
 }
 
-void EnemyQuick::Update(float deltaTime)
+void EnemyTank::Update(float deltaTime)
 {
 	if (!isAlive) { return; }
 
@@ -65,19 +66,19 @@ void EnemyQuick::Update(float deltaTime)
 	animTimer += 10.0f * deltaTime;
 }
 
-void EnemyQuick::Draw() const
+void EnemyTank::Draw() const
 {
 	if (!isAlive) { return; }
 
 	BodyLine();
 }
 
-void EnemyQuick::DrawDebug() const
+void EnemyTank::DrawDebug() const
 {
-	DrawSphere3D( DxConv::ToVECTOR(GetSphere().centerPos), radius, 16, GetColor(255, 0, 0), GetColor(255, 0, 0), false);
+	DrawSphere3D(DxConv::ToVECTOR(GetSphere().centerPos), hitSphereRadius, 16, GetColor(255, 0, 0), GetColor(255, 0, 0), false);
 }
 
-void EnemyQuick::TakeDamage(int amount)
+void EnemyTank::TakeDamage(int amount)
 {
 	if (isKilledReaction) { return; }
 
@@ -96,10 +97,8 @@ void EnemyQuick::TakeDamage(int amount)
 	}
 }
 
-void EnemyQuick::BodyLine() const
+void EnemyTank::BodyLine() const
 {
-
-
 	float sizeMagnification = 1.0f;
 
 	if (isKilledReaction)
@@ -111,7 +110,7 @@ void EnemyQuick::BodyLine() const
 		DxLib::SetDrawBlendMode(DX_BLENDMODE_MUL, 64);
 		//1スタート0になっていく
 		constexpr float damageReactionSize = 1.1f;
-		sizeMagnification = 1.0f + damageReactionSize * (damageReactionTimer / DAMAGE_REACTION_TIME);
+		sizeMagnification = 2.0f + damageReactionSize * (damageReactionTimer / DAMAGE_REACTION_TIME);
 	}
 
 
@@ -121,13 +120,13 @@ void EnemyQuick::BodyLine() const
 		DxConv::ToVECTOR({ position.x , (position.y + skin) , position.z }),
 		DxConv::ToVECTOR({ position.x , (position.y + skin + height), position.z }),
 
-		50 * sizeMagnification, 16, GetColor(0, 0, 250), GetColor(0, 0, 255), true
+		50 * sizeMagnification, 16, GetColor(0, 0, 250), GetColor(255, 255, 255), true
 	);
 
 
 	//position.yは固定
-	constexpr float SPIN_RADIUS = 50.0f;
-	constexpr float CAPSULE_RADIUS = 20.0f;
+	constexpr float SPIN_RADIUS = 70.0f;
+	constexpr float CAPSULE_RADIUS = 40.0f;
 	constexpr float spinSpeedBoost = 3.0f;
 
 	const float sinSpin = std::sinf(animTimer * spinSpeedBoost) * SPIN_RADIUS;
@@ -142,14 +141,14 @@ void EnemyQuick::BodyLine() const
 		//sinとかcosは -1から1をぐるぐるするという性質を使って理想を表現している
 		DxConv::ToVECTOR({ position.x + sinSpin, position.y + height, position.z + cosSpin }),
 		DxConv::ToVECTOR({ position.x, position.y + height, position.z }),
-		CAPSULE_RADIUS * sizeMagnification, 16, GetColor(255, 255, 0), GetColor(0, 0, 0), true
+		CAPSULE_RADIUS * sizeMagnification, 16, GetColor(155, 100, 0), GetColor(255, 255, 0), true
 	);
 
 	DxLib::DrawCapsule3D
 	(
 		DxConv::ToVECTOR({ position.x - sinSpin, position.y + height, position.z - cosSpin }),
 		DxConv::ToVECTOR({ position.x, position.y + height, position.z }),
-		CAPSULE_RADIUS * sizeMagnification, 16, GetColor(255, 255, 0), GetColor(0, 0, 0), true
+		CAPSULE_RADIUS * sizeMagnification, 16, GetColor(255, 25, 0), GetColor(255, 255, 0), true
 	);
 
 	DxLib::SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);

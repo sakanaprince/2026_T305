@@ -20,6 +20,16 @@ public:
 		aliveEnemyCount--;
 	}
 
+	enum class ENEMY_NAME
+	{
+		Low = 0,
+		Quick,
+		Tank,
+
+		//AllEnemyNameCountは全部で何種類の敵がいるかを返す
+		AllEnemyNameCount
+	};
+
 
 	/// <summary>
 	/// 引数番目の敵の”参照”返す、indexの値確認は呼び出しもとで注意してね
@@ -28,15 +38,21 @@ public:
 	/// <returns></returns>
 	auto& GetEnemy(size_t index) { return enemyCollection[index]; }
 
-private:
-	void SpawnEnemy();
+	/// <summary>
+	/// コレクションVectorの要素数を取得できる
+	/// </summary>
+	/// <returns></returns>
+	size_t GetEnemyCollectionSize() { return enemyCollection.size(); }
 
-	//std::array<Entity, Const::MAX_ENEMY_COUNT> enemyCollection{};
+private:
+	void SpawnEnemy(ENEMY_NAME enName);
+
 	std::vector<std::unique_ptr<Entity>> enemyCollection;
 
 	int aliveEnemyCount = 0;
 
 	float spawnTimer{ 0.0f };
 	const float spawnDuration{ 1.0f };
+	int spawnedCount{ 0 };
 };
 
