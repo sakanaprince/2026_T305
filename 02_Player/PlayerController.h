@@ -5,6 +5,8 @@
 #include "Bullet.h"
 #include "../05_Stage/Stage.h"
 #include "../07_Math/Vector3.h"
+#include "../10_Physics/Collision.h"
+#include "../99_Utility/Const.h"
 
 class PlayerController
 {
@@ -13,14 +15,20 @@ public:
 		bullets = b;
 		bulletCount = count;
 	}
+
+	const Collision::Sphere GetPlayerSphere() const {
+		Collision::Sphere s{};
+		s.centerPos = position;
+		s.radius = Const::PLAYER_ENEMY_RADIUS;
+		return s;
+	}
+
 	//プレイヤーの位置を取得
 	const Vec3& GetPosition() const { return position; }
 	//プレイヤーのHPを取得
 	const int GetHp() const { return hp; }
 	//ダメージを渡してその分をHPから引く
 	void TakeDamage(const int damage) { hp -= damage; }
-	//残弾数を取得
-	const int GetAmmoCount() const { return ammoCount; }
 
 	void Init();
 	void Reset();
@@ -42,7 +50,10 @@ private:
 	int hp{ 0 };
 
 	int bulletCount{ 0 };
-	int ammoCount{ 0 };
+
+	int pistolAmmo{ 0 };
+	int rifleAmmo{ 0 };
+	int shotgunAmmo{ 0 };
 	float reloadTimer{ 0.0f };
 
 	int ammoFont{ -1 };
