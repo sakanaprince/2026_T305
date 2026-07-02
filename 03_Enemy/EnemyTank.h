@@ -9,10 +9,8 @@ public:
 	void Update(float deltaTime) override;
 	void Draw() const override;
 	void DrawDebug()const override;
-
-	void TakeDamage(int amount) override;
 private:
 	void BodyLine()const override;
-	const int initHp{ 40 };
+	const int initHp{ 400 };
 };
 

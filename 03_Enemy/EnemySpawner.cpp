@@ -70,8 +70,9 @@ void EnemySpawner::Update(float deltaTime)
 	if (spawnTimer >= spawnDuration - firstTimer)
 	{
 		//敵を全員出現させるサイクル
-		int spawnCycle = spawnedCount % static_cast<int>( ENEMY_NAME::AllEnemyNameCount);
-		SpawnEnemy(static_cast<ENEMY_NAME>(spawnCycle));
+		//int spawnCycle = spawnedCount % static_cast<int>( ENEMY_NAME::AllEnemyNameCount);
+		//SpawnEnemy(static_cast<ENEMY_NAME>(spawnCycle));
+		SpawnEnemy(ENEMY_NAME::Quick);
 
 		spawnTimer = 0;
 	}

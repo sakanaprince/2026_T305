@@ -25,7 +25,7 @@ void EnemyLow::Reset()
 	moveDir = Vec3(0.0f, 0.0f, 0.0f);
 		moveSpeed = 70.0f;
 	rootTargetIndex = 0;
-		currentHp = Const::ENEMY_LOW_MAXHP ;
+		currentHp = initHp ;
 		radius = 100.0f;
 		height = 60.0f;
 	damageReactionTimer = 0.0f;
@@ -204,26 +204,6 @@ void EnemyLow::DrawDebug() const
 		if (i % 6 == 0) { MyDrawCircle(bottom0, top0); }
 	}
 	
-}
-
-void EnemyLow::TakeDamage(int amount)
-{
-	if (isKilledReaction) { return; }
-
-	amount = std::max(amount, 0);
-	currentHp = std::max(currentHp - amount, 0);
-
-	damageReactionTimer = DAMAGE_REACTION_TIME;
-	isDamageReaction = true;
-
-	if(currentHp == 0 && !isKilledReaction)
-	{
-		isKilledReaction = true;
-		killedReactionTimer = KILLED_REACTION_TIME;
-
-		if (pEnemySpawner) { pEnemySpawner->DecAliveEnemyCount(); }
-	}
-
 }
 
 
