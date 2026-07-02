@@ -23,18 +23,19 @@ public:
 		return s;
 	}
 
-	//ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®ä½ç½®ã‚’å–å¾—
+	//ƒvƒŒƒCƒ„[‚ÌˆÊ’u‚ğæ“¾
 	const Vec3& GetPosition() const { return position; }
-	//ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®HPã‚’å–å¾—
+	//ƒvƒŒƒCƒ„[‚ÌHP‚ğæ“¾
 	const int GetHp() const { return hp; }
-	//ãƒ€ãƒ¡ãƒ¼ã‚¸ã‚’æ¸¡ã—ã¦ãã®åˆ†ã‚’HPã‹ã‚‰å¼•ã
+	//ƒ_ƒ[ƒW‚ğ“n‚µ‚Ä‚»‚Ì•ª‚ğHP‚©‚çˆø‚­
 	void TakeDamage(const int damage) { hp -= damage; }
 
 	void Init();
 	void Reset();
 	void Update(float deltaTime, Stage& stage);
-	void Step(float deltaTime, const class Stage& stage, const Vec3& moveVec);
+	void Step(float deltaTime, Stage& stage, const Vec3& moveVec);
 	void Draw() const;
+	void FireBullet(const Vec3& eye, const Vec3& forward);
 
 private:
 	Vec3 position{ 0.0f,0.0f,0.0f };
@@ -51,9 +52,12 @@ private:
 
 	int bulletCount{ 0 };
 
+	int currentGunType{ 0 };
 	int pistolAmmo{ 0 };
 	int rifleAmmo{ 0 };
 	int shotgunAmmo{ 0 };
+
+	float fireTimer{ 0.0f };
 	float reloadTimer{ 0.0f };
 
 	int ammoFont{ -1 };
