@@ -48,7 +48,7 @@ void EnemyLow::Update(float deltaTime)
 
 	if (!pEnemyRoot)
 	{
-		DxPlus::Utils::FatalError(L"Null Ptr");
+		DxPlus::Utils::FatalError(L"EnemyRoot Null Ptr by Low");
 		return;
 	}
 
