@@ -21,7 +21,7 @@ private:
 	int fontHandle{ -1 };
 
 	int hp{ 0 };
-	int hp_Max{ 1000 };
+	int hp_Max{ 100 };
 	int hp_prev{ 0 };
 
 	std::wstring text;
