@@ -36,10 +36,10 @@ void Core::Draw() const
 
 	DxPlus::Text::DrawString(
 		text.c_str(),
-		{DxPlus::CLIENT_WIDTH * 0.5f, 55},
+		{DxPlus::CLIENT_WIDTH * 0.5f, 50},
 		GetColor(0, 0, 0),
 		DxPlus::Text::TextAlign::TOP_CENTER,
-		{1.0f,1.0f},
+		{1.3f,1.3f},
 		0.0,
 		fontHandle);
 }

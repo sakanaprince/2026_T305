@@ -9,13 +9,8 @@
 void GameContext::Init()
 {
     SetFontSize(50);
+    fontHandle = RM().GetFont(ResourceKeys::Font_ManufacturingConsent);
 
-    enemyRoot.Init();
-    enemy.SetPlayerPointer(&player);
-    enemySpawner.Init(&enemyRoot);
-    //enemy.Init(&enemyRoot);
-    player.Init();
-    player.SetBulletPointer(bullets, Const::AMMO_MAX);
     stage.Init();
     coin.Init();
     core.Init();
@@ -23,56 +18,56 @@ void GameContext::Init()
     {
         t.Init(&player, &enemySpawner, &coin);
     }
+    enemyRoot.Init();
+    enemySpawner.Init(&enemyRoot);
+    bullets->Init();   
+    player.Init();
+    player.SetBulletPointer(bullets, Const::AMMO_MAX);
 }
 
 void GameContext::Reset()
 {
-    limit_Timer = limit_Time;
     // 描画先をバックバッファに指定
     DxLib::SetDrawScreen(DX_SCREEN_BACK);
     SetBackgroundColor(0, 105, 255);
 
+    limit_Timer = limit_Time;
+    limit_prevTime = limit_Timer;
+    
+    text_Timer = std::to_wstring(static_cast<int>(limit_Timer));
+    
+    stage.Reset();
+    coin.Reset();
+    core.Reset();
+    turrets[0].Reset({ 1030,260, 870 });
+    turrets[1].Reset({ -1170, 260, 870 });
+    turrets[2].Reset({ -1170, 260, -1340 });
+    turrets[3].Reset({ 1030, 260, -1340 });
     player.Reset();
     for (auto& b : bullets) 
     {
         b.Reset();
     }
-    stage.Reset();
-
-    enemy.Reset();
-
-    turrets[0].Reset({ 1030,260, 870 });
-    turrets[1].Reset({ -1170, 260, 870 });
-    turrets[2].Reset({ -1170, 260, -1340 });
-    turrets[3].Reset({ 1030, 260, -1340 });
-
-    coin.Reset();
-    core.Reset();
 }
 
 void GameContext::Update(float deltaTime)
 { 
-   limit_Timer -= deltaTime;
-    if (limit_Timer <= 0)
-    {
-        limit_Timer = 0;
-    }
+    TimeLimit(deltaTime);
 
     core.Update();
     coin.Update();
+    for (auto& t : turrets)
+    {
+        t.Update(deltaTime);
+    }
     
     for (auto& b : bullets) 
     {
         b.Update(deltaTime);
     }
-    player.Update(deltaTime, stage);  
-    //enemy.Update(deltaTime);
-    enemySpawner.Update(deltaTime);
 
-    for (auto& t : turrets)
-    {
-        t.Update(deltaTime);
-    }
+    player.Update(deltaTime, stage);  
+    enemySpawner.Update(deltaTime);
 
     CollisionEnemyBullet();
     CollisionEnemyArrow();
@@ -83,31 +78,57 @@ void GameContext::Draw() const
     // 画面をクリア
     DxLib::ClearDrawScreen();
 
-    //enemy.Draw();
-    enemySpawner.Draw();
     stage.Draw();
+    coin.Draw();
+    core.Draw();
     for (auto& t : turrets)
     {
         t.Draw();
     }
+    enemySpawner.Draw();
     for (auto& b : bullets) {
         b.Draw();
     }
-    coin.Draw();
     player.Draw();
 
-    core.Draw();
 
-    //制限時間の描画
-    DrawFormatString(DxPlus::CLIENT_WIDTH  * 0.85f, 10, GetColor(0, 0, 0), L"Time : %.0f", limit_Timer);
+    DxPlus::Text::DrawString(
+        (L"Time : "+ text_Timer).c_str(),
+        { DxPlus::CLIENT_WIDTH * 0.93f, 20 },
+        GetColor(0, 0, 0),
+        DxPlus::Text::TextAlign::TOP_CENTER,
+        { 1.5f,1.5f },
+        0.0,
+        fontHandle);
+}
+
+void GameContext::TimeLimit(float deltaTime)
+{
+    limit_Timer -= deltaTime;
+    if (limit_Timer <= 0)
+    {
+        limit_Timer = 0;
+    }
+
+    //1秒ごとにテキストを変更する
+    if (limit_Timer <= limit_prevTime)
+    {
+        limit_prevTime--;
+        text_Timer = std::to_wstring(static_cast<int>(limit_Timer));
+
+        if (limit_prevTime > 0) { return; }
+
+        limit_prevTime = 0;
+    }
 }
 
 void GameContext::CollisionEnemyBullet()
 {
-    for (int i = 0; i < Const::MAX_ENEMY_COUNT; i++)
+    for (int i = 0; i < enemySpawner.GetEnemyCollectionSize(); i++)
     {
         auto& en = enemySpawner.GetEnemy(i);
         if (!en) { continue; }
+        if (!en->IsAlive()) { continue; }
 
         for (auto& b : bullets)
         {
@@ -116,6 +137,7 @@ void GameContext::CollisionEnemyBullet()
             if (Collision::IsHitSphereSphere(en->GetSphere(), b.GetBulletSpere()))
             {
                 en->TakeDamage(1);
+                b.DeActivate();
             }
 
         }
@@ -124,10 +146,11 @@ void GameContext::CollisionEnemyBullet()
 
 void GameContext::CollisionEnemyArrow()
 {
-    for (int i = 0; i < Const::MAX_ENEMY_COUNT; i++)
+    for (int i = 0; i < enemySpawner.GetEnemyCollectionSize(); i++)
     {
         auto& en = enemySpawner.GetEnemy(i);
         if (!en) { continue; }
+        if (!en->IsAlive()) { continue; }
 
         for (auto& t : turrets)
         {
