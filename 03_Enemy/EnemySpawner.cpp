@@ -2,6 +2,8 @@
 #include "../05_Stage/EnemyRoot.h"
 #include "../03_Enemy/EnemyLow.h"
 #include "../03_Enemy/EnemyQuick.h"
+#include "../03_Enemy/EnemyTank.h"
+
 #include <iterator>
 
 void EnemySpawner::Init(EnemyRoot* enR)
@@ -22,6 +24,14 @@ void EnemySpawner::Init(EnemyRoot* enR)
 	for (int i = Const::MAX_SAME_ENEMY_POOL_COUNT; i < Const::MAX_SAME_ENEMY_POOL_COUNT * 2; i++)
 	{
 		enemyCollection.push_back(std::make_unique<EnemyQuick>());
+
+		enemyCollection[i]->Init(enR);
+		enemyCollection[i]->BindEnemySpawner(this);
+	}
+	//開始する値に注意
+	for (int i = Const::MAX_SAME_ENEMY_POOL_COUNT * 2; i < Const::MAX_SAME_ENEMY_POOL_COUNT * 3; i++)
+	{
+		enemyCollection.push_back(std::make_unique<EnemyTank>());
 
 		enemyCollection[i]->Init(enR);
 		enemyCollection[i]->BindEnemySpawner(this);
@@ -54,8 +64,9 @@ void EnemySpawner::Update(float deltaTime)
 
 	if (spawnTimer >= spawnDuration)
 	{
-		if (spawnedCount % 3 == 0){SpawnEnemy(ENEMY_NAME::Quick);}
-		else{SpawnEnemy(ENEMY_NAME::Low);}
+
+		SpawnEnemy(ENEMY_NAME::Quick);
+
 		
 		spawnTimer = 0;
 	}
@@ -76,6 +87,16 @@ void EnemySpawner::Draw() const
 
 		e->Draw();
 	}
+	
+#ifndef DEBUG
+	for (const auto& e : enemyCollection)
+	{
+		if (!e->IsAlive()) { continue; }
+
+		e->DrawDebug();
+	}
+#endif
+
 }
 
 
@@ -97,7 +118,8 @@ void EnemySpawner::SpawnEnemy(ENEMY_NAME enName)
 	size_t startIndex = 0;
 
 	if (enName == ENEMY_NAME::Low){startIndex = 0;}
-	if (enName == ENEMY_NAME::Quick){startIndex = Const::MAX_SAME_ENEMY_POOL_COUNT;}
+	else if (enName == ENEMY_NAME::Quick){startIndex = Const::MAX_SAME_ENEMY_POOL_COUNT;}
+	else if (enName == ENEMY_NAME::Tank) {startIndex = Const::MAX_SAME_ENEMY_POOL_COUNT + Const::MAX_SAME_ENEMY_POOL_COUNT;}
 
 	//待機状態の敵を探してResetする
 	for (size_t i = startIndex; i < startIndex + Const::MAX_SAME_ENEMY_POOL_COUNT; i++)
