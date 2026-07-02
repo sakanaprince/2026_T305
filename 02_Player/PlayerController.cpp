@@ -26,6 +26,7 @@ void PlayerController::Reset()
     hp = { Const::PLAYER_MAX_HP };
 
     fireTimer = { 0.0f };
+    fireInterval = { Const::PISTOL_FIRE_INTERVAL };
 	reloadTimer = { Const::RELOAD_TIME };
 
     currentGunType = { 0 };
@@ -125,13 +126,13 @@ void PlayerController::Update(float deltaTime, Stage& stage)
     switch (currentGunType)
     {
     case GunType::Pistol:
-        fireTimer = Const::PISTOL_FIRE_INTERVAL;
+        fireInterval = Const::PISTOL_FIRE_INTERVAL;
         break;
     case GunType::Rifle:
-        fireTimer = Const::RIFLE_FIRE_INTERVAL;
+        fireInterval = Const::RIFLE_FIRE_INTERVAL;
         break;
     case GunType::Shotgun:
-        fireTimer = Const::SHOTGUN_FIRE_INTERVAL;
+        fireInterval = Const::SHOTGUN_FIRE_INTERVAL;
         break;
     }
 
@@ -145,7 +146,7 @@ void PlayerController::Update(float deltaTime, Stage& stage)
             {
                 FireBullet(camera.GetEye(), camera.GetForward());
                 pistolAmmo--;
-                fireTimer = Const::PISTOL_FIRE_INTERVAL;
+                fireTimer = fireInterval;
             }
             break;
 
@@ -154,7 +155,7 @@ void PlayerController::Update(float deltaTime, Stage& stage)
             {
                 FireBullet(camera.GetEye(), camera.GetForward());
                 rifleAmmo--;
-                fireTimer = Const::RIFLE_FIRE_INTERVAL;
+                fireTimer = fireInterval;
             }
             break;
 
@@ -163,7 +164,7 @@ void PlayerController::Update(float deltaTime, Stage& stage)
             {
                 FireBullet(camera.GetEye(), camera.GetForward());
                 shotgunAmmo--;
-                fireTimer = Const::SHOTGUN_FIRE_INTERVAL;
+                fireTimer = fireInterval;
             }
             break;
         }

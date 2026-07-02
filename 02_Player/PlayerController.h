@@ -58,6 +58,7 @@ private:
 	int shotgunAmmo{ 0 };
 
 	float fireTimer{ 0.0f };
+	float fireInterval{ 0.0f };
 	float reloadTimer{ 0.0f };
 
 	int ammoFont{ -1 };
