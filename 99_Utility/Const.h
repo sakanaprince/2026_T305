@@ -14,6 +14,8 @@ namespace Const
 	constexpr float PLAYER_WALK_SPEED{ 200.0f };
 	//ダッシュ中の移動速度
 	constexpr float PLAYER_DASH_SPEED{ 500.0f };
+	//エイム中の移動速度
+	constexpr float PLAYER_AIM_SPEED{ 100.0f };
 	//ジャンプの高さ
 	constexpr float PLAYER_JUMP_FORCE{ 1000.0f };
 	//プレイヤーの視界の高さ

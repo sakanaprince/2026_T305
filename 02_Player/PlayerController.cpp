@@ -21,6 +21,7 @@ void PlayerController::Reset()
 	pitch = { 0.0f };
 
 	isGrounded = { true };
+    isAim = { false };
 	isReload = { false };
 
     hp = { Const::PLAYER_MAX_HP };
@@ -39,6 +40,10 @@ void PlayerController::Reset()
 
 void PlayerController::Update(float deltaTime, Stage& stage)
 {
+    static int prevMouseInput = 0;
+    int nowMouse = GetMouseInput();
+    bool leftDown = (nowMouse & MOUSE_INPUT_LEFT) && !(prevMouseInput & MOUSE_INPUT_LEFT);
+
     //現在の銃の種類を取得
     currentGunType = gun.GetGunType();
 
@@ -55,14 +60,18 @@ void PlayerController::Update(float deltaTime, Stage& stage)
 	forward = { cos(yaw), 0.0f, sin(yaw) };
 	right = { -forward.z, 0.0f, forward.x };
 
-	float playerSpeed = CheckHitKey(KEY_INPUT_LSHIFT) ? Const::PLAYER_DASH_SPEED : Const::PLAYER_WALK_SPEED;
-
 	// positionを直接動かさず、このフレームの「入力による水平移動ベクトル」を計算する
 	Vec3 moveVec = { 0.0f, 0.0f, 0.0f };
 	if (CheckHitKey(KEY_INPUT_W)) moveVec += forward;
 	if (CheckHitKey(KEY_INPUT_S)) moveVec -= forward;
 	if (CheckHitKey(KEY_INPUT_A)) moveVec += right;
 	if (CheckHitKey(KEY_INPUT_D)) moveVec -= right;
+
+    float playerSpeed;
+
+    if (isAim) playerSpeed = Const::PLAYER_AIM_SPEED;
+    else if (CheckHitKey(KEY_INPUT_LSHIFT)) playerSpeed = Const::PLAYER_DASH_SPEED;
+    else playerSpeed = Const::PLAYER_WALK_SPEED;
 
 	// 斜め移動でも速くならないように正規化して速度を掛ける
 	if (moveVec.LengthSq() > Const::EPS) {
@@ -78,17 +87,19 @@ void PlayerController::Update(float deltaTime, Stage& stage)
         velocity.y -= Const::GRAVITY * deltaTime;
     }
 
+    isAim = nowMouse & MOUSE_INPUT_RIGHT;
+
     Step(deltaTime, stage, moveVec);
 
 	// 視点の高さに更新
 	Vec3 eye = position + Vec3(0, Const::PLAYER_EYE_POSITION, 0);
 
 	// カメラの更新
-	camera.UpdateFromPlayer(eye, yaw, pitch);
+	camera.UpdateFromPlayer(eye, yaw, pitch, isAim);
 
     // 銃の種類の切り替え
-    gun.Update();
-    gun.UpdateFromCamera(position, camera.GetForward(), camera.GetRight(), camera.GetUp());
+    gun.Update(isReload);
+    gun.UpdateFromCamera(position, camera.GetForward(), camera.GetRight(), camera.GetUp(), isAim);
 
 	// リロード判定
     if (!isReload && (CheckHitKey(KEY_INPUT_R) || 
@@ -119,10 +130,6 @@ void PlayerController::Update(float deltaTime, Stage& stage)
 	}
 
 	// 弾丸の発射
-	static int prevMouseInput = 0;
-	int nowMouse = GetMouseInput();
-	bool leftDown = (nowMouse & MOUSE_INPUT_LEFT) && !(prevMouseInput & MOUSE_INPUT_LEFT);
-
     switch (currentGunType)
     {
     case GunType::Pistol:

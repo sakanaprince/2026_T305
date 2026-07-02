@@ -48,6 +48,7 @@ private:
 	float pitch{ 0.0f };
 
 	bool isGrounded{ true };
+	bool isAim{ false };
 	bool isReload{ false };
 
 	int hp{ 0 };
