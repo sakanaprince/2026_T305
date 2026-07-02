@@ -33,5 +33,23 @@ void Entity::StepGround(float deltaTime)
 		}
 	}
 
+	if (pPlayer)
+	{
+		int a = 0;
+
+		if (!isDamageReaction && Collision::IsHitSphereSphere(pPlayer->GetPlayerSphere(), GetSphere()))
+		{
+			pPlayer->TakeDamage(2);
+			TakeDamage(1);
+		}
+	}
+	
 	position += moveDir * moveSpeed * deltaTime;
 }
+
+/*
+
+constexpr int ENEMY_LOW_MAXHP{ 3 };
+	constexpr int MAX_ENEMY_COUNT{ 20 };
+	constexpr int MAX_SAME_ENEMY_POOL_COUNT{ 10 };
+*/

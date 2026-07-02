@@ -6,7 +6,7 @@
 
 #include <iterator>
 
-void EnemySpawner::Init(EnemyRoot* enR)
+void EnemySpawner::Init(EnemyRoot* enR, PlayerController* pc)
 {
 	enemyCollection.reserve(Const::MAX_ENEMY_COUNT);
 	spawnedCount = 0;
@@ -17,7 +17,7 @@ void EnemySpawner::Init(EnemyRoot* enR)
 	{
 		enemyCollection.push_back(std::make_unique<EnemyLow>()); 
 		
-		enemyCollection[i]->Init(enR);
+		enemyCollection[i]->Init(enR, pc);
 		enemyCollection[i]->BindEnemySpawner(this);
 	}
 	//開始する値に注意
@@ -25,7 +25,7 @@ void EnemySpawner::Init(EnemyRoot* enR)
 	{
 		enemyCollection.push_back(std::make_unique<EnemyQuick>());
 
-		enemyCollection[i]->Init(enR);
+		enemyCollection[i]->Init(enR, pc);
 		enemyCollection[i]->BindEnemySpawner(this);
 	}
 	//開始する値に注意
@@ -33,7 +33,7 @@ void EnemySpawner::Init(EnemyRoot* enR)
 	{
 		enemyCollection.push_back(std::make_unique<EnemyTank>());
 
-		enemyCollection[i]->Init(enR);
+		enemyCollection[i]->Init(enR, pc);
 		enemyCollection[i]->BindEnemySpawner(this);
 	}
 
@@ -65,7 +65,7 @@ void EnemySpawner::Update(float deltaTime)
 	if (spawnTimer >= spawnDuration)
 	{
 
-		SpawnEnemy(ENEMY_NAME::Quick);
+		SpawnEnemy(ENEMY_NAME::Low);
 
 		
 		spawnTimer = 0;

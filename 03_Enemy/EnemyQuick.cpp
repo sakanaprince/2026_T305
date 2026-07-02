@@ -2,12 +2,13 @@
 #include "../99_Utility/Const.h"
 #include "EnemySpawner.h"
 
-void EnemyQuick::Init(EnemyRoot* enRoot)
+void EnemyQuick::Init(EnemyRoot* enRoot, PlayerController* pc)
 {
 	radius = 80.0f;
 	height = 40.0f;
 	isAlive = false;
 	pEnemyRoot = enRoot;
+	pPlayer = pc;
 
 	if (!pEnemyRoot)
 	{

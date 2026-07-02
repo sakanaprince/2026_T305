@@ -7,10 +7,11 @@
 #include "../08_Debug/DebugUI.h"
 
 
-void EnemyLow::Init(EnemyRoot* enRoot)
+void EnemyLow::Init(EnemyRoot* enRoot, PlayerController* pc)
 {
 	isAlive = false;
 	pEnemyRoot = enRoot;
+	pPlayer = pc;
 
 	if (!pEnemyRoot)
 	{
