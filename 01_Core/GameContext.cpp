@@ -100,6 +100,11 @@ void GameContext::Draw() const
         { 1.5f,1.5f },
         0.0,
         fontHandle);
+
+    SetFontSize(30);
+    DrawFormatString(10, DxPlus::CLIENT_HEIGHT * 0.95f, GetColor(255, 255, 255), 
+        L"移動：WASD　射撃：左クリック　武器変更：マウスホイール　リロード：R　ダッシュ：左Shift　ジャンプ：Space");
+    SetFontSize(50);
 }
 
 void GameContext::TimeLimit(float deltaTime)
@@ -136,7 +141,7 @@ void GameContext::CollisionEnemyBullet()
 
             if (Collision::IsHitSphereSphere(en->GetSphere(), b.GetBulletSpere()))
             {
-                en->TakeDamage(1);
+                en->TakeDamage(b.BulletDamage());
                 b.DeActivate();
             }
 
