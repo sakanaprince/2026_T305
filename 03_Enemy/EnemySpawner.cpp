@@ -13,12 +13,12 @@
 
 void EnemySpawner::Init(EnemyRoot* enR, PlayerController* pc, GameContext* gC)
 {
+	pGameContext = gC;
+
 	enemyCollection.reserve(Const::MAX_ENEMY_COUNT);
 	spawnedCount = 0;
 	aliveEnemyCount = 0;
 
-
-	pGameContext = gC;
 	initLimitTimer = pGameContext->GetLimit_Timer();
 	//プール初期化
 	for (int i = 0; i < Const::MAX_SAME_ENEMY_POOL_COUNT; i++)
@@ -52,25 +52,6 @@ void EnemySpawner::Init(EnemyRoot* enR, PlayerController* pc, GameContext* gC)
 		enemyCollection[i]->Init(enR, pc);
 		enemyCollection[i]->BindEnemySpawner(this);
 	}
-
-	//とりあえずvectorの中身を要素で埋めよう
-	//for (int i = 0; i < 10; i++)
-	//{
-	//	enemyCollection.push_back(std::make_unique<EnemyQuick>());
-
-	//	enemyCollection[i]->Init(enR);
-	//	enemyCollection[i]->BindEnemySpawner(this);
-	//}
-
-	//for (auto& e : enemyCollection)
-	//{
-	// 
-	//	//初期化するEnitityリストの中に「EnemyLowクラス」「EnemyQuickクラス」...と初期化したい
-	//	
-
-	//	e->Init(enR);
-	//	e->BindEnemySpawner(this);
-	//}
 }
 
 
@@ -78,7 +59,7 @@ void EnemySpawner::Update(float deltaTime)
 {
 	spawnTimer += deltaTime;
 
-	float firstTimer = spawnedCount * 0.5f;
+	float firstTimer = spawnedCount * 0.2f;
 
 	if (firstTimer > 4.0f)
 	{
@@ -88,7 +69,10 @@ void EnemySpawner::Update(float deltaTime)
 
 	if (spawnTimer >= spawnDuration - firstTimer)
 	{
-		SpawnEnemy(ENEMY_NAME::Fly);
+		//敵を全員出現させるサイクル
+		int spawnCycle = spawnedCount % static_cast<int>( ENEMY_NAME::AllEnemyNameCount);
+		SpawnEnemy(static_cast<ENEMY_NAME>(spawnCycle));
+
 		spawnTimer = 0;
 	}
 
