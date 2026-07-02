@@ -19,9 +19,9 @@ void EnemyQuick::Init(EnemyRoot* enRoot)
 void EnemyQuick::Reset()
 {
 	moveDir = Vec3(0.0f, 0.0f, 0.0f);
-	moveSpeed = 100.0f;
+	moveSpeed = 300.0f;
 	rootTargetIndex = 0;
-	currentHp = Const::ENEMY_LOW_MAXHP;
+	currentHp = initHp;
 
 	damageReactionTimer = 0.0f;
 	isDamageReaction = false;
@@ -74,6 +74,7 @@ void EnemyQuick::Draw() const
 
 void EnemyQuick::DrawDebug() const
 {
+	DrawSphere3D( DxConv::ToVECTOR(GetSphere().centerPos), radius, 16, GetColor(255, 0, 0), GetColor(255, 0, 0), false);
 }
 
 void EnemyQuick::TakeDamage(int amount)
@@ -97,7 +98,7 @@ void EnemyQuick::TakeDamage(int amount)
 
 void EnemyQuick::BodyLine() const
 {
-	constexpr float skin = 30.0f;
+
 
 	float sizeMagnification = 1.0f;
 
@@ -118,7 +119,7 @@ void EnemyQuick::BodyLine() const
 	DxLib::DrawCapsule3D
 	(
 		DxConv::ToVECTOR({ position.x , (position.y + skin) , position.z }),
-		DxConv::ToVECTOR({ position.x , (position.y + height), position.z }),
+		DxConv::ToVECTOR({ position.x , (position.y + skin + height), position.z }),
 
 		50 * sizeMagnification, 16, GetColor(0, 0, 250), GetColor(0, 0, 255), true
 	);
@@ -140,23 +141,16 @@ void EnemyQuick::BodyLine() const
 		//-250 ~ 250　の値を使いたい、sinとかのぐるぐる巡回するやつで
 		//sinとかcosは -1から1をぐるぐるするという性質を使って理想を表現している
 		DxConv::ToVECTOR({ position.x + sinSpin, position.y + height, position.z + cosSpin }),
-		DxConv::ToVECTOR({ position.x, position.y, position.z }),
+		DxConv::ToVECTOR({ position.x, position.y + height, position.z }),
 		CAPSULE_RADIUS * sizeMagnification, 16, GetColor(255, 255, 0), GetColor(0, 0, 0), true
 	);
 
 	DxLib::DrawCapsule3D
 	(
 		DxConv::ToVECTOR({ position.x - sinSpin, position.y + height, position.z - cosSpin }),
-		DxConv::ToVECTOR(position),
+		DxConv::ToVECTOR({ position.x, position.y + height, position.z }),
 		CAPSULE_RADIUS * sizeMagnification, 16, GetColor(255, 255, 0), GetColor(0, 0, 0), true
 	);
 
 	DxLib::SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
-
-	////中心の骨組み的な
-	//DxLib::DrawCapsule3D(
-	//	DxConv::ToVECTOR({ position.x , position.y, position.z }),
-	//	DxConv::ToVECTOR({ position.x - 250, position.y + 250, position.z - 50 }),
-	//	50, 16, GetColor(0, 255, 0), GetColor(255, 0, 0), true);
-
 }

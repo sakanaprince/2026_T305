@@ -14,5 +14,6 @@ public:
 	void TakeDamage(int amount) override;
 private:
 	void BodyLine()const override;
+	const int initHp{ 3 };
 };
 

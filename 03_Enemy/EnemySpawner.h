@@ -24,6 +24,7 @@ public:
 	{
 		Low = 0,
 		Quick,
+		Tank,
 
 		//AllEnemyNameCountは全部で何種類の敵がいるかを返す
 		AllEnemyNameCount
@@ -36,6 +37,12 @@ public:
 	/// <param name="index"></param>
 	/// <returns></returns>
 	auto& GetEnemy(size_t index) { return enemyCollection[index]; }
+
+	/// <summary>
+	/// コレクションVectorの要素数を取得できる
+	/// </summary>
+	/// <returns></returns>
+	size_t GetEnemyCollectionSize() { return enemyCollection.size(); }
 
 private:
 	void SpawnEnemy(ENEMY_NAME enName);

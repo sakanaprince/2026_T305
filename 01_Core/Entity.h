@@ -20,7 +20,7 @@ public:
     const Vec3& const GetPosition() { return position; }
     const float GetRadius()const { return radius; }
     const float GetHeight()const { return height; }
-    const Collision::Sphere GetSphere() { return { position, radius }; }
+    const Collision::Sphere GetSphere() const { return { {position.x, position.y + skin, position.z}, hitSphereRadius }; }
     const bool IsAlive()const { return isAlive; }
 
     void SetPosition(const Vec3& pos) { position = pos; }
@@ -39,14 +39,14 @@ public:
     
     //アクセサー
 
-    //ほんとは純粋仮想関数にしたいけど、配列を作る時にエラーが
-    virtual void Init(EnemyRoot* enRoot) {};
+    //ライフサイクル
+    //ほんとは純粋仮想関数にしたいけど、配列を作る時にエラーが...え？直った。vectorにしたからかな
+    virtual void Init(EnemyRoot* enRoot) = 0;
     virtual void Reset() { MessageBox(NULL, L"なぜ基底クラスのResetを呼ぶのか", L"", FALSE); };
     virtual void Update(float deltaTime) { MessageBox(NULL, L"なぜ基底クラスのUpdateを呼ぶのか", L"", FALSE); };
     virtual void Draw()const {};
     virtual void DrawDebug()const {}; //判定の可視化とか で
     virtual void Release() {}; 
-
 
 
     virtual void TakeDamage(int amount) {};
@@ -64,8 +64,11 @@ protected:
 
     Vec3 moveDir{ 0.0f, 0.0f, 0.0f };
 
-    float radius{ 60.0f };
-    float height{ 100.0f };
+    float height{ 100.0f };     //高さ、身長
+    float radius{ 60.0f };      //半径
+    float skin{ 60.0f };        //地面からの浮き上がり
+
+    float hitSphereRadius{ 50.0f };
 
     void KilledReactionUpdate(float deltaTime)
     {
