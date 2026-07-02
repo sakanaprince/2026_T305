@@ -1,17 +1,25 @@
 #include "EnemySpawner.h"
+#include "../01_Core/GameContext.h"
+
 #include "../05_Stage/EnemyRoot.h"
 #include "../03_Enemy/EnemyLow.h"
 #include "../03_Enemy/EnemyQuick.h"
 #include "../03_Enemy/EnemyTank.h"
+#include "../03_Enemy/EnemyFly.h"
+
+#include "../08_Debug/DebugUI.h"
 
 #include <iterator>
 
-void EnemySpawner::Init(EnemyRoot* enR, PlayerController* pc)
+void EnemySpawner::Init(EnemyRoot* enR, PlayerController* pc, GameContext* gC)
 {
 	enemyCollection.reserve(Const::MAX_ENEMY_COUNT);
 	spawnedCount = 0;
 	aliveEnemyCount = 0;
 
+
+	pGameContext = gC;
+	initLimitTimer = pGameContext->GetLimit_Timer();
 	//プール初期化
 	for (int i = 0; i < Const::MAX_SAME_ENEMY_POOL_COUNT; i++)
 	{
@@ -32,6 +40,14 @@ void EnemySpawner::Init(EnemyRoot* enR, PlayerController* pc)
 	for (int i = Const::MAX_SAME_ENEMY_POOL_COUNT * 2; i < Const::MAX_SAME_ENEMY_POOL_COUNT * 3; i++)
 	{
 		enemyCollection.push_back(std::make_unique<EnemyTank>());
+
+		enemyCollection[i]->Init(enR, pc);
+		enemyCollection[i]->BindEnemySpawner(this);
+	}
+	//開始する値に注意
+	for (int i = Const::MAX_SAME_ENEMY_POOL_COUNT * 3; i < Const::MAX_SAME_ENEMY_POOL_COUNT * 4; i++)
+	{
+		enemyCollection.push_back(std::make_unique<EnemyFly>());
 
 		enemyCollection[i]->Init(enR, pc);
 		enemyCollection[i]->BindEnemySpawner(this);
@@ -62,12 +78,17 @@ void EnemySpawner::Update(float deltaTime)
 {
 	spawnTimer += deltaTime;
 
-	if (spawnTimer >= spawnDuration)
+	float firstTimer = spawnedCount * 0.5f;
+
+	if (firstTimer > 4.0f)
 	{
+		firstTimer = 4.0f;
+	}
 
-		SpawnEnemy(ENEMY_NAME::Low);
 
-		
+	if (spawnTimer >= spawnDuration - firstTimer)
+	{
+		SpawnEnemy(ENEMY_NAME::Fly);
 		spawnTimer = 0;
 	}
 
@@ -100,6 +121,17 @@ void EnemySpawner::Draw() const
 }
 
 
+const void EnemySpawner::CoreDamage(int damage) const
+{
+	if (!pGameContext)
+	{
+		DxPlus::Utils::FatalError(L"Pointer GameContextがないバインド忘れてる EnemySpanerがいってる");
+	}
+
+	pGameContext->GetCore().TakeDamage(damage);
+}
+
+
 void EnemySpawner::SpawnEnemy(ENEMY_NAME enName)
 {
 	//出現限界の数を超えてるならreturn
@@ -119,7 +151,8 @@ void EnemySpawner::SpawnEnemy(ENEMY_NAME enName)
 
 	if (enName == ENEMY_NAME::Low){startIndex = 0;}
 	else if (enName == ENEMY_NAME::Quick){startIndex = Const::MAX_SAME_ENEMY_POOL_COUNT;}
-	else if (enName == ENEMY_NAME::Tank) {startIndex = Const::MAX_SAME_ENEMY_POOL_COUNT + Const::MAX_SAME_ENEMY_POOL_COUNT;}
+	else if (enName == ENEMY_NAME::Tank) {startIndex = Const::MAX_SAME_ENEMY_POOL_COUNT * 2;}
+	else if (enName == ENEMY_NAME::Fly) {startIndex = Const::MAX_SAME_ENEMY_POOL_COUNT * 3;}
 
 	//待機状態の敵を探してResetする
 	for (size_t i = startIndex; i < startIndex + Const::MAX_SAME_ENEMY_POOL_COUNT; i++)

@@ -7,13 +7,19 @@
 #include "../99_Utility/Const.h"
 
 #include <vector>
+
+class GameContext;
 class EnemySpawner
 {
 public:
 	EnemySpawner() = default;
-	void Init(EnemyRoot* enRoot, PlayerController* pc);
+	void Init(EnemyRoot* enRoot, PlayerController* pc, GameContext* gC);
 	void Update(float deltaTime);
 	void Draw() const;
+
+
+
+	const void CoreDamage(int damage) const;
 
 	void DecAliveEnemyCount()
 	{
@@ -25,6 +31,7 @@ public:
 		Low = 0,
 		Quick,
 		Tank,
+		Fly,
 
 		//AllEnemyNameCount‚Í‘S•”‚Å‰½Ží—Þ‚Ì“G‚ª‚¢‚é‚©‚ð•Ô‚·
 		AllEnemyNameCount
@@ -47,12 +54,18 @@ public:
 private:
 	void SpawnEnemy(ENEMY_NAME enName);
 
+	GameContext* pGameContext{ nullptr };
+
 	std::vector<std::unique_ptr<Entity>> enemyCollection;
 
 	int aliveEnemyCount = 0;
 
 	float spawnTimer{ 0.0f };
-	const float spawnDuration{ 1.0f };
+	const float spawnDuration{ 5.0f };
+
+
 	int spawnedCount{ 0 };
+
+	float initLimitTimer{ 0 };
 };
 

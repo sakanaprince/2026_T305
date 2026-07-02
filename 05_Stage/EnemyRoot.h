@@ -17,7 +17,7 @@ public:
 private:
 	static constexpr size_t START_POINT_AMOUNT = 2;
 	std::array<Vec3, START_POINT_AMOUNT> startPoints;
-	Vec3 corePos_kari{ 0,0,0 };
+	Vec3 corePos_kari{ -110,0,-200 };
 
 	size_t startIdx{ 0 };
 };
