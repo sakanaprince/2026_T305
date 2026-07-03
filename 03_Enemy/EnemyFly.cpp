@@ -35,38 +35,11 @@ void EnemyFly::Reset()
 		position = pEnemyRoot->GetNextStartPos();
 		const float flyStartPosY = 500.0f;
 		position.y += flyStartPosY;
-		rootTargetPoint = pEnemyRoot->GetCorePos();
-		moveDir = (rootTargetPoint - position).Normalized();
+		targetPosition = pEnemyRoot->GetCorePos();
+		moveDir = (targetPosition - position).Normalized();
 	}
 
 	isAlive = true;
-}
-
-void EnemyFly::Update(float deltaTime)
-{
-	if (!isAlive) { return; }
-
-	if (!pEnemyRoot)
-	{
-		DxPlus::Utils::FatalError(L"EnemyRoot Null Ptr by Quick");
-		return;
-	}
-
-	if (isKilledReaction)
-	{
-		KilledReactionUpdate(deltaTime);
-		return;
-	}
-
-	if (isDamageReaction)
-	{
-		DamageReactionUpdate(deltaTime);
-		return;
-	}
-
-	StepGround(deltaTime);
-
-	animTimer += 10.0f * deltaTime;
 }
 
 void EnemyFly::Draw() const

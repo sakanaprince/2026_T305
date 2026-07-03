@@ -2,6 +2,40 @@
 #include "../03_Enemy/EnemySpawner.h"
 
 
+void Entity::Update(float deltaTime)
+{
+	if (!isAlive) { return; }
+
+	if (!pEnemyRoot)
+	{
+		DxPlus::Utils::FatalError(L"EnemyRoot Null Ptr by Entity");
+		return;
+	}
+
+	if (isKilledReaction)
+	{
+		KilledReactionUpdate(deltaTime);
+		return;
+	}
+
+	if (isDamageReaction)
+	{
+		DamageReactionUpdate(deltaTime);
+		return;
+	}
+
+	StepGround(deltaTime);
+
+	animTimer += deltaTime;
+
+	startChaseTimer += deltaTime;
+	if (startChaseTimer > START_CHASE_TIME)
+	{
+		startChaseTimer = 0.0f;
+		SetTargetDirection();
+	}
+}
+
 void Entity::Draw() const
 {
 	if (!isAlive) { return; }
@@ -27,8 +61,7 @@ void Entity::TakeDamage(int amount)
 
 		explosion.Play({position.x, position.y + skin, position.z }, 250.0f, 0.2f);
 		
-		//お金を増やす
-
+		//お金を増やす処理が必要
 
 		if (pEnemySpawner) { pEnemySpawner->DecAliveEnemyCount(); }
 	}
@@ -39,8 +72,6 @@ void Entity::DrawHpBar() const
 	if (!isAlive) { return; }
 
 	//距離を取ったらバーを小さくしないと
-
-
 	bool isPlayerView = false;
 	Vec3 playerPos = position - pPlayer->GetPosition();
 	Vec3 playerForward = pPlayer->GetForward();
@@ -68,13 +99,11 @@ void Entity::DrawHpBar() const
 
 	DxPlus::Primitive2D::DrawRect({finalPos.x, finalPos.y +  10.0f},{512,hpBarHeight},GetColor(255,0,0),true );
 	DxPlus::Primitive2D::DrawRect({finalPos.x, finalPos.y +  10.0f},{512 * p,hpBarHeight},GetColor(0,255,0),true );
-
-	//DxPlus::Debug::SetFormatString(L"CAM_X %.2f, CAM_Z %.2f",playerForward.x, playerForward.z);
 }
 
 void Entity::StepGround(float deltaTime)
 {
-	const float toCoreDistance = (rootTargetPoint - position).Length();
+	const float toCoreDistance = (targetPosition - position).Length();
 
 	//目的ポイントに到達
 	if (toCoreDistance <= ROOTPOINT_DISTANCE_LIMIT)
@@ -113,6 +142,28 @@ void Entity::StepGround(float deltaTime)
 	}
 	
 	position += moveDir * moveSpeed * deltaTime;
+}
+
+bool Entity::IsClosePlayer()
+{
+	float distance = (pPlayer->GetPosition() - position).LengthSq();
+	int a = 0;
+	return distance < ChaseStartDistance * ChaseStartDistance;
+}
+
+void Entity::SetTargetDirection()
+{
+	isChasePlayer = IsClosePlayer();
+
+	if (isChasePlayer)
+	{
+		moveDir = (pPlayer->GetPosition() - position).Normalized();
+		moveDir.y = 0;
+	}
+	else
+	{
+		moveDir = (targetPosition - position).Normalized();
+	}
 }
 
 /*
