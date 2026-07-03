@@ -20,6 +20,7 @@ public:
 
 
 	const void CoreDamage(int damage) const;
+	const void MoneyInc(int money) const;
 
 	void DecAliveEnemyCount()
 	{
@@ -41,15 +42,14 @@ public:
 	/// <summary>
 	/// 引数番目の敵の”参照”返す、indexの値確認は呼び出しもとで注意してね
 	/// </summary>
-	/// <param name="index"></param>
-	/// <returns></returns>
 	auto& GetEnemy(size_t index) { return enemyCollection[index]; }
 
 	/// <summary>
 	/// コレクションVectorの要素数を取得できる
 	/// </summary>
-	/// <returns></returns>
 	size_t GetEnemyCollectionSize() { return enemyCollection.size(); }
+
+	
 
 private:
 	void SpawnEnemy(ENEMY_NAME enName);

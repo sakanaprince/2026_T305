@@ -6,6 +6,8 @@
 
 #include "../10_Physics/Collision.h"
 
+#include "../09_Effect/Explosion.h"
+
 class EnemySpawner;
 class Player;
 
@@ -45,15 +47,20 @@ public:
     virtual void Init(EnemyRoot* enRoot, PlayerController* pc) = 0;
     virtual void Reset() { MessageBox(NULL, L"なぜ基底クラスのResetを呼ぶのか", L"", FALSE); };
     virtual void Update(float deltaTime) { MessageBox(NULL, L"なぜ基底クラスのUpdateを呼ぶのか", L"", FALSE); };
-    virtual void Draw()const {};
+    virtual void Draw()const;
     virtual void DrawDebug()const {}; //判定の可視化とか で
     virtual void Release() {}; 
 
 
-    virtual void TakeDamage(int amount) {};
+    virtual void TakeDamage(int amount);
+ 
 
 protected:
+    //HP関連
+    int initHp;
     int currentHp;
+    const float hpBarHeight{ 20 };
+
     Vec3 position;
     Vec3 velocity;
     Vec3 scale;
@@ -93,6 +100,8 @@ protected:
         isDamageReaction = false;
     }
 
+    void DrawHpBar() const;
+
     virtual void StepGround(float deltaTime) ;
 
     //ポインターまとめ
@@ -100,7 +109,7 @@ protected:
     EnemySpawner* pEnemySpawner{ nullptr };
     EnemyRoot* pEnemyRoot{nullptr};
 
-
+    Explosion explosion;
 
     //＝＝＝＝おそらく敵しか使わないもの＝＝＝＝＝＝＝
     Vec3 rootTargetPoint{ 0.0f, 0.0f, 0.0f };
@@ -110,7 +119,6 @@ protected:
     float animTimer{ 0.0f };
 
     const float  ROOTPOINT_DISTANCE_LIMIT{ 10.0f };
-
     float damageReactionTimer{ 0.0f };
     const float DAMAGE_REACTION_TIME{ 0.08f };
     bool isDamageReaction{ false };

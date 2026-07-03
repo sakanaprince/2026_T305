@@ -9,6 +9,7 @@ void EnemyQuick::Init(EnemyRoot* enRoot, PlayerController* pc)
 	isAlive = false;
 	pEnemyRoot = enRoot;
 	pPlayer = pc;
+	initHp = 15;
 
 	if (!pEnemyRoot)
 	{
@@ -20,7 +21,7 @@ void EnemyQuick::Init(EnemyRoot* enRoot, PlayerController* pc)
 void EnemyQuick::Reset()
 {
 	moveDir = Vec3(0.0f, 0.0f, 0.0f);
-	moveSpeed = 300.0f;
+	moveSpeed = 200.0f;
 	rootTargetIndex = 0;
 	currentHp = initHp;
 
@@ -67,14 +68,6 @@ void EnemyQuick::Update(float deltaTime)
 	animTimer += 10.0f * deltaTime;
 }
 
-void EnemyQuick::Draw() const
-{
-	if (!isAlive) { return; }
-
-	BodyLine();
-	explosion.Draw();
-}
-
 void EnemyQuick::DrawDebug() const
 {
 	DrawSphere3D( DxConv::ToVECTOR(GetSphere().centerPos), radius, 16, GetColor(255, 0, 0), GetColor(255, 0, 0), false);
@@ -83,8 +76,6 @@ void EnemyQuick::DrawDebug() const
 
 void EnemyQuick::BodyLine() const
 {
-
-
 	float sizeMagnification = 1.0f;
 
 	if (isKilledReaction)

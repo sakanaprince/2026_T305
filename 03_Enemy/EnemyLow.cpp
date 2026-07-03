@@ -12,6 +12,7 @@ void EnemyLow::Init(EnemyRoot* enRoot, PlayerController* pc)
 	isAlive = false;
 	pEnemyRoot = enRoot;
 	pPlayer = pc;
+	initHp = 10;
 
 	if (!pEnemyRoot)
 	{
@@ -68,16 +69,6 @@ void EnemyLow::Update(float deltaTime)
 	StepGround(deltaTime);
 
 	animTimer += 10.0f * deltaTime;
-}
-
-
-
-
-void EnemyLow::Draw() const
-{
-	if (!isAlive) { return; }
-
-	BodyLine();
 }
 
 void EnemyLow::BodyLine() const

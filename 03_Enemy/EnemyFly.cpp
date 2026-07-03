@@ -10,6 +10,7 @@ void EnemyFly::Init(EnemyRoot* enRoot, PlayerController* pc)
 	isAlive = false;
 	pEnemyRoot = enRoot;
 	pPlayer = pc;
+	initHp = 30;
 	if (!pEnemyRoot)
 	{
 		DxPlus::Utils::FatalError(L"null Ptr enemyRoot_p");
@@ -70,9 +71,7 @@ void EnemyFly::Update(float deltaTime)
 
 void EnemyFly::Draw() const
 {
-	if (!isAlive) { return; }
 
-	BodyLine();
 }
 
 void EnemyFly::DrawDebug() const
