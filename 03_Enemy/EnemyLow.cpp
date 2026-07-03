@@ -37,38 +37,11 @@ void EnemyLow::Reset()
 	if (pEnemyRoot)
 	{
 		position = pEnemyRoot->GetNextStartPos();
-		rootTargetPoint = pEnemyRoot->GetCorePos();
-		moveDir = (rootTargetPoint - position).Normalized();
+		targetPosition = pEnemyRoot->GetCorePos();
+		moveDir = (targetPosition - position).Normalized();
 	}
 	
 	isAlive = true;
-}
-
-void EnemyLow::Update(float deltaTime)
-{
-	if (!isAlive) { return; }
-
-	if (!pEnemyRoot)
-	{
-		DxPlus::Utils::FatalError(L"EnemyRoot Null Ptr by Low");
-		return;
-	}
-
-	if (isKilledReaction)
-	{
-		KilledReactionUpdate(deltaTime);
-		return;
-	}
-
-	if (isDamageReaction)
-	{
-		DamageReactionUpdate(deltaTime);
-		return;
-	}
-
-	StepGround(deltaTime);
-
-	animTimer += 10.0f * deltaTime;
 }
 
 void EnemyLow::BodyLine() const
