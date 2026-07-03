@@ -11,6 +11,5 @@ public:
 	void DrawDebug()const override;
 private:
 	void BodyLine()const override;
-	const int initHp{ 400 };
 };
 

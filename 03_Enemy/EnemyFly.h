@@ -13,5 +13,4 @@ public:
 
 private:
 	void BodyLine()const override;
-	int initHp{ 30 };
 };

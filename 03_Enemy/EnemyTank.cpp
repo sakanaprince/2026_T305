@@ -10,6 +10,7 @@ void EnemyTank::Init(EnemyRoot* enRoot, PlayerController* pc)
 	isAlive = false;
 	pEnemyRoot = enRoot;
 	pPlayer = pc;
+	initHp = 300;
 	if (!pEnemyRoot)
 	{
 		DxPlus::Utils::FatalError(L"null Ptr enemyRoot_p");

@@ -116,6 +116,16 @@ const void EnemySpawner::CoreDamage(int damage) const
 	pGameContext->GetCore().TakeDamage(damage);
 }
 
+const void EnemySpawner::MoneyInc(int money) const
+{
+	//if (!pGameContext)
+	//{
+	//	DxPlus::Utils::FatalError(L"Pointer GameContext‚ª‚È‚¢ƒoƒCƒ“ƒh–Y‚ê‚Ä‚é EnemySpaner‚ª‚¢‚Á‚Ä‚é");
+	//}
+
+	//pGameContext->GetCore().
+}
+
 
 void EnemySpawner::SpawnEnemy(ENEMY_NAME enName)
 {
