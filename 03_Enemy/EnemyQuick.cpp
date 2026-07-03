@@ -9,6 +9,7 @@ void EnemyQuick::Init(EnemyRoot* enRoot, PlayerController* pc)
 	isAlive = false;
 	pEnemyRoot = enRoot;
 	pPlayer = pc;
+	initHp = 15;
 
 	if (!pEnemyRoot)
 	{
@@ -20,7 +21,7 @@ void EnemyQuick::Init(EnemyRoot* enRoot, PlayerController* pc)
 void EnemyQuick::Reset()
 {
 	moveDir = Vec3(0.0f, 0.0f, 0.0f);
-	moveSpeed = 300.0f;
+	moveSpeed = 200.0f;
 	rootTargetIndex = 0;
 	currentHp = initHp;
 
@@ -32,48 +33,13 @@ void EnemyQuick::Reset()
 	if (pEnemyRoot)
 	{
 		position = pEnemyRoot->GetNextStartPos();
-		rootTargetPoint = pEnemyRoot->GetCorePos();
-		moveDir = (rootTargetPoint - position).Normalized();
+		targetPosition = pEnemyRoot->GetCorePos();
+		moveDir = (targetPosition - position).Normalized();
 	}
 
 	isAlive = true;
 }
 
-void EnemyQuick::Update(float deltaTime)
-{
-	if (!isAlive) { return; }
-
-	if (!pEnemyRoot)
-	{
-		DxPlus::Utils::FatalError(L"EnemyRoot Null Ptr by Quick");
-		return;
-	}
-
-	if (isKilledReaction)
-	{
-		KilledReactionUpdate(deltaTime);
-		explosion.Update(deltaTime);
-		return;
-	}
-
-	if (isDamageReaction)
-	{
-		DamageReactionUpdate(deltaTime);
-		return;
-	}
-
-	StepGround(deltaTime);
-
-	animTimer += 10.0f * deltaTime;
-}
-
-void EnemyQuick::Draw() const
-{
-	if (!isAlive) { return; }
-
-	BodyLine();
-	explosion.Draw();
-}
 
 void EnemyQuick::DrawDebug() const
 {
@@ -83,8 +49,6 @@ void EnemyQuick::DrawDebug() const
 
 void EnemyQuick::BodyLine() const
 {
-
-
 	float sizeMagnification = 1.0f;
 
 	if (isKilledReaction)

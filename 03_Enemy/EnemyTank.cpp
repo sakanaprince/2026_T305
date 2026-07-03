@@ -10,6 +10,7 @@ void EnemyTank::Init(EnemyRoot* enRoot, PlayerController* pc)
 	isAlive = false;
 	pEnemyRoot = enRoot;
 	pPlayer = pc;
+	initHp = 300;
 	if (!pEnemyRoot)
 	{
 		DxPlus::Utils::FatalError(L"null Ptr enemyRoot_p");
@@ -32,39 +33,11 @@ void EnemyTank::Reset()
 	if (pEnemyRoot)
 	{
 		position = pEnemyRoot->GetNextStartPos();
-		rootTargetPoint = pEnemyRoot->GetCorePos();
-		moveDir = (rootTargetPoint - position).Normalized();
+		targetPosition = pEnemyRoot->GetCorePos();
+		moveDir = (targetPosition - position).Normalized();
 	}
 
 	isAlive = true;
-}
-
-void EnemyTank::Update(float deltaTime)
-{
-	if (!isAlive) { return; }
-
-	if (!pEnemyRoot)
-	{
-		DxPlus::Utils::FatalError(L"EnemyRoot Null Ptr by Quick");
-		return;
-	}
-
-	if (isKilledReaction)
-	{
-		explosion.Update(deltaTime);
-		KilledReactionUpdate(deltaTime);
-		return;
-	}
-
-	if (isDamageReaction)
-	{
-		DamageReactionUpdate(deltaTime);
-		return;
-	}
-
-	StepGround(deltaTime);
-
-	animTimer += 10.0f * deltaTime;
 }
 
 void EnemyTank::Draw() const
