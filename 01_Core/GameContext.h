@@ -27,7 +27,7 @@ public:
     void Draw() const;
 
     float GetLimit_Timer() { return limit_Timer; }
-    Core& GetCore(){ return core; }
+    Core GetCore() const { return core; }
 
 private:
     void TimeLimit(float deltaTime);
