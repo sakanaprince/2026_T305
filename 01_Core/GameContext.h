@@ -51,7 +51,7 @@ private:
 
     std::vector<std::unique_ptr<Entity>> entities;
 
-    Turret turrets[Const::TURRET_COUNT];
+    class Turret turrets[Const::TURRET_COUNT];
 
     //Žc‚èŽžŠÔŒv‘ª—p
     float limit_Timer{ 0 };
