@@ -32,7 +32,7 @@ void EnemyTank::Reset()
 
 	if (pEnemyRoot)
 	{
-		position = pEnemyRoot->GetNextStartPos();
+		position = pEnemyRoot->GetNextStartPos_Ground();
 		targetPosition = pEnemyRoot->GetCorePos();
 		moveDir = (targetPosition - position).Normalized();
 	}
@@ -44,7 +44,8 @@ void EnemyTank::Draw() const
 {
 	if (!isAlive) { return; }
 
-	BodyLine();
+	Entity::Draw();
+	
 	explosion.Draw();
 }
 

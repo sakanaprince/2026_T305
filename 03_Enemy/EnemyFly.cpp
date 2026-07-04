@@ -32,7 +32,7 @@ void EnemyFly::Reset()
 
 	if (pEnemyRoot)
 	{
-		position = pEnemyRoot->GetNextStartPos();
+		position = pEnemyRoot->GetNextStartPos_Sky();
 		const float flyStartPosY = 500.0f;
 		position.y += flyStartPosY;
 		targetPosition = pEnemyRoot->GetCorePos();
@@ -42,10 +42,6 @@ void EnemyFly::Reset()
 	isAlive = true;
 }
 
-void EnemyFly::Draw() const
-{
-
-}
 
 void EnemyFly::DrawDebug() const
 {

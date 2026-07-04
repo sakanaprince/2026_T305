@@ -36,7 +36,7 @@ void EnemyLow::Reset()
 
 	if (pEnemyRoot)
 	{
-		position = pEnemyRoot->GetNextStartPos();
+		position = pEnemyRoot->GetNextStartPos_Ground();
 		targetPosition = pEnemyRoot->GetCorePos();
 		moveDir = (targetPosition - position).Normalized();
 	}

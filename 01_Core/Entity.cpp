@@ -40,6 +40,26 @@ void Entity::Draw() const
 {
 	if (!isAlive) { return; }
 
+	//プレイヤーの視野に入っていないならretrun(軽量化)
+	bool isPlayerView = false;
+	Vec3 playerPos = position - pPlayer->GetPosition();
+	Vec3 playerForward = pPlayer->GetForward();
+
+	float dot_startToTargetVecAndSightVec = Vec3::Dot(playerPos, playerForward);
+
+	float scara_startToTarget = sqrtf(playerPos.x * playerPos.x + playerPos.z * playerPos.z);
+	float scara_sight = sqrtf(playerForward.x * playerForward.x + playerForward.z * playerForward.z);
+
+	float digCosSeata = dot_startToTargetVecAndSightVec / (scara_startToTarget * scara_sight);
+
+	const float playerSightAngle = cos(DxPlus::Deg2Rad * 50);
+
+	DxPlus::Debug::SetFormatString(L"COS SETA %.2f, ANGLE %.2f", digCosSeata, playerSightAngle);
+
+	if (digCosSeata > playerSightAngle) { isPlayerView = true; }
+
+	if (!isPlayerView) { return; }
+
 	BodyLine();
 	DrawHpBar();
 }
@@ -72,33 +92,14 @@ void Entity::DrawHpBar() const
 	if (!isAlive) { return; }
 
 	//距離を取ったらバーを小さくしないと
-	bool isPlayerView = false;
-	Vec3 playerPos = position - pPlayer->GetPosition();
-	Vec3 playerForward = pPlayer->GetForward();
-
-	float dot_startToTargetVecAndSightVec = Vec3::Dot(playerPos, playerForward);
-
-	float scara_startToTarget = sqrtf(playerPos.x * playerPos.x + playerPos.z * playerPos.z);
-	float scara_sight = sqrtf(playerForward.x * playerForward.x + playerForward.z * playerForward.z);
-
-	float digCosSeata = dot_startToTargetVecAndSightVec / (scara_startToTarget * scara_sight);
-
-	const float playerSightAngle = cos(DxPlus::Deg2Rad * 30);
-
-	DxPlus::Debug::SetFormatString(L"COS SETA %.2f, ANGLE %.2f",digCosSeata, playerSightAngle);
-
-	if (digCosSeata > playerSightAngle){isPlayerView = true;}
-
-	if (!isPlayerView) { return; }
-
 	Vec3 hpBarPos = { position.x - 100.0f, position.y + 200.0f, position.z };
 
 	VECTOR finalPos = DxLib::ConvWorldPosToScreenPos(DxConv::ToVECTOR(hpBarPos));
 
 	float p = static_cast<float>(currentHp) / static_cast<float>(initHp);
 
-	DxPlus::Primitive2D::DrawRect({finalPos.x, finalPos.y +  10.0f},{512,hpBarHeight},GetColor(255,0,0),true );
-	DxPlus::Primitive2D::DrawRect({finalPos.x, finalPos.y +  10.0f},{512 * p,hpBarHeight},GetColor(0,255,0),true );
+	DxPlus::Primitive2D::DrawRect({finalPos.x- 128, finalPos.y +  10.0f},{256,hpBarHeight},GetColor(255,0,0),true );
+	DxPlus::Primitive2D::DrawRect({finalPos.x- 128, finalPos.y +  10.0f},{256 * p,hpBarHeight},GetColor(0,255,0),true );
 }
 
 void Entity::StepGround(float deltaTime)
