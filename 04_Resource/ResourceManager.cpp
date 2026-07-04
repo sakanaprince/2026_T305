@@ -14,7 +14,8 @@ void ResourceManager::LoadAll()
     LoadSprite(ResourceKeys::Sprite_GameOverBG, L"GameOverBG.png");
     LoadSprite(ResourceKeys::Sprite_GameClearBG, L"GameClearBG.png");
     LoadSprite(ResourceKeys::Sprite_TutorialPurpose, L"Tutorial_Purpose.png");
-    LoadSprite(ResourceKeys::Sprite_TutorialTurret, L"Tutorial_Turret.png");
+    LoadSprite(ResourceKeys::Sprite_TutorialTurretRelease, L"Tutorial_Turret_Release.png");
+    LoadSprite(ResourceKeys::Sprite_TutorialTurretUpgrade, L"Tutorial_Turret_Upgrade.png");
     LoadSprite(ResourceKeys::Sprite_Coin, L"Coin.png");
     LoadSprite(ResourceKeys::Sprite_TurretReleasePrice, L"TurretPrice.png");
     LoadSprite(ResourceKeys::Sprite_TurretUpgradePrice, L"TurretUpgrade.png");

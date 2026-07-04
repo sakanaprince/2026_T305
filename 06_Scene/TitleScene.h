@@ -4,10 +4,12 @@
 
 enum Tutorial
 {
-    Title,      //タイトル画面
-    Purpose,    //目的
-    Operation,  //操作
-    Turret      //タレット
+    Title,           //タイトル画面
+    Purpose,         //目的
+    Operation,       //操作
+    Turret_Release,  //タレットの解放
+    Turret_Upgrade,  //タレットのアップグレード
+    None             //これ以上チュートリアルはない
 };
 
 class TitleScene final : public Scene
@@ -23,13 +25,15 @@ public:
     void TitleRender() const;
     void TutorialPurposeRender() const;
     void TutorialOperation() const;
-    void TutorialTurret() const;
+    void TutorialTurretRelease() const;
+    void TutorialTurretUpgrade() const;
 
 private:
     int fontHandle{ -1 };
     int backGroundHandle{ -1 };
     int tutorial_PurposeHandle{ -1 };
-    int tutorial_TurretHandle{ -1 };
+    int tutorial_TurretReleaseHandle{ -1 };
+    int tutorial_TurretUpgradeHandle{ -1 };
 
     float titleButtonSizeX{ 200 };
     float titleButtonSizeY{ 50 };
@@ -75,7 +79,7 @@ private:
 
     const int black = DxLib::GetColor(0, 0, 0);
 
-    Tutorial tutorial = Tutorial::Title;
+    int tutorial{ 0 };
 
     //マウスが連続で反応しないようにする
     float mouseInterval{ 1.0f };
