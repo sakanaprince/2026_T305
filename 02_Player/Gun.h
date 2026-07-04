@@ -15,8 +15,9 @@ public:
 
 	void Init();
 	void Reset();
-	void Update();
-	void UpdateFromCamera(const Vec3& camPos, const Vec3& forward, const Vec3& right, const Vec3& up);
+	void Update(bool isReload);
+	void UpdateFromCamera(const Vec3& camPos, const Vec3& forward, const Vec3& right,
+		const Vec3& up, bool isAim);
 	void Draw() const;
 
 private:

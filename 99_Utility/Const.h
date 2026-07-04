@@ -14,6 +14,8 @@ namespace Const
 	constexpr float PLAYER_WALK_SPEED{ 200.0f };
 	//ダッシュ中の移動速度
 	constexpr float PLAYER_DASH_SPEED{ 500.0f };
+	//エイム中の移動速度
+	constexpr float PLAYER_AIM_SPEED{ 100.0f };
 	//ジャンプの高さ
 	constexpr float PLAYER_JUMP_FORCE{ 1000.0f };
 	//プレイヤーの視界の高さ
@@ -30,18 +32,31 @@ namespace Const
 	//===== 弾丸関連 =====
 	//弾丸の表示上限
 	constexpr int AMMO_MAX{ 30 };
+	//弾速
+	constexpr float BULLET_SPEED{ 4000.0f };
+	//リロード時間
+	constexpr float RELOAD_TIME{ 1.5f };
+	//エイム時の拡散率
+	constexpr float AIM_SPREAD_RATE{ 0.3f };
+
 	//ピストルの発射間隔
 	constexpr float PISTOL_FIRE_INTERVAL{ 0.3f };
+	//ピストルの拡散率
+	constexpr float PISTOL_SPREAD_ANGLE{ 2.0f };
 	//ピストルのマガジン容量
 	constexpr int PISTOL_MAGAZIN_MAX{ 16 };
 	//ピストルの弾丸一発分のダメージ
 	constexpr int PISTOL_BULLET_DAMAGE{ 5 };
+
 	//ライフルの発射間隔
 	constexpr float RIFLE_FIRE_INTERVAL{ 0.1f };
+	//ライフルの拡散率
+	constexpr float RIFLE_SPREAD_ANGLE{ 3.0f };
 	//ライフルのマガジン容量
 	constexpr int RIFLE_MAGAZIN_MAX{ 30 };
 	//ライフルの弾丸一発分のダメージ
 	constexpr int RIFLE_BULLET_DAMAGE{ 3 };
+
 	//ショットガンの発射間隔
 	constexpr float SHOTGUN_FIRE_INTERVAL{ 0.8f };
 	//ショットガンの拡散率
@@ -52,10 +67,6 @@ namespace Const
 	constexpr int SHOTGUN_PELLET_COUNT{ 10 };
 	//ショットガンの弾丸一発分のダメージ
 	constexpr int SHOTGUN_BULLET_DAMAGE{ 2 };
-	//弾速
-	constexpr float BULLET_SPEED{ 4000.0f };
-	//リロード時間
-	constexpr float RELOAD_TIME{ 1.5f };
 
 	//===== 敵関連 =====
 	constexpr int ENEMY_LOW_MAXHP{ 3 };

@@ -19,8 +19,10 @@ void Gun::Reset()
 	currentGunType = { 0 };
 }
 
-void Gun::Update()
+void Gun::Update(bool isReload)
 {
+	if (isReload) return;
+
 	//マウスホイールで銃の種類の切り替え
 	int wheelRot = GetMouseWheelRotVol();
 	currentGunType += wheelRot;
@@ -47,9 +49,13 @@ void Gun::Update()
 	}
 }
 
-void Gun::UpdateFromCamera(const Vec3& playerPos, const Vec3& forward, const Vec3& right, const Vec3& up)
+void Gun::UpdateFromCamera(const Vec3& playerPos, const Vec3& forward, const Vec3& right, 
+	const Vec3& up, bool isAim)
 {
-	Vec3 offset = forward * forwardNum + right * 80.0f + up * 60.0f;
+	float rightPos = isAim ? 0.0f : 80.0f;
+	float upPos = isAim ? 80.0f : 60.0f;
+
+	Vec3 offset = forward * forwardNum + right * rightPos + up * upPos;
 	Vec3 muzzlePos = { 0,0,0 };
 
 	position = playerPos + offset;

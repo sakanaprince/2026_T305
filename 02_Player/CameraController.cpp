@@ -10,7 +10,7 @@ void CameraController::Reset(const Vec3& pos)
 }
 
 //プレイヤーの位置・向きからカメラを更新する
-void CameraController::UpdateFromPlayer(const Vec3& playerEye, float yaw, float pitch)
+void CameraController::UpdateFromPlayer(const Vec3& playerEye, float yaw, float pitch, bool isAim)
 {
 	//カメラ位置 = プレイヤー位置
 	eye = playerEye;
@@ -39,7 +39,8 @@ void CameraController::UpdateFromPlayer(const Vec3& playerEye, float yaw, float 
 	}
 
 	//カメラに反映
-	SetCameraPositionAndTargetAndUpVec(DxConv::ToVECTOR(eye), DxConv::ToVECTOR(target), DxConv::ToVECTOR(up));
+	SetCameraPositionAndTargetAndUpVec(DxConv::ToVECTOR(eye), 
+		DxConv::ToVECTOR(target), DxConv::ToVECTOR(up));
 }
 
 //レティクルの描画(十字)
