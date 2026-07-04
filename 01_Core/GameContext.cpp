@@ -19,7 +19,7 @@ void GameContext::Init()
         t.Init(&player, &enemySpawner, &coin);
     }
     enemyRoot.Init();
-    enemySpawner.Init(&enemyRoot,&player, this);
+    enemySpawner.Init(&enemyRoot, &player, this);
     bullets->Init();   
     player.Init();
     player.SetBulletPointer(bullets, Const::AMMO_MAX);
@@ -39,10 +39,10 @@ void GameContext::Reset()
     stage.Reset();
     coin.Reset();
     core.Reset();
-    turrets[0].Reset({ 1030,260, 870 });
-    turrets[1].Reset({ -1170, 260, 870 });
-    turrets[2].Reset({ -1170, 260, -1340 });
-    turrets[3].Reset({ 1030, 260, -1340 });
+    turrets[0].Reset({ 1100,300, 1100 });
+    turrets[1].Reset({ -1100, 300, 1100 });
+    turrets[2].Reset({ -1100, 300, -1100 });
+    turrets[3].Reset({ 1100, 300, -1100 });
     player.Reset();
     for (auto& b : bullets) 
     {
