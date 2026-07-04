@@ -70,9 +70,9 @@ void EnemySpawner::Update(float deltaTime)
 	if (spawnTimer >= spawnDuration - firstTimer)
 	{
 		//敵を全員出現させるサイクル
-		//int spawnCycle = spawnedCount % static_cast<int>( ENEMY_NAME::AllEnemyNameCount);
-		//SpawnEnemy(static_cast<ENEMY_NAME>(spawnCycle));
-		SpawnEnemy(ENEMY_NAME::Quick);
+		int spawnCycle = spawnedCount % static_cast<int>( ENEMY_NAME::AllEnemyNameCount);
+		SpawnEnemy(static_cast<ENEMY_NAME>(spawnCycle));
+		//SpawnEnemy(ENEMY_NAME::Quick);
 
 		spawnTimer = 0;
 	}
@@ -110,7 +110,7 @@ const void EnemySpawner::CoreDamage(int damage) const
 {
 	if (!pGameContext)
 	{
-		DxPlus::Utils::FatalError(L"Pointer GameContextがないバインド忘れてる EnemySpanerがいってる");
+		DxPlus::Utils::FatalError(L"Pointer GameContextがないバインド忘れてる by EnemySpaner");
 	}
 
 	pGameContext->GetCore().TakeDamage(damage);
