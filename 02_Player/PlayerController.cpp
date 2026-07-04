@@ -146,12 +146,21 @@ void PlayerController::Update(float deltaTime, Stage& stage)
     fireTimer -= deltaTime;
 
 	if (fireTimer <= 0.0f) {
+        Vec3 eyePos = camera.GetEye();
+        Vec3 forward = camera.GetForward();
+        float spread = 0.0f;
+
         switch (currentGunType)
         {
         case GunType::Pistol:
             if (leftDown && pistolAmmo > 0)
             {
-                FireBullet(camera.GetEye(), camera.GetForward());
+                spread = isAim ? Const::PISTOL_SPREAD_ANGLE * Const::AIM_SPREAD_RATE
+                    : Const::PISTOL_SPREAD_ANGLE;
+
+                Vec3 dir = RandomSpreadDirection(forward, spread);
+
+                FireBullet(eyePos, dir);
                 pistolAmmo--;
                 fireTimer = fireInterval;
             }
@@ -160,7 +169,12 @@ void PlayerController::Update(float deltaTime, Stage& stage)
         case GunType::Rifle:
             if ((nowMouse & MOUSE_INPUT_LEFT) && rifleAmmo > 0)
             {
-                FireBullet(camera.GetEye(), camera.GetForward());
+                spread = isAim ? Const::RIFLE_SPREAD_ANGLE * Const::AIM_SPREAD_RATE
+                    : Const::RIFLE_SPREAD_ANGLE;
+
+                Vec3 dir = RandomSpreadDirection(forward, spread);
+
+                FireBullet(eyePos, dir);
                 rifleAmmo--;
                 fireTimer = fireInterval;
             }
@@ -169,12 +183,11 @@ void PlayerController::Update(float deltaTime, Stage& stage)
         case GunType::Shotgun:
             if (leftDown && shotgunAmmo > 0)
             {
-                Vec3 eyePos = camera.GetEye();
-                Vec3 forward = camera.GetForward();
-
                 for (int n = 0; n < Const::SHOTGUN_PELLET_COUNT; n++)
                 {
-                    Vec3 dir = RandomSpreadDirection(forward);
+                    spread = isAim ? Const::SHOTGUN_SPREAD_ANGLE * Const::AIM_SPREAD_RATE
+                        : Const::SHOTGUN_SPREAD_ANGLE;
+                    Vec3 dir = RandomSpreadDirection(forward, spread);
                     FireBullet(eyePos, dir);
                 }
                 shotgunAmmo--;
@@ -403,11 +416,11 @@ void PlayerController::FireBullet(const Vec3& eye, const Vec3& forward)
     }
 }
 
-Vec3 PlayerController::RandomSpreadDirection(const Vec3& forward)
+Vec3 PlayerController::RandomSpreadDirection(const Vec3& forward, float spreadDeg)
 {
     // ƒ‰ƒ“ƒ_ƒ€Šp“x
-    float yawOffset = (GetRand(2000) / 1000.0f - 1.0f) * Const::SHOTGUN_SPREAD_ANGLE;
-    float pitchOffset = (GetRand(2000) / 1000.0f - 1.0f) * Const::SHOTGUN_SPREAD_ANGLE;
+    float yawOffset = (GetRand(2000) / 1000.0f - 1.0f) * spreadDeg;
+    float pitchOffset = (GetRand(2000) / 1000.0f - 1.0f) * spreadDeg;
 
     float yawRad = yawOffset * DX_PI / 180.0f;
     float pitchRad = pitchOffset * DX_PI / 180.0f;

@@ -25,6 +25,7 @@ public:
 
 	//プレイヤーの位置を取得
 	const Vec3& GetPosition() const { return position; }
+	const Vec3& GetCameraForward() const { return camera.GetForward(); }
 	//プレイヤーのHPを取得
 	const int GetHp() const { return hp; }
 	//ダメージを渡してその分をHPから引く
@@ -37,7 +38,7 @@ public:
 	void Draw() const;
 
 	void FireBullet(const Vec3& eye, const Vec3& forward);
-	Vec3 RandomSpreadDirection(const Vec3& forward);
+	Vec3 RandomSpreadDirection(const Vec3& forward, float spreadDeg);
 
 private:
 	Vec3 position{ 0.0f,0.0f,0.0f };
