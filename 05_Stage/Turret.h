@@ -23,7 +23,6 @@ public:
 	void Init(PlayerController* _player, EnemySpawner* _enemySpawner, Coin* _coin);
 	void Reset(Vec3 startPosition);
 	void Update(float deltaTime);
-	void BrokenUpdate();                    //タレットを解放していないときのUpdate
 	void AvailableUpdate(float deltaTime);  //タレットを解放しているときのUpdate
 	void Draw() const;
 
@@ -46,6 +45,10 @@ private:
 	int modelNotArrowTurret{ -1 };
 	int modelTurretHandle{ -1 };
 
+	int spritePrice{ -1 };   //値段を表示する画像
+	int spriteReleasePrice{ -1 };  //タレットを解放する前の画像
+	int spriteUpgradePrice{ -1 };   //タレットのUpgradeの画像
+
 	Vec3 scale{ 2.0f,2.0f,2.0f };
 	Vec3 position{ 0.0f,0.0f,0.0f };
 	float yaw{ 0.0f };
@@ -55,9 +58,14 @@ private:
 
 	float shotIntervalTimer{ 0.0f };
 	float shotIntervalTime{ 2.0f };
+	float shotIntervalTime_Max{ 2.0f };
+	float shotIntervalDownRate{ 0.2f };  //アップグレードしたときに何秒インターバルが減るかの数値
+
+	float contactIntervalTimer{ 0.0f };
+	float contactIntervalTime{ 0.5f };
 
 	int turretCoin{ 100 };   //タレットの解放に必要なコインの数
-	int spritePrice{ -1 };   //値段を表示する画像
+	int turretUpgradeCoin{ 50 };  //タレットのアップグレードに必要なコインの数
 	bool isPriceDraw{ false };  //値段を表示するかどうか
 
 	PlayerController* player{ nullptr };

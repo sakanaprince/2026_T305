@@ -11,7 +11,10 @@ namespace ResourceKeys
     inline constexpr const wchar_t* Sprite_TutorialPurpose = L"SpriteTutorialPurpose"; 
     inline constexpr const wchar_t* Sprite_TutorialTurret = L"SpriteTutorialTurret ";
     inline constexpr const wchar_t* Sprite_Coin = L"SpriteCoin";
-    inline constexpr const wchar_t* Sprite_TurretPrice = L"SpriteTurretPrice";
+    inline constexpr const wchar_t* Sprite_TurretReleasePrice = L"SpriteTurretReleasePrice";
+    inline constexpr const wchar_t* Sprite_TurretUpgradePrice = L"SpriteTurretUpgradPerice";
+
+
 
     // ===== Models =====
     inline constexpr const wchar_t* Model_Stage = L"ModelStage";

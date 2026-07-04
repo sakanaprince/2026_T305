@@ -40,7 +40,7 @@ private:
 	float yaw{ 0.0f };
 
 	float lifeTimer{ 0.0f };
-	float lifeTime{ 2.0f };
+	float lifeTime{ 1.0f };
 
 	int arrowDamage{ 1 };
 
