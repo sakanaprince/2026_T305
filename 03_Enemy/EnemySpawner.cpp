@@ -113,17 +113,22 @@ const void EnemySpawner::CoreDamage(int damage) const
 		DxPlus::Utils::FatalError(L"Pointer GameContextがないバインド忘れてる by EnemySpaner");
 	}
 
-	pGameContext->GetCore().TakeDamage(damage);
+	//警告が気になるのでnull確認を明示
+	if (pGameContext)
+	{
+		pGameContext->GetCore().TakeDamage(damage);
+	}
+
 }
 
 const void EnemySpawner::MoneyInc(int money) const
 {
-	//if (!pGameContext)
-	//{
-	//	DxPlus::Utils::FatalError(L"Pointer GameContextがないバインド忘れてる EnemySpanerがいってる");
-	//}
+	if (!pGameContext)
+	{
+		DxPlus::Utils::FatalError(L"Pointer GameContextがないバインド忘れてる EnemySpanerがいってる");
+	}
 
-	//pGameContext->GetCore().
+	pGameContext->GetCoinManager().PlusCoin(money);
 }
 
 

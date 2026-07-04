@@ -82,6 +82,7 @@ void Entity::TakeDamage(int amount)
 		explosion.Play({position.x, position.y + skin, position.z }, 250.0f, 0.2f);
 		
 		//‚¨‹à‚ð‘‚â‚·ˆ—‚ª•K—v
+		pEnemySpawner->MoneyInc(10);
 
 		if (pEnemySpawner) { pEnemySpawner->DecAliveEnemyCount(); }
 	}
