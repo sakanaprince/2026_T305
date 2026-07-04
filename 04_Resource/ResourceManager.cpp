@@ -16,7 +16,8 @@ void ResourceManager::LoadAll()
     LoadSprite(ResourceKeys::Sprite_TutorialPurpose, L"Tutorial_Purpose.png");
     LoadSprite(ResourceKeys::Sprite_TutorialTurret, L"Tutorial_Turret.png");
     LoadSprite(ResourceKeys::Sprite_Coin, L"Coin.png");
-    LoadSprite(ResourceKeys::Sprite_TurretPrice, L"TurretPrice.png");
+    LoadSprite(ResourceKeys::Sprite_TurretReleasePrice, L"TurretPrice.png");
+    LoadSprite(ResourceKeys::Sprite_TurretUpgradePrice, L"TurretUpgrade.png");
     LoadFont(ResourceKeys::Font_ManufacturingConsent, L"./Data/Fonts/Manufacturing_Consent/ManufacturingConsent-Regular.ttf");
     LoadModel(ResourceKeys::Model_Stage, L"Stage.mv1");
     LoadModel(ResourceKeys::Model_Pistol, L"Pistol.mv1");
