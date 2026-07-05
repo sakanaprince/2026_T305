@@ -9,12 +9,14 @@ void TitleScene::Init()
     fontHandle = RM().GetFont(ResourceKeys::Font_ManufacturingConsent);
     backGroundHandle = RM().GetSprite(ResourceKeys::Sprite_TitleBG);
     tutorial_PurposeHandle = RM().GetSprite(ResourceKeys::Sprite_TutorialPurpose);
-    tutorial_TurretHandle = RM().GetSprite(ResourceKeys::Sprite_TutorialTurret);
+    tutorial_TurretReleaseHandle = RM().GetSprite(ResourceKeys::Sprite_TutorialTurretRelease);
+    tutorial_TurretUpgradeHandle = RM().GetSprite(ResourceKeys::Sprite_TutorialTurretUpgrade);
     titleButtonColor = buttonNormalColor;
     tutorialButtonColor = buttonNormalColor;
     nextButtonColor = buttonNormalColor;
     returnButtonColor = buttonNormalColor;
     mouseIntervalTimer = mouseInterval;
+    tutorial = 0;
     StartFadeIn();
 
     DxLib::SetMouseDispFlag(TRUE);
@@ -40,7 +42,8 @@ void TitleScene::Update(float deltaTime)
         //チュートリアルボタンの判定
         if (ButtonCheckHit(mouseX, mouseY, tutorialPosX_1, tutorialPosX_2, tutorialPosY_1, tutorialPosY_2, tutorialButtonColor))
         {
-            tutorial = Tutorial::Purpose;
+            titleButtonColor = buttonNormalColor;
+            tutorial = 1;
         }
 
     }
@@ -50,46 +53,21 @@ void TitleScene::Update(float deltaTime)
 
         if (ButtonCheckHit(mouseX, mouseY, nextPosX_1, nextPosX_2, nextPosY_1, nextPosY_2, nextButtonColor))
         {
-            switch (tutorial)
+            tutorial++;
+            
+            if (tutorial == Tutorial::None)
             {
-            case Purpose:
-                tutorial = Tutorial::Operation;
-                break;
-            case Operation:
-                tutorial = Tutorial::Turret;
-                break;
-            case Turret:
-                tutorial = Tutorial::Title;
-                titleButtonColor = buttonNormalColor;
-                break;
-            default:
-                tutorial = Tutorial::Title;
-                titleButtonColor = buttonNormalColor;
-                break;
+                tutorial = 0;
             }
+
             mouseIntervalTimer = mouseInterval;
         }
 
 
         if (ButtonCheckHit(mouseX, mouseY, returnPosX_1, returnPosX_2, returnPosY_1, returnPosY_2, returnButtonColor))
         {
-            switch (tutorial)
-            {
-            case Purpose:
-                tutorial = Tutorial::Title;
-                titleButtonColor = buttonNormalColor;
-                break;
-            case Operation:
-                tutorial = Tutorial::Purpose;
-                break;
-            case Turret:
-                tutorial = Tutorial::Operation;
-                break;
-            default:
-                tutorial = Tutorial::Title;
-                titleButtonColor = buttonNormalColor;
-                break;
-            }
+            tutorial--;
+
             mouseIntervalTimer = mouseInterval;
         }
     }
@@ -108,8 +86,11 @@ void TitleScene::Render() const
     case Operation:
         TutorialOperation();
         break;
-    case Turret:
-        TutorialTurret();
+    case Turret_Release:
+        TutorialTurretRelease();
+        break;
+    case Turret_Upgrade:
+        TutorialTurretUpgrade();
         break;
     }
 
@@ -164,7 +145,7 @@ void TitleScene::TitleRender() const
 {
     DxPlus::Sprite::Draw(backGroundHandle);
 
-    DxPlus::Text::DrawString(L"Castle Defense",
+    DxPlus::Text::DrawString(L"Tower Defense",
         { DxPlus::CLIENT_WIDTH * 0.5f, DxPlus::CLIENT_HEIGHT * 0.35f },
         black, DxPlus::Text::TextAlign::MIDDLE_CENTER, { 4,4 }, 0, fontHandle);
 
@@ -198,7 +179,7 @@ void TitleScene::TutorialPurposeRender() const
 {
     DxPlus::Sprite::Draw(tutorial_PurposeHandle);
 
-    DxPlus::Text::DrawString(L"迫りくる敵からコアを守れ！！！",
+    DxPlus::Text::DrawString(L"迫りくる敵から塔を守れ！！！",
         { DxPlus::CLIENT_WIDTH * 0.5f, 100 },
         textColor, DxPlus::Text::TextAlign::MIDDLE_CENTER, { 3,3 }, 0);
 }
@@ -210,11 +191,20 @@ void TitleScene::TutorialOperation() const
         textColor, DxPlus::Text::TextAlign::MIDDLE_CENTER, { 2,2 }, 0);
 }
 
-void TitleScene::TutorialTurret() const
+void TitleScene::TutorialTurretRelease() const
 {
-    DxPlus::Sprite::Draw(tutorial_TurretHandle);
+    DxPlus::Sprite::Draw(tutorial_TurretReleaseHandle);
 
     DxPlus::Text::DrawString(L"敵を倒すとお金が手に入る。\n手に入ったお金でタレットを修理しよう！！！",
+        { DxPlus::CLIENT_WIDTH * 0.5f, 100 },
+        textColor, DxPlus::Text::TextAlign::MIDDLE_CENTER, { 3,3 }, 0);
+}
+
+void TitleScene::TutorialTurretUpgrade() const
+{
+    DxPlus::Sprite::Draw(tutorial_TurretUpgradeHandle);
+
+    DxPlus::Text::DrawString(L"修理したタレットは\nコインを使って強化することもできる。",
         { DxPlus::CLIENT_WIDTH * 0.5f, 100 },
         textColor, DxPlus::Text::TextAlign::MIDDLE_CENTER, { 3,3 }, 0);
 }
