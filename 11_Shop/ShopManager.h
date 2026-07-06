@@ -2,6 +2,7 @@
 #include "BuyButton.h"
 #include "../DxPlus/DxPlus.h"
 
+#include "BuyRepair.h"
 class GameContext;
 
 class ShopManager
@@ -9,7 +10,7 @@ class ShopManager
 public:
 	ShopManager() = default;
 	void Init(GameContext* gC);
-	void Update();
+	void Update(float deltaTime);
 	void Draw()const;
 
 	bool IsShopOpen(){ return isShopOpen; }
@@ -22,9 +23,25 @@ public:
 private:
 	GameContext* pGameContext{ nullptr };
 	int fontHandle{ -1 };
-	BuyButton btnRepairCore;
+
+
+	static constexpr size_t BUTTON_AMOUNT{ 2 };
+	std::vector<BuyButton*> btnCollection;
+
+	BuyRepair btnRepairCore;
+	BuyRepair btnSushi; //今だけリペアと同じクラスとしてる
 	DxPlus::Vec2Int mousePos{ 0,0 };
-	bool isShopOpen{ false };
 	bool prevFrameMouseDown{ false };
+
+	bool isShopOpen{ false };
+
+	//ショップ開店アニメーションに使う
+	bool prevShopOpen{ false };
+	bool nowShopOpenAnimation{ false };
+	void UpdateShopOpenAnimation(float deltaTime);
+	void DrawShopOpenAnimation()const;
+	DxPlus::Vec2 shopBackgroundPos{ 0,0 };
+
+	unsigned int shopBackgroundColor{ 0 };
 };
 
