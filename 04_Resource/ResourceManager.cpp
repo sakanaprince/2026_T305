@@ -28,6 +28,7 @@ void ResourceManager::LoadAll()
     LoadModel(ResourceKeys::Model_BrokenTurret, L"BrokenTurret.mv1");
     LoadModel(ResourceKeys::Model_NotArrowTurret, L"NotArrowTurret.mv1");
     LoadModel(ResourceKeys::Model_Arrow, L"Arrow.mv1");
+    LoadModel(ResourceKeys::Model_Trap, L"Trap.mv1");
 }
 
 void ResourceManager::UnloadAll()

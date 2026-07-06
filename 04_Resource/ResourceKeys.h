@@ -27,6 +27,7 @@ namespace ResourceKeys
     inline constexpr const wchar_t* Model_BrokenTurret = L"ModelBrokenTurret";
     inline constexpr const wchar_t* Model_NotArrowTurret = L"ModelNotArrowTurret";
     inline constexpr const wchar_t* Model_Arrow = L"ModelArrow";
+    inline constexpr const wchar_t* Model_Trap = L"ModelTrap";
 
     // ===== Musics / Sounds =====
 

@@ -12,8 +12,10 @@
 #include "../08_Debug/Grid.h"
 #include "../99_Utility/Const.h"
 #include "../05_Stage/Core.h"
+#include "../11_Shop/ShopManager.h"
 
 #include <string>
+#include "../11_Shop/Trap.h"
 
 class GameContext
 {
@@ -34,10 +36,20 @@ public:
     Coin& GetCoinManager() { return coin; }
     const Coin& GetCoinManager() const { return coin; }
 
+    EnemySpawner& GetEnemySpawner() { return enemySpawner; }
+    const EnemySpawner& GetEnemySpawner() const { return enemySpawner; }
+
+    //トラップを購入したときの処理
+    void BuyTrap() { possessionTrap++; }
+
+
 private:
     void TimeLimit(float deltaTime);
     void CollisionEnemyBullet();
     void CollisionEnemyArrow();
+    void CollisionEnemyTrap();
+    //トラップの設置
+    void InstallationTrap();
 
     PlayerController player;
     EnemyRoot enemyRoot;
@@ -48,6 +60,7 @@ private:
     Grid grid;
     Coin coin;
     Core core;
+    ShopManager shopManager;
 
     std::vector<std::unique_ptr<Entity>> entities;
 
@@ -60,4 +73,8 @@ private:
 
     int fontHandle{ -1 };
     std::wstring text_Timer;
+
+    int trapModelHandle{ -1 };  //罠のモデル
+    std::vector<std::unique_ptr<Trap>> spawnTraps;  //設置している罠
+    int possessionTrap{ 0 };  //現在所持している罠の数
 };
