@@ -42,7 +42,6 @@ public:
     //トラップを購入したときの処理
     void BuyTrap() { possessionTrap++; }
 
-
 private:
     void TimeLimit(float deltaTime);
     void CollisionEnemyBullet();
@@ -77,4 +76,7 @@ private:
     int trapModelHandle{ -1 };  //罠のモデル
     std::vector<std::unique_ptr<Trap>> spawnTraps;  //設置している罠
     int possessionTrap{ 0 };  //現在所持している罠の数
+
+    bool shopOpen{ false };
+    int E_KEY_prevFrameDown{ -1 };
 };
