@@ -22,6 +22,12 @@ public:
 	const void CoreDamage(int damage) const;
 	const void MoneyInc(int money) const;
 
+	/// <summary>
+	/// ショップ閉じた後で反映されるために時間差を作っておいた
+	/// </summary>
+	/// <returns>すでに全敵ダメージ関数が呼ばれている最中ならFALSE</returns>
+	bool ReadyAllEnemyTakeDamage(int dmg, float delayTime);
+
 	void DecAliveEnemyCount()
 	{
 		aliveEnemyCount--;
@@ -64,7 +70,17 @@ private:
 	const float spawnDuration{ 5.0f };
 
 	int spawnedCount{ 0 };
+	int bossSpawnCount{ 0 };
+	const int bossSpawnCountLimit{ 3 };
 
-	float initLimitTimer{ 0 };
+	//ゲーム開始時のクリアまでの残り時間を覚えておく
+	float gameStartLeftTime{ 0 };
+
+
+	//時間差全体攻撃
+	float allEnemyTakeDamageDelayTimer{ 0.0f };
+	float allEnemyTakeDamageDelayTime{ 0.0f };
+	bool nowAllEnemyTakeDamage{ false };
+	int allEnemyTakeDamageAmount{ 0 };
 };
 
