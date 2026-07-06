@@ -56,7 +56,46 @@ void GameContext::Reset()
 
 void GameContext::Update(float deltaTime)
 { 
+    //Eキーが押されているかチェック
+    int e_key_down = CheckHitKey(KEY_INPUT_E);
+
+    //前フレームにEキーが押されていないかつ現在フレームでEキーが押された場合ショップを開く
+    if (!E_KEY_prevFrameDown && e_key_down)
+    {
+        //ショップ状態の変更
+        shopManager.SwitchShopOpen();
+
+        //現在のショップの状態を取得
+        shopOpen = shopManager.IsShopOpen();
+
+        //マウスカーソルの出現・削除の切り替え
+        DxLib::SetMouseDispFlag(shopOpen);
+
+        //マウスカーソルの位置を中央に持ってくる
+        SetMousePoint(DxPlus::CLIENT_WIDTH * 0.5f, DxPlus::CLIENT_HEIGHT * 0.5f);
+
+        //if (!shopOpen)
+        //{
+        //    int mouseX, mouseY;
+        //    GetMousePoint(&mouseX, &mouseY);
+
+        //    //ショップを閉じた時に視点が飛んでいかないようにする
+        //    player.SetPrevMouse({ mouseX, mouseY });
+        //}
+    }
+
+    //現在のキーの情報を前フレームのキー情報保存用の変数に入れる
+    E_KEY_prevFrameDown = (e_key_down);
+
+    coin.Update();
+
+    shopManager.Update(deltaTime);
+
+    //ショップが開かれている場合はこれより下の処理は行わない
+    if (shopOpen) { return; }
+
     TimeLimit(deltaTime);
+
 
     //テスト用
     int buttonDown = DxPlus::Input::GetButtonDown(DxPlus::Input::PLAYER1);
@@ -67,10 +106,10 @@ void GameContext::Update(float deltaTime)
     }
     //---
 
+
     InstallationTrap();
 
     core.Update();
-    coin.Update();
     for (auto& t : turrets)
     {
         t.Update(deltaTime);
@@ -83,8 +122,6 @@ void GameContext::Update(float deltaTime)
 
     player.Update(deltaTime, stage);  
     enemySpawner.Update(deltaTime);
-
-    //shopManager.Update();
 
     CollisionEnemyBullet();
     CollisionEnemyArrow();
@@ -109,7 +146,7 @@ void GameContext::Draw() const
     }
     player.Draw();
 
-    //shopManager.Draw();
+    shopManager.Draw();
 
 
     DxPlus::Text::DrawString(
