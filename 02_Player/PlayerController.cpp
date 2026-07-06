@@ -25,6 +25,7 @@ void PlayerController::Reset()
 	isReload = { false };
 
     hp = { Const::PLAYER_MAX_HP };
+    jumpCount = { 0 };
 
     fireTimer = { 0.0f };
     fireInterval = { Const::PISTOL_FIRE_INTERVAL };
@@ -42,6 +43,8 @@ void PlayerController::Update(float deltaTime, Stage& stage)
 {
     static int prevMouseInput = 0;
     int nowMouse = GetMouseInput();
+    static bool prevSpace = false;
+    bool nowSpace = CheckHitKey(KEY_INPUT_SPACE);
     bool leftDown = (nowMouse & MOUSE_INPUT_LEFT) && !(prevMouseInput & MOUSE_INPUT_LEFT);
 
     //現在の銃の種類を取得
@@ -73,21 +76,27 @@ void PlayerController::Update(float deltaTime, Stage& stage)
     else if (CheckHitKey(KEY_INPUT_LSHIFT)) playerSpeed = Const::PLAYER_DASH_SPEED;
     else playerSpeed = Const::PLAYER_WALK_SPEED;
 
+    isAim = nowMouse & MOUSE_INPUT_RIGHT;
+
 	// 斜め移動でも速くならないように正規化して速度を掛ける
 	if (moveVec.LengthSq() > Const::EPS) {
 		moveVec = moveVec.Normalized() * playerSpeed;
 	}
 
 	// スペースキーでジャンプ
-	if (CheckHitKey(KEY_INPUT_SPACE) && isGrounded) {
-		velocity.y = Const::PLAYER_JUMP_FORCE;
-		isGrounded = false;
+	if (nowSpace && !prevSpace) {
+        if (jumpCount < Const::MAX_JUNP_COUNT) {
+            velocity.y = Const::PLAYER_JUMP_FORCE;
+            isGrounded = false;
+            jumpCount++;
+        }
 	}
-    else if (!isGrounded) {
+    
+    if (!isGrounded) {
         velocity.y -= Const::GRAVITY * deltaTime;
     }
 
-    isAim = nowMouse & MOUSE_INPUT_RIGHT;
+    prevSpace = nowSpace;
 
     Step(deltaTime, stage, moveVec);
 
@@ -329,6 +338,7 @@ void PlayerController::Step(float deltaTime, Stage& stage, const Vec3& moveVec)
             position.y = groundY;
             velocity.y = 0.0f;
             isGrounded = true;
+            jumpCount = 0;
         }
         else
         {

@@ -53,6 +53,7 @@ private:
 	bool isReload{ false };
 
 	int hp{ 0 };
+	int jumpCount{ 0 };
 
 	int bulletCount{ 0 };
 
