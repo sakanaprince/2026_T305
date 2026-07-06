@@ -19,7 +19,7 @@ void EnemySpawner::Init(EnemyRoot* enR, PlayerController* pc, GameContext* gC)
 	spawnedCount = 0;
 	aliveEnemyCount = 0;
 
-	initLimitTimer = pGameContext->GetLimit_Timer();
+	gameStartLeftTime = pGameContext->GetLimit_Timer();
 	//プール初期化
 	for (int i = 0; i < Const::MAX_SAME_ENEMY_POOL_COUNT; i++)
 	{
@@ -59,7 +59,7 @@ void EnemySpawner::Update(float deltaTime)
 {
 	spawnTimer += deltaTime;
 
-	float firstTimer = spawnedCount * 0.2f;
+	float firstTimer = spawnedCount * 0.1f;
 
 	if (firstTimer > 4.0f)
 	{
@@ -71,8 +71,24 @@ void EnemySpawner::Update(float deltaTime)
 	{
 		//敵を全員出現させるサイクル
 		int spawnCycle = spawnedCount % static_cast<int>( ENEMY_NAME::AllEnemyNameCount);
+
+		if (static_cast<ENEMY_NAME>(spawnCycle) == ENEMY_NAME::Tank)
+		{
+			if (bossSpawnCount >= 0)
+			{
+				spawnCycle = static_cast<int>(ENEMY_NAME::Low);
+				bossSpawnCount--;
+			
+			}
+			else
+			{
+				bossSpawnCount = bossSpawnCountLimit;
+			}
+		}
+	
+
 		SpawnEnemy(static_cast<ENEMY_NAME>(spawnCycle));
-		//SpawnEnemy(ENEMY_NAME::Quick);
+
 
 		spawnTimer = 0;
 	}
@@ -83,6 +99,22 @@ void EnemySpawner::Update(float deltaTime)
 
 		e->Update(deltaTime);
 	}
+
+	if (nowAllEnemyTakeDamage)
+	{
+		allEnemyTakeDamageDelayTimer -= deltaTime;
+
+		if (allEnemyTakeDamageDelayTimer <= 0.0f)
+		{
+			nowAllEnemyTakeDamage = false;
+			for (auto& e : enemyCollection)
+			{
+				if (!e->IsAlive()) { continue; }
+
+				e->TakeDamage(allEnemyTakeDamageAmount);
+			}
+		}
+	}
 }
 
 void EnemySpawner::Draw() const
@@ -92,6 +124,16 @@ void EnemySpawner::Draw() const
 		if (!e->IsAlive()) { continue; }
 
 		e->Draw();
+	}
+
+	//ホーリー寿司の演出
+	if (nowAllEnemyTakeDamage)
+	{
+		const int blendPower = 255 * (1 - allEnemyTakeDamageDelayTimer / allEnemyTakeDamageDelayTime);
+		DxLib::SetDrawBlendMode(DX_BLENDMODE_ALPHA, blendPower);
+		DxPlus::Primitive2D::DrawRect({ 0,0 }, { DxPlus::CLIENT_WIDTH,DxPlus::CLIENT_HEIGHT }, GetColor(255, 255, 255)
+			, true);
+		DxLib::SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 	}
 	
 #ifdef _DEBUG
@@ -129,6 +171,16 @@ const void EnemySpawner::MoneyInc(int money) const
 	}
 
 	pGameContext->GetCoinManager().PlusCoin(money);
+}
+
+bool EnemySpawner::ReadyAllEnemyTakeDamage(int dmg, float delayTime)
+{
+	if (nowAllEnemyTakeDamage) { return false; }
+
+	nowAllEnemyTakeDamage = true;
+	allEnemyTakeDamageDelayTimer = delayTime;
+	allEnemyTakeDamageDelayTime = delayTime;
+	allEnemyTakeDamageAmount = dmg;
 }
 
 
