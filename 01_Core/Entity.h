@@ -14,7 +14,9 @@ class Player;
 class Entity
 {
 public:
-    Entity() = default;
+    Entity(int _initHp):
+        initHp(_initHp)
+        {};
 
     //アクセサー
     void SetPosition(const Vec3& pos) { position = pos; }
@@ -44,12 +46,16 @@ public:
     virtual void Release() {}; 
 
     virtual void TakeDamage(int amount);
+    virtual void TakeGroundDamage(int amount);
 
 protected:
     //HP関連
     int initHp;
-    int currentHp;
+    int currentHp{1};
     const float hpBarHeight{ 20 };
+
+    int coreDamage{ 10 };
+    int dropCoin{ 10 };
 
     const float  ROOTPOINT_DISTANCE_LIMIT{ 10.0f };
     Vec3 position;
@@ -112,6 +118,9 @@ protected:
 
     virtual void BodyLine()const {};
     float animTimer{ 0.0f };
+
+    float groundDamageInvTimer{ 0.0f };
+    const float groundDamageInvTime{ 1.0f };
 
     //
     float startChaseTimer{ 0.0f };

@@ -4,6 +4,8 @@
 
 void Entity::Update(float deltaTime)
 {
+	explosion.Update(deltaTime);
+
 	if (!isAlive) { return; }
 
 	if (!pEnemyRoot)
@@ -17,6 +19,8 @@ void Entity::Update(float deltaTime)
 		KilledReactionUpdate(deltaTime);
 		return;
 	}
+
+	if (groundDamageInvTimer > 0.0f) { groundDamageInvTimer -= deltaTime; }
 
 	if (isDamageReaction)
 	{
@@ -38,12 +42,14 @@ void Entity::Update(float deltaTime)
 
 void Entity::Draw() const
 {
+	explosion.Draw();
+
 	if (!isAlive) { return; }
 
 	//プレイヤーの視野に入っていないならretrun(軽量化)
 	bool isPlayerView = false;
 	Vec3 playerPos = position - pPlayer->GetPosition();
-	Vec3 playerForward = pPlayer->GetForward();
+	Vec3 playerForward = pPlayer->GetCameraForward();
 
 	float dot_startToTargetVecAndSightVec = Vec3::Dot(playerPos, playerForward);
 
@@ -79,9 +85,35 @@ void Entity::TakeDamage(int amount)
 		isKilledReaction = true;
 		killedReactionTimer = KILLED_REACTION_TIME;
 
-		explosion.Play({position.x, position.y + skin, position.z }, 250.0f, 0.2f);
-		
-		//お金を増やす処理が必要
+		explosion.Play({position.x, position.y + skin, position.z }, 450.0f, 0.2f);
+
+		pEnemySpawner->MoneyInc(10);
+
+		if (pEnemySpawner) { pEnemySpawner->DecAliveEnemyCount(); }
+	}
+}
+
+void Entity::TakeGroundDamage(int amount)
+{
+	if (groundDamageInvTimer > 0.0f) { return; }
+
+	groundDamageInvTimer = groundDamageInvTime;
+
+	if (isKilledReaction) { return; }
+
+	amount = std::max(amount, 0);
+	currentHp = std::max(currentHp - amount, 0);
+
+	damageReactionTimer = DAMAGE_REACTION_TIME;
+	isDamageReaction = true;
+
+	if (currentHp == 0 && !isKilledReaction)
+	{
+		isKilledReaction = true;
+		killedReactionTimer = KILLED_REACTION_TIME;
+
+		explosion.Play({ position.x, position.y + skin, position.z }, 450.0f, 0.2f);
+
 		pEnemySpawner->MoneyInc(10);
 
 		if (pEnemySpawner) { pEnemySpawner->DecAliveEnemyCount(); }
@@ -167,10 +199,3 @@ void Entity::SetTargetDirection()
 		moveDir = (targetPosition - position).Normalized();
 	}
 }
-
-/*
-
-constexpr int ENEMY_LOW_MAXHP{ 3 };
-	constexpr int MAX_ENEMY_COUNT{ 20 };
-	constexpr int MAX_SAME_ENEMY_POOL_COUNT{ 10 };
-*/
