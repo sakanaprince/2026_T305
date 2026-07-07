@@ -18,6 +18,10 @@ namespace Const
 	constexpr float PLAYER_AIM_SPEED{ 100.0f };
 	//ジャンプの高さ
 	constexpr float PLAYER_JUMP_FORCE{ 1000.0f };
+	//ジャンプの回数
+	constexpr int MAX_JUNP_COUNT{ 2 };
+	//リスポーンまでの時間
+	constexpr int RESPAWN_TIME{ 10 }; 
 	//プレイヤーの視界の高さ
 	constexpr float PLAYER_EYE_POSITION{ 110.0f };
 
@@ -81,8 +85,8 @@ namespace Const
 	constexpr float EPS = 1e-3f;
 
 	//===== タレット関連 =====
-	static constexpr int TURRET_COUNT{ 4 };
-	static constexpr float TULLET_CONTACTDISTANCE{ 200.0f };
-	static constexpr float TULLET_SHOTRANGE{ 2220.0f };
-	static constexpr int ARROW_COUNT{ 20 };
+	static constexpr int TURRET_COUNT = 4;
+	static constexpr float TULLET_RELEASEDISTANCE = 200.0f;
+	static constexpr float TULLET_SHOTRANGE = 2220.0f;
+	static constexpr int ARROW_COUNT = 10;
 }
