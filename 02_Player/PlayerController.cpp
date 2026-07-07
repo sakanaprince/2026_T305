@@ -5,6 +5,7 @@
 
 void PlayerController::Init()
 {
+    deadFont= CreateFontToHandle(NULL, 70, 5, DX_FONTTYPE_ANTIALIASING);
 	gunFont = CreateFontToHandle(NULL, 50, 3, DX_FONTTYPE_ANTIALIASING);
     reloadFont = CreateFontToHandle(NULL, 25, 2, DX_FONTTYPE_ANTIALIASING);
 
@@ -21,12 +22,15 @@ void PlayerController::Reset()
 	pitch = { 0.0f };
 
 	isGrounded = { true };
+    isAlive = { true };
     isAim = { false };
 	isReload = { false };
 
     hp = { Const::PLAYER_MAX_HP };
     jumpCount = { 0 };
 
+    damageTimer = { 0.0f };
+    respawnTimer = { 0.0f };
     fireTimer = { 0.0f };
     fireInterval = { Const::PISTOL_FIRE_INTERVAL };
 	reloadTimer = { Const::RELOAD_TIME };
@@ -41,6 +45,24 @@ void PlayerController::Reset()
 
 void PlayerController::Update(float deltaTime, Stage& stage)
 {
+    if (!isAlive) {
+        respawnTimer += deltaTime;
+        if (respawnTimer >= Const::RESPAWN_TIME) {
+            hp = Const::PLAYER_MAX_HP;
+            position = { 0,0,0 };
+            isAlive = false;
+        }
+        return;
+    }
+
+    if (hp <= 0) isAlive = false;
+
+    if (damageTimer > 0.0f)
+    {
+        damageTimer -= deltaTime;
+        if (damageTimer < 0.0f) damageTimer = 0.0f;
+    }
+
     static int prevMouseInput = 0;
     int nowMouse = GetMouseInput();
     static bool prevSpace = false;
@@ -391,7 +413,7 @@ void PlayerController::Draw() const
         break;
     }
 
-	//右下に残弾数の表示
+    //右下に残弾数の表示
 	wchar_t buf[32];
 	swprintf(buf, 32, L"%s", ammoBuf);
 	int textWidth = GetDrawStringWidthToHandle(buf, wcslen(buf), gunFont);
@@ -402,15 +424,45 @@ void PlayerController::Draw() const
 	DrawFormatStringToHandle(x - textWidth - 20, y - 60, GetColor(255, 255, 255),
         gunFont, L"%s", ammoBuf);
 
+    //銃の種類を表示
     swprintf(buf, 32, L"%s", gunName);
     textWidth = GetDrawStringWidthToHandle(buf, wcslen(buf), gunFont);
 
     DrawFormatStringToHandle(x - textWidth - 10, y - 120, GetColor(255, 255, 255), gunFont, L"%s", gunName);
 
+    DrawFormatString(x, y, GetColor(255, 255, 255), L"HP: %d / %d", hp, Const::PLAYER_MAX_HP);
+
+    //死亡時の表示
+    if (!isAlive) {
+        SetDrawBlendMode(DX_BLENDMODE_ALPHA, 150);
+        DrawBox(0, 0, x, y, GetColor(255, 0, 0), TRUE);
+
+        DrawFormatStringToHandle(x / 2 - 70, y / 2 - 300, GetColor(255, 255, 255), deadFont, L"死亡");
+        DrawFormatStringToHandle(x / 2 - 20, y / 2 - 200, GetColor(255, 255, 255),
+            deadFont, L"%d", (int)respawnTimer);
+    }
+
 	//リロード中の表示
 	if (isReload) {
         DrawFormatStringToHandle(x / 2 - 55, y / 2 + 15, GetColor(255, 200, 0), reloadFont, L"RELOADING...");
 	}
+
+    //ダメージ演出
+    if (damageTimer > 0.0f)
+    {
+        float alphaRate = damageTimer / 0.2f;
+        int alpha = (int)(alphaRate * 150);
+
+        SetDrawBlendMode(DX_BLENDMODE_ALPHA, alpha);
+        DrawBox(0, 0, x, y, GetColor(255, 0, 0), TRUE);
+        SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
+    }
+}
+
+void PlayerController::TakeDamage(const int damage)
+{
+    hp -= damage;
+    damageTimer = 0.2f;
 }
 
 void PlayerController::FireBullet(const Vec3& eye, const Vec3& forward)
