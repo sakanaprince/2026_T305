@@ -49,6 +49,7 @@ private:
 	float pitch{ 0.0f };
 
 	bool isGrounded{ true };
+	bool isDead{ false };
 	bool isAim{ false };
 	bool isReload{ false };
 
@@ -62,11 +63,12 @@ private:
 	int rifleAmmo{ 0 };
 	int shotgunAmmo{ 0 };
 
+	float respawnTimer{ 0.0f };
 	float fireTimer{ 0.0f };
 	float fireInterval{ 0.0f };
 	float reloadTimer{ 0.0f };
 
-	int ammoFont{ -1 };
+	int deadFont{ -1 };
 	int gunFont{ -1 };
 	int reloadFont{ -1 };
 
