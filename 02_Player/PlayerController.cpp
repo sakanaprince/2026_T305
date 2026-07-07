@@ -5,6 +5,7 @@
 
 void PlayerController::Init()
 {
+    deadFont= CreateFontToHandle(NULL, 70, 5, DX_FONTTYPE_ANTIALIASING);
 	gunFont = CreateFontToHandle(NULL, 50, 3, DX_FONTTYPE_ANTIALIASING);
     reloadFont = CreateFontToHandle(NULL, 25, 2, DX_FONTTYPE_ANTIALIASING);
 
@@ -21,11 +22,14 @@ void PlayerController::Reset()
 	pitch = { 0.0f };
 
 	isGrounded = { true };
+    isDead = { true };
     isAim = { false };
 	isReload = { false };
 
     hp = { Const::PLAYER_MAX_HP };
+    jumpCount = { 0 };
 
+    respawnTimer = { 0.0f };
     fireTimer = { 0.0f };
     fireInterval = { Const::PISTOL_FIRE_INTERVAL };
 	reloadTimer = { Const::RELOAD_TIME };
@@ -40,8 +44,22 @@ void PlayerController::Reset()
 
 void PlayerController::Update(float deltaTime, Stage& stage)
 {
+    if (isDead) {
+        respawnTimer += deltaTime;
+        if (respawnTimer >= Const::RESPAWN_TIME) {
+            hp = Const::PLAYER_MAX_HP;
+            position = { 0,0,0 };
+            isDead = false;
+        }
+        return;
+    }
+
+    if (hp <= 0) isDead = true;
+
     static int prevMouseInput = 0;
     int nowMouse = GetMouseInput();
+    static bool prevSpace = false;
+    bool nowSpace = CheckHitKey(KEY_INPUT_SPACE);
     bool leftDown = (nowMouse & MOUSE_INPUT_LEFT) && !(prevMouseInput & MOUSE_INPUT_LEFT);
 
     //現在の銃の種類を取得
@@ -73,21 +91,27 @@ void PlayerController::Update(float deltaTime, Stage& stage)
     else if (CheckHitKey(KEY_INPUT_LSHIFT)) playerSpeed = Const::PLAYER_DASH_SPEED;
     else playerSpeed = Const::PLAYER_WALK_SPEED;
 
+    isAim = nowMouse & MOUSE_INPUT_RIGHT;
+
 	// 斜め移動でも速くならないように正規化して速度を掛ける
 	if (moveVec.LengthSq() > Const::EPS) {
 		moveVec = moveVec.Normalized() * playerSpeed;
 	}
 
 	// スペースキーでジャンプ
-	if (CheckHitKey(KEY_INPUT_SPACE) && isGrounded) {
-		velocity.y = Const::PLAYER_JUMP_FORCE;
-		isGrounded = false;
+	if (nowSpace && !prevSpace) {
+        if (jumpCount < Const::MAX_JUNP_COUNT) {
+            velocity.y = Const::PLAYER_JUMP_FORCE;
+            isGrounded = false;
+            jumpCount++;
+        }
 	}
-    else if (!isGrounded) {
+    
+    if (!isGrounded) {
         velocity.y -= Const::GRAVITY * deltaTime;
     }
 
-    isAim = nowMouse & MOUSE_INPUT_RIGHT;
+    prevSpace = nowSpace;
 
     Step(deltaTime, stage, moveVec);
 
@@ -329,6 +353,7 @@ void PlayerController::Step(float deltaTime, Stage& stage, const Vec3& moveVec)
             position.y = groundY;
             velocity.y = 0.0f;
             isGrounded = true;
+            jumpCount = 0;
         }
         else
         {
@@ -381,7 +406,7 @@ void PlayerController::Draw() const
         break;
     }
 
-	//右下に残弾数の表示
+    //右下に残弾数の表示
 	wchar_t buf[32];
 	swprintf(buf, 32, L"%s", ammoBuf);
 	int textWidth = GetDrawStringWidthToHandle(buf, wcslen(buf), gunFont);
@@ -392,10 +417,21 @@ void PlayerController::Draw() const
 	DrawFormatStringToHandle(x - textWidth - 20, y - 60, GetColor(255, 255, 255),
         gunFont, L"%s", ammoBuf);
 
+    //銃の種類を表示
     swprintf(buf, 32, L"%s", gunName);
     textWidth = GetDrawStringWidthToHandle(buf, wcslen(buf), gunFont);
 
     DrawFormatStringToHandle(x - textWidth - 10, y - 120, GetColor(255, 255, 255), gunFont, L"%s", gunName);
+
+    //死亡時の表示
+    if (isDead) {
+        DrawFormatStringToHandle(x / 2-70, y / 2-300, GetColor(255, 255, 255), deadFont, L"死亡");
+
+        swprintf(buf, 32, L"%d", (int)respawnTimer);
+        textWidth = GetDrawStringWidthToHandle(buf, wcslen(buf), deadFont);
+        DrawFormatStringToHandle(x / 2 - 20, y / 2 - 200, GetColor(255, 255, 255),
+            deadFont, L"%d", (int)respawnTimer);
+    }
 
 	//リロード中の表示
 	if (isReload) {
