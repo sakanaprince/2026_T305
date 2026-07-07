@@ -30,6 +30,7 @@ namespace ResourceKeys
     inline constexpr const wchar_t* Model_Trap = L"ModelTrap";
 
     // ===== Musics / Sounds =====
+    inline constexpr const wchar_t* Sound_Arrow = L"Sound_Arrow";
 
     // ===== Fonts =====
     inline constexpr const wchar_t* Font_ManufacturingConsent = L"Manufacturing Consent";

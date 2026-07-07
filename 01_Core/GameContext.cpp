@@ -17,7 +17,7 @@ void GameContext::Init()
     core.Init();
     for (auto& t : turrets)
     {
-        t.Init(&player, &enemySpawner, &coin);
+        t.Init(&player, &enemySpawner, &coin, &soundManager);
     }
     enemyRoot.Init();
     enemySpawner.Init(&enemyRoot, &player, this);
@@ -25,6 +25,7 @@ void GameContext::Init()
     player.Init();
     player.SetBulletPointer(bullets, Const::AMMO_MAX);
     shopManager.Init(this);
+    soundManager.Init(&player);
 }
 
 void GameContext::Reset()
