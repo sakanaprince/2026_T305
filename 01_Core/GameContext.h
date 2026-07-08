@@ -13,6 +13,7 @@
 #include "../99_Utility/Const.h"
 #include "../05_Stage/Core.h"
 #include "../11_Shop/ShopManager.h"
+#include "../12_Sound/SoundManager.h"
 
 #include <string>
 #include "../11_Shop/Trap.h"
@@ -30,6 +31,9 @@ public:
 
     float GetLimit_Timer() { return limit_Timer; }
 
+    PlayerController& GetPlayer() { return player; }
+    const PlayerController& GetPlayer() const { return player; }
+
     Core& GetCore() { return core; }
     const Core& GetCore() const { return core; }
 
@@ -38,6 +42,9 @@ public:
 
     EnemySpawner& GetEnemySpawner() { return enemySpawner; }
     const EnemySpawner& GetEnemySpawner() const { return enemySpawner; }
+
+    SoundManager& GetSoundManager() { return soundManager; }
+    const SoundManager& GetSoundManager() const { return soundManager; }
 
     //ƒgƒ‰ƒbƒv‚ğw“ü‚µ‚½‚Æ‚«‚Ìˆ—
     void BuyTrap() { possessionTrap++; }
@@ -60,6 +67,7 @@ private:
     Coin coin;
     Core core;
     ShopManager shopManager;
+    SoundManager soundManager;
 
     std::vector<std::unique_ptr<Entity>> entities;
 

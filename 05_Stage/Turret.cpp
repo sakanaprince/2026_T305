@@ -5,17 +5,20 @@
 #include "../08_Debug/DebugUI.h"
 #include "../99_Utility/Const.h"
 
-void Turret::Init(PlayerController* _player, EnemySpawner* _enemySpawner, Coin* _coin)
+
+void Turret::Init(PlayerController* _player, EnemySpawner* _enemySpawner, Coin* _coin, SoundManager* _sound)
 {
 	modelBrokenTurret = RM().GetModel(ResourceKeys::Model_BrokenTurret);
 	modelTurret = RM().GetModel(ResourceKeys::Model_Turret);
 	MV1SetScale(modelBrokenTurret, DxConv::ToVECTOR(scale));
 	MV1SetScale(modelTurret, DxConv::ToVECTOR(scale));
 	modelTurretHandle = modelBrokenTurret;
+	soundArrowHandle = RM().GetSound(ResourceKeys::Sound_Arrow);
 
 	player = _player;
 	enemySpawner = _enemySpawner;
-	coin   = _coin;
+	coin = _coin;
+	sound = _sound;
 
 	for (auto& a : arrows)
 	{
@@ -124,6 +127,7 @@ void Turret::AvailableUpdate(float deltaTime)
 			if (a.IsActive()) { continue; }
 
 			a.LaunchArrow(toEnemy, deltaTime, *this);
+			sound->PlaySEAtPosition(soundArrowHandle, position);
 			Debug().Log(u8"–î‚ª”­ŽË‚³‚ê‚½");
 			break;
 		}

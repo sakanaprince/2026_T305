@@ -6,6 +6,7 @@
 #include "../05_Stage/Stage.h"
 #include "../03_Enemy/EnemySpawner.h"
 #include "../02_Player/Coin.h"
+#include "../12_Sound/SoundManager.h"
 
 enum State
 {
@@ -20,7 +21,7 @@ public:
 	Turret() = default;
 	~Turret() = default;
 
-	void Init(PlayerController* _player, EnemySpawner* _enemySpawner, Coin* _coin);
+	void Init(PlayerController* _player, EnemySpawner* _enemySpawner, Coin* _coin, SoundManager* _sound);
 	void Reset(Vec3 startPosition);
 	void Update(float deltaTime);
 	void AvailableUpdate(float deltaTime);  //タレットを解放しているときのUpdate
@@ -49,6 +50,8 @@ private:
 	int spriteReleasePrice{ -1 };  //タレットを解放する前の画像
 	int spriteUpgradePrice{ -1 };   //タレットのUpgradeの画像
 
+	int soundArrowHandle{ -1 };
+
 	Vec3 scale{ 2.0f,2.0f,2.0f };
 	Vec3 position{ 0.0f,0.0f,0.0f };
 	float yaw{ 0.0f };
@@ -71,5 +74,6 @@ private:
 	PlayerController* player{ nullptr };
 	EnemySpawner* enemySpawner{ nullptr };
 	Coin* coin{ nullptr };
+	SoundManager* sound{ nullptr };
 };
 
