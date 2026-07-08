@@ -3,6 +3,8 @@
 #include "../DxPlus/DxPlus.h"
 
 #include "BuyRepair.h"
+#include "BuyHolySushi.h"
+#include "BuyTrap.h"
 class GameContext;
 
 class ShopManager
@@ -14,7 +16,14 @@ public:
 	void Draw()const;
 
 	bool IsShopOpen(){ return isShopOpen; }
-	void SwitchShopOpen() { isShopOpen = !isShopOpen; }
+	void SwitchShopOpen()
+	{ 
+		isShopOpen = !isShopOpen; 
+		for (auto& b : btnCollection)
+		{
+			b->SetEffectDeActive();
+		}
+	}
 	const bool GetPrevFrameMouseDown()const  { return prevFrameMouseDown; }
 
 	GameContext* GetGameContext() { return pGameContext; }
@@ -27,9 +36,11 @@ private:
 
 	static constexpr size_t BUTTON_AMOUNT{ 2 };
 	std::vector<BuyButton*> btnCollection;
-
+	//商品
 	BuyRepair btnRepairCore;
-	BuyRepair btnSushi; //今だけリペアと同じクラスとしてる
+	BuyHolySushi btnSushi;
+	BuyTrap btnTrap;
+
 	DxPlus::Vec2Int mousePos{ 0,0 };
 	bool prevFrameMouseDown{ false };
 
