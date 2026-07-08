@@ -24,18 +24,20 @@ void BuyButton::Update(float deltaTime)
 	auto gC = pShopManager->GetGameContext();
 	canBuy = gC->GetCoinManager().GetCoin() >= buyCost;
 
+	//購入処理
 	if (CheckBuySuccess(buttonPosition_x, buttonPosition_x + buttonWidth, buttonPosition_y, buttonPosition_y + buttonHeight))
 	{
 		buyEffect.isEffectAlive = true;
 		buyEffect.effectAliveTimer = 0.0f;
 		buyEffect.effectUpY = buttonPosition_y;
 		gC->GetCoinManager().MinusCoin(buyCost);
+		pushedUXTimer = PushedUXTime;
 
-		//継承を使ったら解決できそう
+		//継承を使ったら解決できそう(できました
 		PurchaseItem();
-	
 	}
 
+	//購入エフェクト更新
 	if (buyEffect.isEffectAlive)
 	{
 		constexpr float effectSpeed = 256.0f;
@@ -44,13 +46,50 @@ void BuyButton::Update(float deltaTime)
 
 		if(buyEffect.effectAliveTimer >= buyEffect.effectAliveLimit){ buyEffect.isEffectAlive = false; }
 	}
+
+	//ボタンUXアニメーション
+	currentUXState = mouseOnBtn ? UXState::toReduce : UXState::toExpand;
+	
+	if(pushedUXTimer > 0.0f)
+	{
+		pushedUXTimer -= deltaTime;
+		scale -= deltaTime * ScaleSpeed;
+		scale = std::max(scale, MinReduceEndScale);
+		return;
+	}
+
+	else if (currentUXState == UXState::toReduce)
+	{
+		scale -= deltaTime * ScaleSpeed;
+		
+		scale = std::max(scale, ReduceEndScale);
+	}
+	else if(currentUXState == UXState::toExpand)
+	{
+		scale += deltaTime * ScaleSpeed;
+
+		scale = std::min(scale, ExpandEndScale);
+	}
 }
 
 void BuyButton::Draw() const
 {
 	using namespace DxPlus;
 
-	Primitive2D::DrawRect({ buttonPosition_x, buttonPosition_y }, {buttonWidth, buttonHeight}, buttonColor, true);
+	Primitive2D::DrawRect({ buttonPosition_x, buttonPosition_y }, 
+		{buttonWidth * scale, buttonHeight * scale}, buttonColor, true	);
+
+	//目標 * 　影響度でできないかな
+	//int rightEnd = buttonPosition_x + 30;
+
+	//DxLib::DrawBox(
+	//	buttonPosition_x + (scale * power),
+	//	buttonPosition_y,
+	//	buttonPosition_x + buttonWidth,
+	//	buttonPosition_y + buttonHeight,
+	//	buttonColor,
+	//	true
+	//);
 
 	wchar_t box[64];
 	swprintf(box, sizeof(box) / sizeof(wchar_t),L"%s \n \n %d $",itemName.c_str(), buyCost);
@@ -94,6 +133,14 @@ bool BuyButton::CheckBuySuccess(float posX_1, float posX_2, float posY_1, float 
 	const DxPlus::Vec2Int mousePos = pShopManager->GetMousePos();
 	mouseOnBtn = false;
 
+
+	if (!canBuy)
+	{
+		buttonColor = cantBuyButtonColor;
+		return false;
+	}
+
+
 	if (mousePos.x >= posX_1 && mousePos.x <= posX_2 && mousePos.y >= posY_1 && mousePos.y <= posY_2)
 	{
 		mouseOnBtn = true;
@@ -108,11 +155,6 @@ bool BuyButton::CheckBuySuccess(float posX_1, float posX_2, float posY_1, float 
 		return false;
 	}
 
-	if (!canBuy)
-	{
-		buttonColor = cantBuyButtonColor;
-		return false;
-	}
 
 	
 	buttonColor = unSelectButtonColor;

@@ -5,6 +5,6 @@
 void BuyHolySushi::PurchaseItem()
 {
 	constexpr int damage{ 100 };
-	constexpr float delay{ 5.0f };
+	constexpr float delay{ 1.0f };
 	pShopManager->GetGameContext()->GetEnemySpawner().ReadyAllEnemyTakeDamage(damage, delay);
 }
