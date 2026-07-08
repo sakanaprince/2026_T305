@@ -2,21 +2,7 @@
 #include "../99_Utility/Const.h"
 #include "EnemySpawner.h"
 
-void EnemyQuick::Init(EnemyRoot* enRoot, PlayerController* pc)
-{
-	radius = 80.0f;
-	height = 40.0f;
-	isAlive = false;
-	pEnemyRoot = enRoot;
-	pPlayer = pc;
-	initHp = 15;
 
-	if (!pEnemyRoot)
-	{
-		DxPlus::Utils::FatalError(L"null Ptr enemyRoot_p");
-		return;
-	}
-}
 
 void EnemyQuick::Reset()
 {

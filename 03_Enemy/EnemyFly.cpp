@@ -2,21 +2,6 @@
 #include "../99_Utility/Const.h"
 #include "EnemySpawner.h"
 
-void EnemyFly::Init(EnemyRoot* enRoot, PlayerController* pc)
-{
-	radius = 160.0f;
-	height = 70.0f;
-	hitSphereRadius = 100.0f;
-	isAlive = false;
-	pEnemyRoot = enRoot;
-	pPlayer = pc;
-	initHp = 30;
-	if (!pEnemyRoot)
-	{
-		DxPlus::Utils::FatalError(L"null Ptr enemyRoot_p");
-		return;
-	}
-}
 
 void EnemyFly::Reset()
 {

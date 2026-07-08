@@ -1,0 +1,32 @@
+{
+  "enemies": [
+    {
+      "key": "Low",
+      "maxHp": 50,
+      "moveSpeed": 15,
+      "coreDamage": 10,
+      "dropCoin": 5
+    },
+    {
+      "key": "Quick",
+      "maxHp": 30,
+      "moveSpeed": 30,
+      "coreDamage": 20,
+      "dropCoin": 7
+    },
+    {
+      "key": "Fly",
+      "maxHp": 40,
+      "moveSpeed": 30,
+      "coreDamage": 30,
+      "dropCoin": 7
+    },
+    {
+      "key": "Tank",
+      "maxHp": 500,
+      "moveSpeed": 5,
+      "coreDamage": 50,
+      "dropCoin": 50
+    }
+  ]
+}

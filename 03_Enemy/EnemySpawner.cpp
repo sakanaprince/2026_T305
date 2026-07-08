@@ -2,16 +2,16 @@
 #include "../01_Core/GameContext.h"
 
 #include "../05_Stage/EnemyRoot.h"
-#include "../03_Enemy/EnemyLow.h"
-#include "../03_Enemy/EnemyQuick.h"
-#include "../03_Enemy/EnemyTank.h"
-#include "../03_Enemy/EnemyFly.h"
+#include "EnemyLow.h"
+#include "EnemyQuick.h"
+#include "EnemyTank.h"
+#include "EnemyFly.h"
 
 #include "../08_Debug/DebugUI.h"
 
 #include <iterator>
 
-void EnemySpawner::Init(EnemyRoot* enR, PlayerController* pc, GameContext* gC)
+void EnemySpawner::Init(EnemyRoot* enR, PlayerController* pc, GameContext* gC, EnemyDataMaster* eD)
 {
 	pGameContext = gC;
 
@@ -25,7 +25,8 @@ void EnemySpawner::Init(EnemyRoot* enR, PlayerController* pc, GameContext* gC)
 	{
 		enemyCollection.push_back(std::make_unique<EnemyLow>()); 
 		
-		enemyCollection[i]->Init(enR, pc);
+		enemyCollection[i]->BindEnemyDataMaster(eD);
+		enemyCollection[i]->Init(enR, pc, EnemyKey::Low);
 		enemyCollection[i]->BindEnemySpawner(this);
 	}
 	//開始する値に注意
@@ -33,7 +34,8 @@ void EnemySpawner::Init(EnemyRoot* enR, PlayerController* pc, GameContext* gC)
 	{
 		enemyCollection.push_back(std::make_unique<EnemyQuick>());
 
-		enemyCollection[i]->Init(enR, pc);
+		enemyCollection[i]->BindEnemyDataMaster(eD);
+		enemyCollection[i]->Init(enR, pc, EnemyKey::Quick);
 		enemyCollection[i]->BindEnemySpawner(this);
 	}
 	//開始する値に注意
@@ -41,7 +43,8 @@ void EnemySpawner::Init(EnemyRoot* enR, PlayerController* pc, GameContext* gC)
 	{
 		enemyCollection.push_back(std::make_unique<EnemyTank>());
 
-		enemyCollection[i]->Init(enR, pc);
+		enemyCollection[i]->BindEnemyDataMaster(eD);
+		enemyCollection[i]->Init(enR, pc, EnemyKey::Tank);
 		enemyCollection[i]->BindEnemySpawner(this);
 	}
 	//開始する値に注意
@@ -49,7 +52,8 @@ void EnemySpawner::Init(EnemyRoot* enR, PlayerController* pc, GameContext* gC)
 	{
 		enemyCollection.push_back(std::make_unique<EnemyFly>());
 
-		enemyCollection[i]->Init(enR, pc);
+		enemyCollection[i]->BindEnemyDataMaster(eD);
+		enemyCollection[i]->Init(enR, pc, EnemyKey::Fly);
 		enemyCollection[i]->BindEnemySpawner(this);
 	}
 }
@@ -183,6 +187,11 @@ bool EnemySpawner::ReadyAllEnemyTakeDamage(int dmg, float delayTime)
 	allEnemyTakeDamageAmount = dmg;
 }
 
+
+void EnemySpawner::PlaySoundPos(int handle, Vec3 pos)
+{
+	pGameContext->GetSoundManager().PlaySEAtPosition(handle, pos);
+}
 
 void EnemySpawner::SpawnEnemy(ENEMY_NAME enName)
 {

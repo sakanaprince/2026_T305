@@ -4,8 +4,6 @@
 class EnemyQuick : public Entity
 {
 public:
-	// Entity ‚ğ‰î‚µ‚ÄŒp³‚³‚ê‚Ü‚µ‚½
-	void Init(EnemyRoot* enRoot, PlayerController* pc) override;
 	void Reset();
 	void DrawDebug()const override;
 

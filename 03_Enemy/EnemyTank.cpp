@@ -2,21 +2,7 @@
 #include "../99_Utility/Const.h"
 #include "EnemySpawner.h"
 
-void EnemyTank::Init(EnemyRoot* enRoot, PlayerController* pc)
-{
-	radius = 160.0f;
-	height = 70.0f;
-	hitSphereRadius = 100.0f;
-	isAlive = false;
-	pEnemyRoot = enRoot;
-	pPlayer = pc;
-	initHp = 300;
-	if (!pEnemyRoot)
-	{
-		DxPlus::Utils::FatalError(L"null Ptr enemyRoot_p");
-		return;
-	}
-}
+
 
 void EnemyTank::Reset()
 {
@@ -77,7 +63,7 @@ void EnemyTank::BodyLine() const
 		DxConv::ToVECTOR({ position.x , (position.y + skin) , position.z }),
 		DxConv::ToVECTOR({ position.x , (position.y + skin + height), position.z }),
 
-		50 * sizeMagnification, 16, GetColor(0, 0, 250), GetColor(255, 255, 255), true
+		50 * sizeMagnification, 16, GetColor(10, 10, 50), GetColor(155, 155, 155), true
 	);
 
 

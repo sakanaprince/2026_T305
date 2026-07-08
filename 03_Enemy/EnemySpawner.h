@@ -13,7 +13,7 @@ class EnemySpawner
 {
 public:
 	EnemySpawner() = default;
-	void Init(EnemyRoot* enRoot, PlayerController* pc, GameContext* gC);
+	void Init(EnemyRoot* enRoot, PlayerController* pc, GameContext* gC, EnemyDataMaster* eD);
 	void Update(float deltaTime);
 	void Draw() const;
 
@@ -55,6 +55,7 @@ public:
 	/// </summary>
 	size_t GetEnemyCollectionSize() { return enemyCollection.size(); }
 
+	void PlaySoundPos(int handle, Vec3 pos);
 	
 
 private:
