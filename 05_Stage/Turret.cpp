@@ -126,7 +126,7 @@ void Turret::AvailableUpdate(float deltaTime)
 		{
 			if (a.IsActive()) { continue; }
 
-			a.LaunchArrow(toEnemy, deltaTime, *this);
+			a.LaunchArrow(toEnemy, *this);
 			sound->PlaySEAtPosition(soundArrowHandle, position);
 			Debug().Log(u8"–î‚ª”­ŽË‚³‚ê‚½");
 			break;

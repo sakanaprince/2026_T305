@@ -1,6 +1,7 @@
 #pragma once
 #include "../DxPlus/DxPlus.h"
 #include "../01_Core/Entity.h"
+#include "../01_Core/EnemyDataMaster.h"
 #include "../02_Player/CameraController.h"
 #include "../02_Player/Bullet.h"
 #include "../02_Player/Coin.h"
@@ -9,11 +10,12 @@
 #include "../05_Stage/Stage.h"
 #include "../05_Stage/Turret.h"
 #include "../05_Stage/EnemyRoot.h"
-#include "../08_Debug/Grid.h"
-#include "../99_Utility/Const.h"
 #include "../05_Stage/Core.h"
+#include "../08_Debug/Grid.h"
 #include "../11_Shop/ShopManager.h"
 #include "../12_Sound/SoundManager.h"
+#include "../99_Utility/Const.h"
+
 
 #include <string>
 #include "../11_Shop/Trap.h"
@@ -21,7 +23,7 @@
 class GameContext
 {
 public:
-    GameContext() = default;
+    GameContext(SoundManager& _sound) : soundManager(_sound){}
     ~GameContext() = default;
 
     void Init();
@@ -67,7 +69,9 @@ private:
     Coin coin;
     Core core;
     ShopManager shopManager;
-    SoundManager soundManager;
+    EnemyDataMaster enemyDataManster;
+
+    SoundManager& soundManager;
 
     std::vector<std::unique_ptr<Entity>> entities;
 
