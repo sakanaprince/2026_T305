@@ -23,13 +23,13 @@ public:
 		return s;
 	}
 
-	//ƒvƒŒƒCƒ„[‚ÌˆÊ’u‚ğæ“¾
+	//ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®ä½ç½®ã‚’å–å¾—
 	const Vec3& GetPosition() const { return position; }
 	const Vec3& GetCameraForward() const { return camera.GetForward(); }
-	//ƒvƒŒƒCƒ„[‚ÌHP‚ğæ“¾
+	//ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®ç”Ÿå­˜ã‚’å–å¾—
+	const bool IsAlive() const { return isAlive; }
+	//ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®HPã‚’å–å¾—
 	const int GetHp() const { return hp; }
-	//ƒ_ƒ[ƒW‚ğ“n‚µ‚Ä‚»‚Ì•ª‚ğHP‚©‚çˆø‚­
-	void TakeDamage(const int damage) { hp -= damage; }
 
 	void Init();
 	void Reset();
@@ -37,6 +37,8 @@ public:
 	void Step(float deltaTime, Stage& stage, const Vec3& moveVec);
 	void Draw() const;
 
+	//ãƒ€ãƒ¡ãƒ¼ã‚¸ã‚’æ¸¡ã—ã¦ãã®åˆ†ã‚’HPã‹ã‚‰å¼•ã
+	void TakeDamage(const int damage);
 	void FireBullet(const Vec3& eye, const Vec3& forward);
 	Vec3 RandomSpreadDirection(const Vec3& forward, float spreadDeg);
 
@@ -48,6 +50,7 @@ private:
 	float yaw{ 0.0f };
 	float pitch{ 0.0f };
 
+	bool isAlive{ true };
 	bool isGrounded{ true };
 	bool isDead{ false };
 	bool isAim{ false };
@@ -63,6 +66,7 @@ private:
 	int rifleAmmo{ 0 };
 	int shotgunAmmo{ 0 };
 
+	float damageTimer{ 0.0f };
 	float respawnTimer{ 0.0f };
 	float fireTimer{ 0.0f };
 	float fireInterval{ 0.0f };
