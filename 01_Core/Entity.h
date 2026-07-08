@@ -1,19 +1,19 @@
 #pragma once
 #include "../07_Math/Vector3.h"
 #include "../02_Player/PlayerController.h"
-
 #include "../05_Stage/EnemyRoot.h"
-
 #include "../10_Physics/Collision.h"
-
 #include "../09_Effect/Explosion.h"
+#include "../01_Core/EnemyDataMaster.h"
 
 class EnemySpawner;
+
 class Player;
 
 class Entity
 {
 public:
+
     Entity() = default;
 
     //アクセサー
@@ -36,32 +36,41 @@ public:
 
     //ライフサイクル
     //ほんとは純粋仮想関数にしたいけど、配列を作る時にエラーが...え？直った。vectorにしたからかな
-    virtual void Init(EnemyRoot* enRoot, PlayerController* pc) = 0;
-    virtual void Reset() { MessageBox(NULL, L"なぜ基底クラスのResetを呼ぶのか", L"", FALSE); };
+    virtual void Init(EnemyRoot* enRoot, PlayerController* pc, EnemyKey key);
+    virtual void Reset() {};
     virtual void Update(float deltaTime);
     virtual void Draw()const;
     virtual void DrawDebug()const {}; //判定の可視化とか で
     virtual void Release() {}; 
 
     virtual void TakeDamage(int amount);
+    virtual void TakeGroundDamage(int amount);
+
+    void BindEnemyDataMaster(EnemyDataMaster* dtm) { pEnemyDataMaster = dtm; }
 
 protected:
     //HP関連
-    int initHp;
-    int currentHp;
+    EnemyKey myKey{EnemyKey::Low};
+
+    int currentHp{1};
     const float hpBarHeight{ 20 };
+
+    //Jsonで調整する
+    int initHp{ 30 };
+    int coreDamage{ 10 };
+    int dropCoin{ 10 };
+    float moveSpeed{ 80.0f };
 
     const float  ROOTPOINT_DISTANCE_LIMIT{ 10.0f };
     Vec3 position;
     Vec3 velocity;
     Vec3 scale;
-    float yaw; //向いてる方向
+    float yaw{ 0 }; //向いてる方向
     bool isMoving{ false };
     bool isAlive{ false };
     bool isChasePlayer{ false };
     const float ChaseStartDistance{ 500.0f };
 
-    float moveSpeed{ 80.0f };
 
     Vec3 moveDir{ 0.0f, 0.0f, 0.0f };
 
@@ -103,6 +112,7 @@ protected:
     PlayerController* pPlayer{ nullptr };
     EnemySpawner* pEnemySpawner{ nullptr };
     EnemyRoot* pEnemyRoot{nullptr};
+    EnemyDataMaster* pEnemyDataMaster{ nullptr };
 
     Explosion explosion;
 
@@ -113,9 +123,12 @@ protected:
     virtual void BodyLine()const {};
     float animTimer{ 0.0f };
 
-    //
+    float groundDamageInvTimer{ 0.0f };
+    const float groundDamageInvTime{ 0.5f };
+
+    //プレイヤーが近くにいたら追いかけ始める
     float startChaseTimer{ 0.0f };
-    const float START_CHASE_TIME{ 1.5f };
+    const float START_CHASE_TIME{ 0.2f };
 
     //ダメージを受けたときのリアクション用
     float damageReactionTimer{ 0.0f };

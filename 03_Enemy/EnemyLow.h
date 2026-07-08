@@ -6,7 +6,6 @@
 class EnemyLow final : public Entity
 {
 public:
-	void Init(EnemyRoot* enRoot, PlayerController* pc) override;
 	void Reset();
 	
 	void DrawDebug()const override;
