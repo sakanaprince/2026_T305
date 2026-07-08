@@ -7,8 +7,10 @@ void SoundManager::Init(PlayerController* _player)
 	player = _player;
 }
 
-void SoundManager::PlaySENormal(const int soundHandle)
+void SoundManager::PlaySENormal(const int soundHandle, int soundVolume)
 {
+	ChangeVolumeSoundMem(soundVolume, soundHandle);
+
 	PlaySoundMem(soundHandle, DX_PLAYTYPE_BACK);
 }
 
@@ -27,7 +29,7 @@ void SoundManager::PlaySEAtPosition(const int soundHandle, const Vec3& position)
 	float clampLength = length / maxDistance;
 
 	//maxSoundをmaxSoound * clampLengthを書けて出た値で引くことで音量を調整
-	int volume = (float)maxSoundAndPan - (float)maxSoundAndPan * clampLength;
+	int volume = static_cast<int>((float)maxSoundAndPan - (float)maxSoundAndPan * clampLength);
 
 	//プレイヤーの前方と左右の方向を取る
 	Vec3 forward = player->GetCameraForward();
@@ -41,17 +43,17 @@ void SoundManager::PlaySEAtPosition(const int soundHandle, const Vec3& position)
 	float rightDot = Vec3::Dot(right, normalized);
 	float leftDot  = Vec3::Dot(left , normalized);
 
-	float soundDot = 0;
+	int soundDot = 0;
 
 	//数値の大きいほうだけ使う
 	if (rightDot > 0)
 	{
 		//ドットが大きいほど値が大きくなるようにする
-		soundDot = (float)maxSoundAndPan * rightDot;
+		soundDot = static_cast<int>((float)maxSoundAndPan * rightDot);
 	}
 	else if (leftDot > 0)
 	{
-		soundDot = (float)maxSoundAndPan * leftDot;
+		soundDot = static_cast<int>((float)maxSoundAndPan * leftDot);
 
 		//左の音量はマイナスが大きいほど大きくなるのでマイナスにしておく
 		soundDot *= -1;

@@ -20,7 +20,8 @@ void GameContext::Init()
         t.Init(&player, &enemySpawner, &coin, &soundManager);
     }
     enemyRoot.Init();
-    enemySpawner.Init(&enemyRoot, &player, this);
+    enemyDataManster.LoadJson();
+    enemySpawner.Init(&enemyRoot, &player, this, &enemyDataManster);
     bullets->Init();   
     player.Init();
     player.SetBulletPointer(bullets, Const::AMMO_MAX);
@@ -73,7 +74,7 @@ void GameContext::Update(float deltaTime)
         DxLib::SetMouseDispFlag(shopOpen);
 
         //マウスカーソルの位置を中央に持ってくる
-        SetMousePoint(DxPlus::CLIENT_WIDTH * 0.5f, DxPlus::CLIENT_HEIGHT * 0.5f);
+        SetMousePoint(DxPlus::CLIENT_WIDTH / 2, DxPlus::CLIENT_HEIGHT / 2);
 
         //if (!shopOpen)
         //{
@@ -160,7 +161,7 @@ void GameContext::Draw() const
         fontHandle);
 
     SetFontSize(30);
-    DrawFormatString(10, DxPlus::CLIENT_HEIGHT * 0.95f, GetColor(255, 255, 255), 
+    DrawFormatString(10, (int)DxPlus::CLIENT_HEIGHT * 0.95f, GetColor(255, 255, 255), 
         L"移動：WASD　射撃：左クリック　武器変更：マウスホイール　リロード：R　ダッシュ：左Shift　ジャンプ：Space");
     SetFontSize(50);
 

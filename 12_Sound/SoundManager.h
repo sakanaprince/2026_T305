@@ -2,8 +2,8 @@
 #include "../04_Resource/ResourceKeys.h"
 #include "../07_Math/Vector3.h"
 #include <string>
-#include "../02_Player/PlayerController.h"
 
+class PlayerController;
 class SoundManager
 {
 public:
@@ -12,10 +12,18 @@ public:
 
 	void Init(PlayerController* _player);
 
-	//普通の音の再生
-	void PlaySENormal(const int soundHandle);
+	/// <summary>
+	/// 通常の音の再生
+	/// </summary>
+	/// <param name="soundHandle">音のハンドル</param>
+	/// <param name="soundVolume">音の大きさ。０～２５５で設定</param>
+	void PlaySENormal(const int soundHandle , int soundVolume = 255);
 
-	//距離減衰と音の左右差がある音の再生
+	/// <summary>
+	/// 距離減衰と音の左右差がある音の再生
+	/// </summary>
+	/// <param name="soundHandle">音のハンドル</param>
+	/// <param name="position">音のなる位置</param>
 	void PlaySEAtPosition(const int soundHandle, const Vec3& position);
 
 private:

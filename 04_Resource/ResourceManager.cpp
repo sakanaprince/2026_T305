@@ -39,7 +39,10 @@ void ResourceManager::LoadAll()
     // -----
 
     // --- Sound ---
-    LoadSound(ResourceKeys::Sound_Arrow, L"ShotArrow.mp3");
+    LoadSound(ResourceKeys::Sound_Arrow, L"ShotArrow.wav");
+    LoadSound(ResourceKeys::Sound_SubmachineGun, L"SubmachineGun.wav");
+    LoadSound(ResourceKeys::Sound_Gun, L"Gun.wav");
+    LoadSound(ResourceKeys::Sound_ShotGun, L"ShotGun.wav");
     // -----
 }
 
