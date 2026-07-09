@@ -47,6 +47,9 @@ void ResourceManager::LoadAll()
     LoadSound(ResourceKeys::Sound_OpenShop, L"OpenShop.mp3");
     LoadSound(ResourceKeys::Sound_BuyItem, L"BuyItem.mp3");
     LoadSound(ResourceKeys::Sound_EnemyDamage, L"EnemyDamage.wav");
+    LoadSound(ResourceKeys::Sound_SetTrap, L"SetTrap.wav");
+    LoadSound(ResourceKeys::Sound_Upgrade, L"Upgrade.wav");
+    LoadSound(ResourceKeys::Sound_Click, L"Click.wav");
     // -----
 
     // --- Music ---

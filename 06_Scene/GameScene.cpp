@@ -1,7 +1,5 @@
 #include "GameScene.h"
 #include "SceneManager.h"
-#include "../04_Resource/ResourceManager.h"
-#include "../04_Resource/ResourceKeys.h"
 
 void GameScene::Init()
 {

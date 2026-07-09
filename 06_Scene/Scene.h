@@ -1,5 +1,7 @@
 #pragma once
 #include "../DxPlus/DxPlus.h"
+#include "../04_Resource/ResourceManager.h"
+#include "../04_Resource/ResourceKeys.h"
 
 class Scene
 {
@@ -9,7 +11,7 @@ public:
     virtual ~Scene() = default;
 
     // ライフサイクル
-    virtual void Init() = 0;            // 初期化（純粋仮想関数）
+    virtual void Init() = 0;
     virtual void Update(float) {}            // 毎フレーム更新（派生で実装）
     virtual void Render() const {}      // 毎フレーム描画（派生で実装）
     virtual void End() {}
@@ -41,6 +43,8 @@ protected:
 
     //タイトルやリザルトシーンの文字の色
     const int textColor = DxLib::GetColor(255, 255, 0);
+
+    int soundClickHandle{ -1 };
 
 private:
     DxPlus::FadeController fade;

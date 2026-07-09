@@ -19,7 +19,7 @@ public:
 	Collision::Sphere GetSphereArrow() const { return sphereArrow; }
 
 	//–î‚Ì”­Ë‚ÌŠÖ”
-	void LaunchArrow(Vec3 forward, float deltaTime, Turret& turret);
+	void LaunchArrow(Vec3 forward, class Turret& turret);
 
 	//–î‚ªg—p‚³‚ê‚Ä‚¢‚é‚©‚Ç‚¤‚©
 	bool IsActive() const { return isActive; }
