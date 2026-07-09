@@ -42,7 +42,7 @@ private:
 	float lifeTimer{ 0.0f };
 	float lifeTime{ 1.0f };
 
-	int arrowDamage{ 1 };
+	int arrowDamage{ 5 };
 
 	Collision::Sphere sphereArrow;
 };
