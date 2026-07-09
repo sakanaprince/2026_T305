@@ -39,10 +39,6 @@ public:
 	//•œŠˆ‚Ì‚¨ç‚è ŒÄ‚Ño‚·‚²‚Æ‚É1‘‚¦‚é
 	void ResurrectionAmuletPlus() { resurrectionAmulet++; }
 
-	void SetPrevMouse(int mouseX, int mouseY) { prevMouse = { mouseX, mouseY }; }
-	//•œŠˆ‚Ì‚¨ç‚è ŒÄ‚Ño‚·‚²‚Æ‚É1‘‚¦‚é
-	void ResurrectionAmuletPlus() { resurrectionAmulet++; }
-
 	void Init();
 	void Reset();
 	void Update(float deltaTime, Stage& stage);
