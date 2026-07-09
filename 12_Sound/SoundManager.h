@@ -10,7 +10,18 @@ public:
 	SoundManager() = default;
 	~SoundManager() = default;
 
+	//PlaySEAtPositionでプレイヤーの位置が必要なのでここで取得する
 	void Init(PlayerController* _player);
+
+	//音の再生用関数
+	void Play(const int soundHandle, int soundType, int soundVolume = 255);
+
+	/// <summary>
+	/// BGMの再生（再生中のBGMがあれば自動で止めます）
+	/// </summary>
+	/// <param name="soundHandle">音のハンドル</param>
+	/// <param name="soundVolume">音の大きさ。０～２５５で設定</param>
+	void PlayBGM(const int soundHandle, int soundVolume = 255);
 
 	/// <summary>
 	/// 通常の音の再生
@@ -28,6 +39,8 @@ public:
 
 private:
 	PlayerController* player{ nullptr };
+
+	int currentSoundHandle{ -1 };
 
 	//音の聞こえる最大距離
 	float maxDistance{ 1500.0f };

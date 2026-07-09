@@ -5,12 +5,14 @@
 
 void TitleScene::Init()
 {
-//    frameCount = 0;
+    DxLib::SetBackgroundColor(0, 0, 0);
     fontHandle = RM().GetFont(ResourceKeys::Font_ManufacturingConsent);
     backGroundHandle = RM().GetSprite(ResourceKeys::Sprite_TitleBG);
     tutorial_PurposeHandle = RM().GetSprite(ResourceKeys::Sprite_TutorialPurpose);
     tutorial_TurretReleaseHandle = RM().GetSprite(ResourceKeys::Sprite_TutorialTurretRelease);
     tutorial_TurretUpgradeHandle = RM().GetSprite(ResourceKeys::Sprite_TutorialTurretUpgrade);
+    bgmHandle = RM().GetMusic(ResourceKeys::Music_Title);
+    soundManager->PlayBGM(bgmHandle);
     titleButtonColor = buttonNormalColor;
     tutorialButtonColor = buttonNormalColor;
     nextButtonColor = buttonNormalColor;
@@ -99,8 +101,8 @@ void TitleScene::Render() const
     {
         DrawBox
         (
-            nextPosX_1, nextPosY_1,
-            nextPosX_2, nextPosY_2,
+            (int)nextPosX_1, (int)nextPosY_1,
+            (int)nextPosX_2, (int)nextPosY_2,
             nextButtonColor,
             true
         );
@@ -111,8 +113,8 @@ void TitleScene::Render() const
 
         DrawBox
         (
-            returnPosX_1, returnPosY_1,
-            returnPosX_2, returnPosY_2,
+            (int)returnPosX_1, (int)returnPosY_1,
+            (int)returnPosX_2, (int)returnPosY_2,
             returnButtonColor,
             true
         );
@@ -139,6 +141,7 @@ bool TitleScene::ButtonCheckHit(int mouseX, int mouseY, float posX_1, float posX
         buttonColor = buttonNormalColor;
         return false;
     }
+    return false;
 }
 
 void TitleScene::TitleRender() const
@@ -151,8 +154,8 @@ void TitleScene::TitleRender() const
 
     DrawBox
     (
-        titlePosX_1, titlePosY_1,
-        titlePosX_2, titlePosY_2,
+        (int)titlePosX_1, (int)titlePosY_1,
+        (int)titlePosX_2, (int)titlePosY_2,
         titleButtonColor,
         true
     );
@@ -164,8 +167,8 @@ void TitleScene::TitleRender() const
 
     DrawBox
     (
-        tutorialPosX_1, tutorialPosY_1,
-        tutorialPosX_2, tutorialPosY_2,
+        (int)tutorialPosX_1, (int)tutorialPosY_1,
+        (int)tutorialPosX_2, (int)tutorialPosY_2,
         tutorialButtonColor,
         true
     );

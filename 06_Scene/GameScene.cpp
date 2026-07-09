@@ -10,7 +10,10 @@ void GameScene::Init()
 
     //ƒ}ƒEƒX‚ðÁ‚·‚©‚ÌÝ’è
     DxLib::SetMouseDispFlag(FALSE);
-    SetMousePoint(DxPlus::CLIENT_WIDTH * 0.5f, DxPlus::CLIENT_HEIGHT * 0.5f);
+    SetMousePoint(DxPlus::CLIENT_WIDTH / 2, (int)DxPlus::CLIENT_HEIGHT / 2);
+
+    bgmHandle = RM().GetMusic(ResourceKeys::Music_Game);
+    soundManager->PlayBGM(bgmHandle, 155);
 
     StartFadeIn();
 }
@@ -19,22 +22,27 @@ void GameScene::Update(float deltaTime)
 {
     gameContext->Update(deltaTime);
 
-    int mouseX;
-    int mouseY;
-    GetMousePoint(&mouseX, &mouseY);
-    if (mouseX >= DxPlus::CLIENT_WIDTH - 1)
+#ifndef NDEBUG
+    if (CheckHitKey(KEY_INPUT_DELETE))
     {
-        SetMousePoint(0, mouseY);
+        Scene* gameOverScene = SceneManager::GetInstance().GetScene(SceneID::GameOver);
+        SetNextScene(gameOverScene);
+        return;
     }
-    else if (mouseX <= 0)
+
+    if (CheckHitKey(KEY_INPUT_C))
     {
-        SetMousePoint(DxPlus::CLIENT_WIDTH - 1, mouseY);
+        Scene* gameClearScene = SceneManager::GetInstance().GetScene(SceneID::GameClear);
+        SetNextScene(gameClearScene);
+        return;
     }
+#endif // !NDEBUG
+
 
     if (gameContext->GetCore().GetHP() <= 0)
     {
-        Scene* gameClearScene = SceneManager::GetInstance().GetScene(SceneID::GameOver);
-        SetNextScene(gameClearScene);
+        Scene* gameOverScene = SceneManager::GetInstance().GetScene(SceneID::GameOver);
+        SetNextScene(gameOverScene);
         return;
     }
 

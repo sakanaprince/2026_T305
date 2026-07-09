@@ -13,6 +13,7 @@ public:
 private:
     int fontHandle{ -1 };
     int backGroundHandle{ -1 };
+    int bgmHandle{ -1 };
 
     float sizeX{ 200 };
     float sizeY{ 50 };
