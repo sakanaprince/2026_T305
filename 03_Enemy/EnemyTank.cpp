@@ -10,6 +10,8 @@ void EnemyTank::Reset()
 	moveSpeed = 20.0f;
 	rootTargetIndex = 0;
 	currentHp = initHp;
+	radius = 300.0f;
+	hitSphereRadius = 130.0f;
 
 	damageReactionTimer = 0.0f;
 	isDamageReaction = false;

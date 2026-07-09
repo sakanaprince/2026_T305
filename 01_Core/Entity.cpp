@@ -82,7 +82,6 @@ void Entity::Draw() const
 
 	const float playerSightAngle = cos(DxPlus::Deg2Rad * 50);
 
-	DxPlus::Debug::SetFormatString(L"COS SETA %.2f, ANGLE %.2f", digCosSeata, playerSightAngle);
 
 	if (digCosSeata > playerSightAngle) { isPlayerView = true; }
 
@@ -96,7 +95,7 @@ void Entity::TakeDamage(int amount)
 {
 	if (isKilledReaction) { return; }
 
-	pEnemySpawner->PlaySoundPos(RM().GetSound(ResourceKeys::Sound_Arrow), position);
+	//pEnemySpawner->PlaySoundPos(RM().GetSound(ResourceKeys::Sound_Arrow), position);
 	amount = std::max(amount, 0);
 	currentHp = std::max(currentHp - amount, 0);
 
@@ -129,15 +128,43 @@ void Entity::DrawHpBar() const
 {
 	if (!isAlive) { return; }
 
-	//距離を取ったらバーを小さくしないと
-	Vec3 hpBarPos = { position.x - 100.0f, position.y + 200.0f, position.z };
+	//0除算を防ぐ
+	if (initHp <= 0.0f) { return; }
 
-	VECTOR finalPos = DxLib::ConvWorldPosToScreenPos(DxConv::ToVECTOR(hpBarPos));
+	//距離を取ったらバーを小さくしないと
+	/*
+	const float Distance = (pPlayer->GetPosition() - position).Length();
+	constexpr float ScaleDownLimit = 2000.0f;
+	float scaleDownRate = 0.0f;
+
+	//Gap値が正なら縮小無し。マイナスなら小さくする。
+	if (Distance > ScaleDownLimit){	scaleDownRate = 0.8f;}
+	//int scaleReduceWidth = scaleDownRate * (hpBarWidth * 0.5f);
+	//int scaleReduceHeight = scaleDownRate * (hpBarHeight * 0.5f);
+	*/
+	Vec3 hpBarPos = { position.x , position.y + 200.0f, position.z };
+
+	VECTOR screenPosition = DxLib::ConvWorldPosToScreenPos(DxConv::ToVECTOR(hpBarPos));
+
 
 	float p = static_cast<float>(currentHp) / static_cast<float>(initHp);
 
-	DxPlus::Primitive2D::DrawRect({finalPos.x- 128, finalPos.y +  10.0f},{256,hpBarHeight},GetColor(255,0,0),true );
-	DxPlus::Primitive2D::DrawRect({finalPos.x- 128, finalPos.y +  10.0f},{256 * p,hpBarHeight},GetColor(0,255,0),true );
+	constexpr int hpBarWidth = 256;
+	int left = screenPosition.x - hpBarWidth / 2;
+	int top = screenPosition.y  - hpBarHeight / 2;
+	int right = left + hpBarWidth;
+	int bottom = top + hpBarHeight;
+
+	//色
+	unsigned int OutLineColor = GetColor(0, 0, 0);
+	unsigned int BackColor = GetColor(128, 32, 32);
+	unsigned int HpColor = GetColor(0, 255, 0);
+
+
+
+	DxLib::DrawBox(left, top, right					,bottom, OutLineColor, false, 10);
+	DxLib::DrawBox(left, top, right					,bottom, BackColor, true);
+	DxLib::DrawBox(left, top, left + hpBarWidth * p ,bottom, HpColor, true);
 }
 
 void Entity::StepGround(float deltaTime)
