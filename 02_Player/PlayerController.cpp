@@ -2,6 +2,7 @@
 #include "DxLib.h"
 #include "../10_Physics/Raycast.h"
 #include "../99_Utility/Const.h"
+#include <algorithm>
 
 void PlayerController::Init()
 {
@@ -52,12 +53,15 @@ void PlayerController::Update(float deltaTime, Stage& stage)
             respawnTimer = Const::RESPAWN_TIME;
             hp = Const::PLAYER_MAX_HP;
             position = { 0,0,0 };
-            isAlive = false;
+            isAlive = true;
         }
         return;
     }
 
-    if (hp <= 0) isAlive = false;
+    if (hp <= 0) {
+        isAlive = false;
+        return;
+    }
 
     if (damageTimer > 0.0f)
     {
@@ -76,23 +80,23 @@ void PlayerController::Update(float deltaTime, Stage& stage)
     bool nowSpace = CheckHitKey(KEY_INPUT_SPACE);
     bool leftDown = (nowMouse & MOUSE_INPUT_LEFT) && !(prevMouseInput & MOUSE_INPUT_LEFT);
 
-    //ç¾åœ¨ã®éŠƒã®ç¨®é¡ã‚’å–å¾—
+    //Œ»İ‚Ìe‚Ìí—Ş‚ğæ“¾
     currentGunType = gun.GetGunType();
 
-	// ãƒã‚¦ã‚¹ã®ç¾åœ¨åœ°ã‚’å–å¾—
+	// ƒ}ƒEƒX‚ÌŒ»İ’n‚ğæ“¾
 	GetMousePoint(&currentMouse.x, &currentMouse.y);
 
-	// å·¦å³ãƒ»ä¸Šä¸‹å›è»¢
+	// ¶‰EEã‰º‰ñ“]
 	yaw -= (currentMouse.x - prevMouse.x) * Const::ROTATE_RAD_PAR_PIXEL;
 	pitch -= (currentMouse.y - prevMouse.y) * Const::ROTATE_RAD_PAR_PIXEL;
 	pitch = std::clamp(pitch, Const::PITC_MIN, Const::PITC_MAX);
 	prevMouse = currentMouse;
 
-	// ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®å‰ãƒ»å³æ–¹å‘ãƒ™ã‚¯ãƒˆãƒ«
+	// ƒvƒŒƒCƒ„[‚Ì‘OE‰E•ûŒüƒxƒNƒgƒ‹
 	forward = { cos(yaw), 0.0f, sin(yaw) };
 	right = { -forward.z, 0.0f, forward.x };
 
-	// positionã‚’ç›´æ¥å‹•ã‹ã•ãšã€ã“ã®ãƒ•ãƒ¬ãƒ¼ãƒ ã®ã€Œå…¥åŠ›ã«ã‚ˆã‚‹æ°´å¹³ç§»å‹•ãƒ™ã‚¯ãƒˆãƒ«ã€ã‚’è¨ˆç®—ã™ã‚‹
+	// position‚ğ’¼Ú“®‚©‚³‚¸A‚±‚ÌƒtƒŒ[ƒ€‚Ìu“ü—Í‚É‚æ‚é…•½ˆÚ“®ƒxƒNƒgƒ‹v‚ğŒvZ‚·‚é
 	Vec3 moveVec = { 0.0f, 0.0f, 0.0f };
 	if (CheckHitKey(KEY_INPUT_W)) moveVec += forward;
 	if (CheckHitKey(KEY_INPUT_S)) moveVec -= forward;
@@ -107,12 +111,12 @@ void PlayerController::Update(float deltaTime, Stage& stage)
 
     isAim = nowMouse & MOUSE_INPUT_RIGHT;
 
-	// æ–œã‚ç§»å‹•ã§ã‚‚é€Ÿããªã‚‰ãªã„ã‚ˆã†ã«æ­£è¦åŒ–ã—ã¦é€Ÿåº¦ã‚’æ›ã‘ã‚‹
+	// Î‚ßˆÚ“®‚Å‚à‘¬‚­‚È‚ç‚È‚¢‚æ‚¤‚É³‹K‰»‚µ‚Ä‘¬“x‚ğŠ|‚¯‚é
 	if (moveVec.LengthSq() > Const::EPS) {
 		moveVec = moveVec.Normalized() * playerSpeed;
 	}
 
-	// ã‚¹ãƒšãƒ¼ã‚¹ã‚­ãƒ¼ã§ã‚¸ãƒ£ãƒ³ãƒ—
+	// ƒXƒy[ƒXƒL[‚ÅƒWƒƒƒ“ƒv
 	if (nowSpace && !prevSpace) {
         if (jumpCount < Const::MAX_JUNP_COUNT) {
             velocity.y = Const::PLAYER_JUMP_FORCE;
@@ -129,23 +133,23 @@ void PlayerController::Update(float deltaTime, Stage& stage)
 
     Step(deltaTime, stage, moveVec);
 
-	// è¦–ç‚¹ã®é«˜ã•ã«æ›´æ–°
+	// ‹“_‚Ì‚‚³‚ÉXV
 	Vec3 eye = position + Vec3(0, Const::PLAYER_EYE_POSITION, 0);
 
-	// ã‚«ãƒ¡ãƒ©ã®æ›´æ–°
+	// ƒJƒƒ‰‚ÌXV
 	camera.UpdateFromPlayer(eye, yaw, pitch, isAim);
 
-    // éŠƒã®ç¨®é¡ã®åˆ‡ã‚Šæ›¿ãˆ
+    // e‚Ìí—Ş‚ÌØ‚è‘Ö‚¦
     gun.Update(isReload);
     gun.UpdateFromCamera(position, camera.GetForward(), camera.GetRight(), camera.GetUp(), isAim);
 
-	// ãƒªãƒ­ãƒ¼ãƒ‰åˆ¤å®š
+	// ƒŠƒ[ƒh”»’è
     if (!isReload && (CheckHitKey(KEY_INPUT_R) || 
         pistolAmmo <= 0 || rifleAmmo <= 0 || shotgunAmmo <= 0)) {
         isReload = true;
     }
 
-	// ãƒªãƒ­ãƒ¼ãƒ‰ä¸­ã®å‡¦ç†
+	// ƒŠƒ[ƒh’†‚Ìˆ—
 	if (isReload) {
 		reloadTimer -= deltaTime;
 		if (reloadTimer <= 0.0f) {
@@ -167,7 +171,7 @@ void PlayerController::Update(float deltaTime, Stage& stage)
 		return;
 	}
 
-	// å¼¾ä¸¸ã®ç™ºå°„
+	// ’eŠÛ‚Ì”­Ë
     switch (currentGunType)
     {
     case GunType::Pistol:
@@ -239,16 +243,16 @@ void PlayerController::Update(float deltaTime, Stage& stage)
 
 void PlayerController::Step(float deltaTime, Stage& stage, const Vec3& moveVec)
 {
-    // ===== æ°´å¹³æ–¹å‘ã®ç§»å‹•ã¨å£åˆ¤å®š =====
-    constexpr int MAX_SLIDE_COUNT = 3;  // å£ã®è§’ã§æ•°å›ã¾ã§æ»‘ã‚‰ã›ã‚‹
-    constexpr float FLOOR_Y = 0.5f;     // ã“ã‚Œä»¥ä¸Šãªã‚‰åºŠã¨ã—ã¦æ‰±ã†
-    constexpr float SLIDE_UP_Y = 0.01f; // ä¸Šå‘ãã®æ»‘ã‚Šã‚’æ‰“ã¡æ¶ˆã™ã—ãã„å€¤
-    constexpr float STEP_LIMIT_HEIGHT = 1.5f; // ä¹—ã‚Šè¶Šãˆã‚‰ã‚Œã‚‹æ®µå·®ã®é«˜ã•
+    // ===== …•½•ûŒü‚ÌˆÚ“®‚Æ•Ç”»’è =====
+    constexpr int MAX_SLIDE_COUNT = 3;  // •Ç‚ÌŠp‚Å”‰ñ‚Ü‚ÅŠŠ‚ç‚¹‚é
+    constexpr float FLOOR_Y = 0.5f;     // ‚±‚êˆÈã‚È‚ç°‚Æ‚µ‚Äˆµ‚¤
+    constexpr float SLIDE_UP_Y = 0.01f; // ãŒü‚«‚ÌŠŠ‚è‚ğ‘Å‚¿Á‚·‚µ‚«‚¢’l
+    constexpr float STEP_LIMIT_HEIGHT = 1.5f; // æ‚è‰z‚¦‚ç‚ê‚é’i·‚Ì‚‚³
     constexpr float SLOPE_LIMIT_HEIGHT = 0.7f;
 
     const int stageHandle = stage.GetModelHandle();
 
-    // æ°´å¹³æ–¹å‘ã®ç§»å‹•é‡
+    // …•½•ûŒü‚ÌˆÚ“®—Ê
     Vec3 horizontal = moveVec * deltaTime;
     float moveLen = horizontal.Length();
 
@@ -256,17 +260,17 @@ void PlayerController::Step(float deltaTime, Stage& stage, const Vec3& moveVec)
     {
         Vec3 dir = horizontal.Normalized();
 
-        // å£ã«å½“ãŸã£ãŸã‚‰æ®‹ã‚Šã®ç§»å‹•ã‚’å£ã«æ²¿ã†æ–¹å‘ã¸æ»‘ã‚‰ã›ã‚‹
+        // •Ç‚É“–‚½‚Á‚½‚çc‚è‚ÌˆÚ“®‚ğ•Ç‚É‰ˆ‚¤•ûŒü‚ÖŠŠ‚ç‚¹‚é
         for (int i = 0; i < MAX_SLIDE_COUNT && moveLen > Const::EPS; ++i)
         {
-            // 2æœ¬ã®Rayã®ä¸­ã§ã€Œä¸€ç•ªæ‰‹å‰ã§å½“ãŸã£ãŸè¡çªãƒ‡ãƒ¼ã‚¿ã€ã‚’è¨˜éŒ²ã™ã‚‹å¤‰æ•°
+            // 2–{‚ÌRay‚Ì’†‚Åuˆê”Ôè‘O‚Å“–‚½‚Á‚½Õ“Ëƒf[ƒ^v‚ğ‹L˜^‚·‚é•Ï”
             Physics::RayHit closestHit{};
             bool isHitAny = false;
 
-            // ãƒã‚§ãƒƒã‚¯ã™ã‚‹2ã¤ã®é«˜ã•ï¼ˆè¶³å…ƒ: 5.0f / èƒ¸: é ­ã‚ˆã‚Šå°‘ã—ä¸‹ï¼‰
+            // ƒ`ƒFƒbƒN‚·‚é2‚Â‚Ì‚‚³i‘«Œ³: 5.0f / ‹¹: “ª‚æ‚è­‚µ‰ºj
             float rayHeights[] = { 5.0f, Const::PLAYER_EYE_POSITION - 5.0f };
 
-            // 2æœ¬ã®Rayã‚’ãƒ«ãƒ¼ãƒ—ã§é£›ã°ã™
+            // 2–{‚ÌRay‚ğƒ‹[ƒv‚Å”ò‚Î‚·
             for (float h : rayHeights)
             {
                 Vec3 start = position + Vec3::Up() * h;
@@ -275,7 +279,7 @@ void PlayerController::Step(float deltaTime, Stage& stage, const Vec3& moveVec)
 
                 if (Physics::Raycast(stageHandle, start, end, tempHit))
                 {
-                    // æœ€åˆã«å½“ãŸã£ãŸã€ã¾ãŸã¯ã“ã‚Œã¾ã§ã®è¡çªã‚ˆã‚Šã‚‚æ‰‹å‰ãªã‚‰æ›´æ–°
+                    // Å‰‚É“–‚½‚Á‚½A‚Ü‚½‚Í‚±‚ê‚Ü‚Å‚ÌÕ“Ë‚æ‚è‚àè‘O‚È‚çXV
                     if (!isHitAny || tempHit.distance < closestHit.distance)
                     {
                         closestHit = tempHit;
@@ -284,7 +288,7 @@ void PlayerController::Step(float deltaTime, Stage& stage, const Vec3& moveVec)
                 }
             }
 
-            // 1æœ¬ã‚‚å½“ãŸã£ã¦ã„ãªã„ã€ã¾ãŸã¯åºŠæ‰±ã„ã®é¢ãªã‚‰ãã®ã¾ã¾é€²ã‚€
+            // 1–{‚à“–‚½‚Á‚Ä‚¢‚È‚¢A‚Ü‚½‚Í°ˆµ‚¢‚Ì–Ê‚È‚ç‚»‚Ì‚Ü‚Üi‚Ş
             if (!isHitAny || closestHit.normal.y >= FLOOR_Y)
             {
                 position += dir * moveLen;
@@ -292,7 +296,7 @@ void PlayerController::Step(float deltaTime, Stage& stage, const Vec3& moveVec)
                 break;
             }
 
-            // ã“ã‚Œä»¥é™ã®åˆ¤å®šã¯ã€å…ƒã®ã€Œhitã€ã‚’ã€ŒclosestHitã€ã«ç½®ãæ›ãˆã‚‹ã ã‘
+            // ‚±‚êˆÈ~‚Ì”»’è‚ÍAŒ³‚Ìuhitv‚ğuclosestHitv‚É’u‚«Š·‚¦‚é‚¾‚¯
             float allowed = closestHit.distance - Const::PLAYER_STAGE_RADIUS;
             allowed = std::clamp(allowed, 0.0f, moveLen);
 
@@ -305,12 +309,12 @@ void PlayerController::Step(float deltaTime, Stage& stage, const Vec3& moveVec)
                 break;
             }
 
-            // æ®‹ã‚Šã®ç§»å‹•ã‚’å£ã«æ²¿ã†æ–¹å‘ã¸å¤‰æ›ã™ã‚‹
+            // c‚è‚ÌˆÚ“®‚ğ•Ç‚É‰ˆ‚¤•ûŒü‚Ö•ÏŠ·‚·‚é
             Vec3 remain = dir * moveLen;
             Vec3 normal = closestHit.normal.Normalized();
             Vec3 slide = remain - normal * Vec3::Dot(remain, normal);
 
-            // ä¸è‡ªç„¶ã«ä¸Šã¸ç™»ã‚‹æ»‘ã‚Šã¯é˜²ã
+            // •s©‘R‚Éã‚Ö“o‚éŠŠ‚è‚Í–h‚®
             if (slide.y >= SLIDE_UP_Y)
             {
                 slide.y = 0.0f;
@@ -328,11 +332,11 @@ void PlayerController::Step(float deltaTime, Stage& stage, const Vec3& moveVec)
         }
     }
 
-    // å‚ç›´æ–¹å‘ã®ç§»å‹•ã¨ä¸Šä¸‹åˆ¤å®š
+    // ‚’¼•ûŒü‚ÌˆÚ“®‚Æã‰º”»’è
     float dy = velocity.y * deltaTime;
     float nextY = position.y + dy;
 
-    // ä¸Šæ˜‡ä¸­ã¯å¤©äº•ã¨ã®åˆ¤å®šã‚’è¡Œã†
+    // ã¸’†‚Í“Vˆä‚Æ‚Ì”»’è‚ğs‚¤
     if (dy > 0.0f)
     {
         isGrounded = false;
@@ -340,7 +344,7 @@ void PlayerController::Step(float deltaTime, Stage& stage, const Vec3& moveVec)
         Physics::RayHit hit{};
         Vec3 headPos = position + Vec3::Up() * Const::PLAYER_EYE_POSITION;
 
-        // å¤©äº•ã«å½“ãŸã£ãŸã‚‰ã€ãã®ä½ç½®ã§ä¸Šæ˜‡ã‚’æ­¢ã‚ã‚‹
+        // “Vˆä‚É“–‚½‚Á‚½‚çA‚»‚ÌˆÊ’u‚Åã¸‚ğ~‚ß‚é
         if (Physics::RaycastUp(stage.GetModelHandle(), headPos, dy, hit))
         {
             position.y = hit.point.y - (Const::PLAYER_EYE_POSITION);
@@ -349,10 +353,10 @@ void PlayerController::Step(float deltaTime, Stage& stage, const Vec3& moveVec)
         }
     }
 
-    // å‚ç›´æ–¹å‘ã®ç§»å‹•
+    // ‚’¼•ûŒü‚ÌˆÚ“®
     position.y += dy;
 
-    // RaycastDown ã§åºŠã‚’æ¢ã™
+    // RaycastDown ‚Å°‚ğ’T‚·
     Physics::RayHit hit{};
     Vec3 rayOrigin = position + Vec3::Up() * Const::PLAYER_EYE_POSITION;
     float rayLength = Const::PLAYER_EYE_POSITION + fabsf(dy) + 10.0f;
@@ -361,7 +365,7 @@ void PlayerController::Step(float deltaTime, Stage& stage, const Vec3& moveVec)
     {
         float groundY = hit.point.y;
 
-        // æ¬¡ã®ä½ç½®ãŒåºŠã‚ˆã‚Šä¸‹ãªã‚‰åºŠã«å›ºå®š
+        // Ÿ‚ÌˆÊ’u‚ª°‚æ‚è‰º‚È‚ç°‚ÉŒÅ’è
         if (nextY <= groundY)
         {
             position.y = groundY;
@@ -377,7 +381,7 @@ void PlayerController::Step(float deltaTime, Stage& stage, const Vec3& moveVec)
     }
     else
     {
-        // åºŠãŒè¦‹ã¤ã‹ã‚‰ãªã„ â†’ ç©ºä¸­
+        // °‚ªŒ©‚Â‚©‚ç‚È‚¢ ¨ ‹ó’†
         position.y = nextY;
         isGrounded = false;
     }
@@ -385,42 +389,43 @@ void PlayerController::Step(float deltaTime, Stage& stage, const Vec3& moveVec)
 
 void PlayerController::Draw() const
 {
- //   //ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®ã‚¹ãƒ†ãƒ¼ã‚¸ã¨ã®å½“ãŸã‚Šåˆ¤å®šã®åŠå¾„
+ //   //ƒvƒŒƒCƒ„[‚ÌƒXƒe[ƒW‚Æ‚Ì“–‚½‚è”»’è‚Ì”¼Œa
 	//DrawCylinder3D(DxConv::ToVECTOR(position), DxConv::ToVECTOR(position + Vec3(0, Const::PLAYER_EYE_POSITION, 0)),
 	//	Const::PLAYER_STAGE_RADIUS, 12, GetColor(0, 255, 0), GetColor(0, 255, 0), FALSE);
 
- //   //ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®æ•µã¨ã®å½“ãŸã‚Šåˆ¤å®šã®åŠå¾„
+ //   //ƒvƒŒƒCƒ„[‚Ì“G‚Æ‚Ì“–‚½‚è”»’è‚Ì”¼Œa
  //   DrawCylinder3D(DxConv::ToVECTOR(position), DxConv::ToVECTOR(position + Vec3(0, Const::PLAYER_EYE_POSITION, 0)),
  //       Const::PLAYER_ENEMY_RADIUS, 12, GetColor(0, 0, 255), GetColor(0, 0, 255), FALSE);
 
-	//ã‚«ãƒ¡ãƒ©ã®ãƒ¬ãƒ†ã‚£ã‚¯ãƒ«ã®æç”»
+	//ƒJƒƒ‰‚ÌƒŒƒeƒBƒNƒ‹‚Ì•`‰æ
 	camera.ReticleDraw();
 
+    DrawHpBar();
     gun.Draw();
 
-    //ç¾åœ¨ã®éŠƒã®ç¨®é¡ã‚’è¡¨ç¤º
+    //Œ»İ‚Ìe‚Ìí—Ş‚ğ•\¦
     const wchar_t* gunName = L"";
     wchar_t ammoBuf[32];
 
     switch (currentGunType)
     {
     case GunType::Pistol:
-        gunName = L"ãƒãƒ³ãƒ‰ã‚¬ãƒ³";
+        gunName = L"ƒnƒ“ƒhƒKƒ“";
         swprintf(ammoBuf, 32, L"%d/%d", pistolAmmo, Const::PISTOL_MAGAZIN_MAX);
         break;
 
     case GunType::Rifle:
-        gunName = L"ãƒ©ã‚¤ãƒ•ãƒ«";
+        gunName = L"ƒ‰ƒCƒtƒ‹";
         swprintf(ammoBuf, 32, L"%d/%d", rifleAmmo, Const::RIFLE_MAGAZIN_MAX);
         break;
 
     case GunType::Shotgun:
-        gunName = L"ã‚·ãƒ§ãƒƒãƒˆã‚¬ãƒ³";
+        gunName = L"ƒVƒ‡ƒbƒgƒKƒ“";
         swprintf(ammoBuf, 32, L"%d/%d", shotgunAmmo, Const::SHOTGUN_MAGAZIN_MAX);
         break;
     }
 
-    //å³ä¸‹ã«æ®‹å¼¾æ•°ã®è¡¨ç¤º
+    //‰E‰º‚Éc’e”‚Ì•\¦
 	wchar_t buf[32];
 	swprintf(buf, 32, L"%s", ammoBuf);
 	int textWidth = GetDrawStringWidthToHandle(buf, wcslen(buf), gunFont);
@@ -431,7 +436,7 @@ void PlayerController::Draw() const
 	DrawFormatStringToHandle(x - textWidth - 20, y - 60, GetColor(255, 255, 255),
         gunFont, L"%s", ammoBuf);
 
-    //éŠƒã®ç¨®é¡ã‚’è¡¨ç¤º
+    //e‚Ìí—Ş‚ğ•\¦
     swprintf(buf, 32, L"%s", gunName);
     textWidth = GetDrawStringWidthToHandle(buf, wcslen(buf), gunFont);
 
@@ -439,22 +444,22 @@ void PlayerController::Draw() const
 
     DrawFormatString(x, y, GetColor(255, 255, 255), L"HP: %d / %d", hp, Const::PLAYER_MAX_HP);
 
-    //ï¿½ï¿½ï¿½Sï¿½ï¿½ï¿½Ì•\ï¿½ï¿½
+    //€–S‚Ì•\¦
     if (!isAlive) {
         SetDrawBlendMode(DX_BLENDMODE_ALPHA, 110);
         DrawBox(0, 0, x, y, GetColor(255, 0, 0), TRUE);
 
-        DrawFormatStringToHandle(x / 2 - 130, y / 2 - 300, GetColor(255, 255, 255), deadFont, L"ï¿½ï¿½ï¿½ï¿½ï¿½Ü‚ï¿½");
+        DrawFormatStringToHandle(x / 2 - 130, y / 2 - 300, GetColor(255, 255, 255), deadFont, L"•œŠˆ‚Ü‚Å");
         DrawFormatStringToHandle(x / 2 - 20, y / 2 - 200, GetColor(255, 255, 255),
             deadFont, L"%d", (int)respawnTimer);
     }
 
-	//ãƒªãƒ­ãƒ¼ãƒ‰ä¸­ã®è¡¨ç¤º
+	//ƒŠƒ[ƒh’†‚Ì•\¦
 	if (isReload) {
         DrawFormatStringToHandle(x / 2 - 55, y / 2 + 15, GetColor(255, 200, 0), reloadFont, L"RELOADING...");
 	}
 
-    //ï¿½_ï¿½ï¿½ï¿½[ï¿½Wï¿½ï¿½ï¿½o
+    //ƒ_ƒ[ƒW‰‰o
     if (damageTimer > 0.0f)
     {
         float alphaRate = damageTimer / 0.2f;
@@ -466,8 +471,37 @@ void PlayerController::Draw() const
     }
 }
 
+void PlayerController::DrawHpBar() const
+{
+    if (Const::PLAYER_MAX_HP <= 0) return;
+    float rate = std::clamp((float)hp / (float)Const::PLAYER_MAX_HP, 0.0f, 1.0f);
+
+    int barX = 40;
+    int barY = 100;
+    int barWidth = 300;
+    int barHeight = 40;
+
+    // ˜gü
+    DrawBox(barX - 2, barY - 2, barX + barWidth + 2, barY + barHeight + 2,
+        GetColor(255, 255, 255), FALSE);
+
+    int hpColor;
+    if (rate > 0.5f) hpColor = GetColor(0, 200, 0);        // —Î
+    else if (rate > 0.25f) hpColor = GetColor(255, 200, 0); // ‰©
+    else hpColor = GetColor(255, 0, 0);                    // Ô
+
+    // HPƒo[–{‘Ì
+    DrawBox(barX, barY, barX + (int)(barWidth * rate), barY + barHeight,
+        hpColor, TRUE);
+
+    // HP”’l‚à•\¦
+    DrawFormatString(barX, barY - 5, GetColor(255, 255, 255),
+        L"HP: %d / %d", hp, Const::PLAYER_MAX_HP);
+}
+
 void PlayerController::TakeDamage(const int damage)
 {
+    if (!isAlive) return;
     if (invincibleTimer > 0.0f) return;
 
     hp -= damage;
@@ -490,22 +524,22 @@ void PlayerController::FireBullet(const Vec3& eye, const Vec3& forward)
 
 Vec3 PlayerController::RandomSpreadDirection(const Vec3& forward, float spreadDeg)
 {
-    // ãƒ©ãƒ³ãƒ€ãƒ è§’åº¦
+    // ƒ‰ƒ“ƒ_ƒ€Šp“x
     float yawOffset = (GetRand(2000) / 1000.0f - 1.0f) * spreadDeg;
     float pitchOffset = (GetRand(2000) / 1000.0f - 1.0f) * spreadDeg;
 
     float yawRad = yawOffset * DX_PI / 180.0f;
     float pitchRad = pitchOffset * DX_PI / 180.0f;
 
-    // forward ã‚’å›è»¢ã•ã›ã‚‹
+    // forward ‚ğ‰ñ“]‚³‚¹‚é
     Vec3 dir = forward;
 
-    // yaw å›è»¢
+    // yaw ‰ñ“]
     float cy = cos(yawRad);
     float sy = sin(yawRad);
     dir = { dir.x * cy - dir.z * sy, dir.y, dir.x * sy + dir.z * cy };
 
-    // pitch å›è»¢
+    // pitch ‰ñ“]
     float cp = cos(pitchRad);
     float sp = sin(pitchRad);
     dir = { dir.x, dir.y * cp - dir.z * sp, dir.y * sp + dir.z * cp };
