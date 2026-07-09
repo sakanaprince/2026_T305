@@ -444,20 +444,10 @@ void PlayerController::Draw() const
 
     DrawFormatString(x, y, GetColor(255, 255, 255), L"HP: %d / %d", hp, Const::PLAYER_MAX_HP);
 
-    //死亡時の表示
-    if (!isAlive) {
-        SetDrawBlendMode(DX_BLENDMODE_ALPHA, 110);
-        DrawBox(0, 0, x, y, GetColor(255, 0, 0), TRUE);
-
-        DrawFormatStringToHandle(x / 2 - 130, y / 2 - 300, GetColor(255, 255, 255), deadFont, L"復活まで");
-        DrawFormatStringToHandle(x / 2 - 20, y / 2 - 200, GetColor(255, 255, 255),
-            deadFont, L"%d", (int)respawnTimer);
-    }
-
-	//リロード中の表示
-	if (isReload) {
+    //リロード中の表示
+    if (isReload) {
         DrawFormatStringToHandle(x / 2 - 55, y / 2 + 15, GetColor(255, 200, 0), reloadFont, L"RELOADING...");
-	}
+    }
 
     //ダメージ演出
     if (damageTimer > 0.0f)
@@ -468,6 +458,16 @@ void PlayerController::Draw() const
         SetDrawBlendMode(DX_BLENDMODE_ALPHA, alpha);
         DrawBox(0, 0, x, y, GetColor(255, 0, 0), TRUE);
         SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
+    }
+
+    //死亡時の表示
+    if (!isAlive) {
+        DrawFormatStringToHandle(x / 2 - 130, y / 2 - 300, GetColor(255, 255, 255), deadFont, L"復活まで");
+        DrawFormatStringToHandle(x / 2 - 20, y / 2 - 200, GetColor(255, 255, 255),
+            deadFont, L"%d", (int)respawnTimer);
+
+        SetDrawBlendMode(DX_BLENDMODE_ALPHA, 110);
+        DrawBox(0, 0, x, y, GetColor(255, 0, 0), TRUE);
     }
 }
 
