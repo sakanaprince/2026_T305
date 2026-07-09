@@ -35,7 +35,6 @@ void PlayerController::Reset()
 
     hp = { Const::PLAYER_MAX_HP };
     jumpCount = { 0 };
-    resurrectionAmulet = { 1 };
 
     invincibleTimer = { 0.0f };
     damageTimer = { 0.0f };
@@ -66,7 +65,7 @@ void PlayerController::Update(float deltaTime, Stage& stage)
     }
 
     if (hp <= 0) {
-        Resurrection();
+        isAlive = false;
         return;
     }
 
@@ -515,19 +514,6 @@ void PlayerController::TakeDamage(const int damage)
     hp -= damage;
     damageTimer = 0.2f;
     invincibleTimer = Const::INVINCIBLE_TIME;
-}
-
-void PlayerController::Resurrection()
-{
-    if (resurrectionAmulet <= 0) {
-        isAlive = false;
-        return;
-    }
-
-    resurrectionAmulet--;
-    isAlive = true;
-    hp = Const::PLAYER_MAX_HP;
-    respawnTimer = Const::RESPAWN_TIME;
 }
 
 void PlayerController::FireBullet(const Vec3& eye, const Vec3& forward)
