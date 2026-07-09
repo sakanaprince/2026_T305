@@ -2,9 +2,11 @@
 #include "BuyButton.h"
 #include "../DxPlus/DxPlus.h"
 
+#include "BuyTutorial.h"
 #include "BuyRepair.h"
 #include "BuyHolySushi.h"
 #include "BuyTrap.h"
+#include "BuyMap.h"
 class GameContext;
 
 class ShopManager
@@ -33,13 +35,14 @@ private:
 	GameContext* pGameContext{ nullptr };
 	int fontHandle{ -1 };
 
-
 	static constexpr size_t BUTTON_AMOUNT{ 2 };
 	std::vector<BuyButton*> btnCollection;
 	//è§ïi
+	BuyTutorial btnTutorial;
 	BuyRepair btnRepairCore;
-	BuyHolySushi btnSushi;
 	BuyTrap btnTrap;
+	BuyHolySushi btnHolyLight;
+	BuyMap btnMap;
 
 	DxPlus::Vec2Int mousePos{ 0,0 };
 	bool prevFrameMouseDown{ false };
