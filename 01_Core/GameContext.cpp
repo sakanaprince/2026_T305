@@ -82,14 +82,14 @@ void GameContext::Update(float deltaTime)
         //マウスカーソルの位置を中央に持ってくる
         SetMousePoint(DxPlus::CLIENT_WIDTH / 2, DxPlus::CLIENT_HEIGHT / 2);
 
-        //if (!shopOpen)
-        //{
-        //    int mouseX, mouseY;
-        //    GetMousePoint(&mouseX, &mouseY);
+        if (!shopOpen)
+        {
+            int mouseX, mouseY;
+            GetMousePoint(&mouseX, &mouseY);
 
-        //    //ショップを閉じた時に視点が飛んでいかないようにする
-        //    player.SetPrevMouse({ mouseX, mouseY });
-        //}
+            //ショップを閉じた時に視点が飛んでいかないようにする
+            player.SetPrevMouse(mouseX, mouseY);
+        }
     }
 
     //現在のキーの情報を前フレームのキー情報保存用の変数に入れる
@@ -102,6 +102,8 @@ void GameContext::Update(float deltaTime)
     //ショップが開かれている場合はこれより下の処理は行わない
     if (shopOpen) { return; }
 
+    MouseController();
+    
     TimeLimit(deltaTime);
 
 
@@ -186,6 +188,35 @@ void GameContext::Draw() const
             t->Draw();
         }
     }
+}
+
+void GameContext::MouseController()
+{
+    int mouseX, mouseY;
+    DxLib::GetMousePoint(&mouseX, &mouseY);
+
+    if (mouseX <= 0)
+    {
+        SetMousePoint(DxPlus::CLIENT_WIDTH - 1, mouseY);
+        player.SetPrevMouse(DxPlus::CLIENT_WIDTH - 1, mouseY);
+    }
+    else if (mouseX >= DxPlus::CLIENT_WIDTH - 1)
+    {
+        SetMousePoint(0, mouseY);
+        player.SetPrevMouse(0, mouseY);
+    }
+
+    if (mouseY <= 0)
+    {
+        SetMousePoint(mouseX, DxPlus::CLIENT_HEIGHT - 1);
+        player.SetPrevMouse(mouseX, DxPlus::CLIENT_HEIGHT - 1);
+    }
+    else if (mouseY >= DxPlus::CLIENT_HEIGHT - 1)
+    {
+        SetMousePoint(mouseX, 0);
+        player.SetPrevMouse(mouseX, 0);
+    }
+
 }
 
 void GameContext::TimeLimit(float deltaTime)
@@ -287,7 +318,7 @@ void GameContext::InstallationTrap()
         if (possessionTrap == 0) { return; }
 
 
-        //if (!player.IsGrounded()) { return; }  //プレイヤーのisGroundedのゲッターができてから使う
+        if (!player.IsGrounded()) { return; }
 
 
         bool isHit = false;

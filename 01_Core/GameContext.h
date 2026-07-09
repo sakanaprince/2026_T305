@@ -52,6 +52,7 @@ public:
     void BuyTrap() { possessionTrap++; }
 
 private:
+    void MouseController();
     void TimeLimit(float deltaTime);
     void CollisionEnemyBullet();
     void CollisionEnemyArrow();
@@ -72,8 +73,6 @@ private:
     EnemyDataMaster enemyDataManster;
 
     SoundManager& soundManager;
-
-    std::vector<std::unique_ptr<Entity>> entities;
 
     Turret turrets[Const::TURRET_COUNT];
 
