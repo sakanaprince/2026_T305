@@ -29,6 +29,11 @@ void SceneManager::Init()
     gameOverScene.SetGameContext(&gameContext);
     gameClearScene.SetGameContext(&gameContext);
 
+    titleScene.SetSESoundManager(&sound);
+    gameScene.SetSESoundManager(&sound);
+    gameOverScene.SetSESoundManager(&sound);
+    gameClearScene.SetSESoundManager(&sound);
+
     scene = &titleScene; // 最初のシーン
 }
 

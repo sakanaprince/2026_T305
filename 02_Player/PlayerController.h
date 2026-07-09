@@ -23,12 +23,12 @@ public:
 		return s;
 	}
 
-	//ƒvƒŒƒCƒ„[‚ÌˆÊ’u‚ğæ“¾
+	//ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®ä½ç½®ã‚’å–å¾—
 	const Vec3& GetPosition() const { return position; }
 	const Vec3& GetCameraForward() const { return camera.GetForward(); }
-	//ƒvƒŒƒCƒ„[‚Ì¶‘¶‚ğæ“¾
+	//ï¿½vï¿½ï¿½ï¿½Cï¿½ï¿½ï¿½[ï¿½Ìï¿½ï¿½ï¿½ï¿½ï¿½ï¿½æ“¾
 	const bool IsAlive() const { return isAlive; }
-	//ƒvƒŒƒCƒ„[‚ÌHP‚ğæ“¾
+	//ï¿½vï¿½ï¿½ï¿½Cï¿½ï¿½ï¿½[ï¿½ï¿½HPï¿½ï¿½ï¿½æ“¾
 	const int GetHp() const { return hp; }
 
 	void Init();
@@ -37,7 +37,7 @@ public:
 	void Step(float deltaTime, Stage& stage, const Vec3& moveVec);
 	void Draw() const;
 
-	//ƒ_ƒ[ƒW‚ğ“n‚µ‚Ä‚»‚Ì•ª‚ğHP‚©‚çˆø‚­
+	//ï¿½_ï¿½ï¿½ï¿½[ï¿½Wï¿½ï¿½nï¿½ï¿½ï¿½Ä‚ï¿½ï¿½Ì•ï¿½ï¿½ï¿½HPï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	void TakeDamage(const int damage);
 	void FireBullet(const Vec3& eye, const Vec3& forward);
 	Vec3 RandomSpreadDirection(const Vec3& forward, float spreadDeg);

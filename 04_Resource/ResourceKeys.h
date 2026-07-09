@@ -30,6 +30,10 @@ namespace ResourceKeys
     inline constexpr const wchar_t* Model_Trap = L"ModelTrap";
 
     // ===== Musics / Sounds =====
+    inline constexpr const wchar_t* Sound_Arrow = L"SoundArrow";
+    inline constexpr const wchar_t* Sound_SubmachineGun = L"SoundSubmachineGun";
+    inline constexpr const wchar_t* Sound_Gun = L"SoundGun";
+    inline constexpr const wchar_t* Sound_ShotGun = L"SoundShotGun";
 
     // ===== Fonts =====
     inline constexpr const wchar_t* Font_ManufacturingConsent = L"Manufacturing Consent";

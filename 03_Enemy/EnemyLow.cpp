@@ -7,19 +7,6 @@
 #include "../08_Debug/DebugUI.h"
 
 
-void EnemyLow::Init(EnemyRoot* enRoot, PlayerController* pc)
-{
-	isAlive = false;
-	pEnemyRoot = enRoot;
-	pPlayer = pc;
-	initHp = 10;
-
-	if (!pEnemyRoot)
-	{
-		DxPlus::Utils::FatalError(L"null Ptr enemyRoot_p");
-		return;
-	}
-}
 
 void EnemyLow::Reset()
 {

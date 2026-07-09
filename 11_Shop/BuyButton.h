@@ -16,8 +16,25 @@ public:
 		buttonPosition_y = y;
 	}
 
-
+	void SetEffectDeActive() { buyEffect.isEffectAlive = false; }
 protected:
+
+	enum class UXState
+	{
+		toReduce,
+		toExpand,
+	};
+	UXState currentUXState{ UXState::toExpand };
+	float scale{ 1.0f };
+	float power{ 0.0f };
+
+	const float ExpandEndScale{ 1.0f };
+	const float ReduceEndScale{ 0.85f };
+	const float MinReduceEndScale{ 0.5f };
+	const float ScaleSpeed{ 2.0f };
+	float pushedUXTimer{ 0.0f };
+	const float PushedUXTime{ 0.2f };
+
 	//‚±‚ÌƒtƒŒ[ƒ€‚Å¤•i‚ğw“ü‚Å‚«‚½‚©‚ğ•Ô‚·
 	bool CheckBuySuccess(float posX_1, float posX_2, float posY_1, float posY_2);
 

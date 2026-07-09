@@ -10,6 +10,7 @@ ResourceManager& ResourceManager::GetInstance()
 
 void ResourceManager::LoadAll()
 {
+    // --- Sprite ---
     LoadSprite(ResourceKeys::Sprite_TitleBG, L"TitleBG.png");
     LoadSprite(ResourceKeys::Sprite_GameOverBG, L"GameOverBG.png");
     LoadSprite(ResourceKeys::Sprite_GameClearBG, L"GameClearBG.png");
@@ -19,7 +20,13 @@ void ResourceManager::LoadAll()
     LoadSprite(ResourceKeys::Sprite_Coin, L"Coin.png");
     LoadSprite(ResourceKeys::Sprite_TurretReleasePrice, L"TurretPrice.png");
     LoadSprite(ResourceKeys::Sprite_TurretUpgradePrice, L"TurretUpgrade.png");
+    // -----
+
+    // --- Font ---
     LoadFont(ResourceKeys::Font_ManufacturingConsent, L"./Data/Fonts/Manufacturing_Consent/ManufacturingConsent-Regular.ttf");
+    // -----
+
+    // --- Model ---
     LoadModel(ResourceKeys::Model_Stage, L"Stage.mv1");
     LoadModel(ResourceKeys::Model_Pistol, L"Pistol.mv1");
     LoadModel(ResourceKeys::Model_Rifle, L"Rifle.mv1");
@@ -29,6 +36,14 @@ void ResourceManager::LoadAll()
     LoadModel(ResourceKeys::Model_NotArrowTurret, L"NotArrowTurret.mv1");
     LoadModel(ResourceKeys::Model_Arrow, L"Arrow.mv1");
     LoadModel(ResourceKeys::Model_Trap, L"Trap.mv1");
+    // -----
+
+    // --- Sound ---
+    LoadSound(ResourceKeys::Sound_Arrow, L"ShotArrow.wav");
+    LoadSound(ResourceKeys::Sound_SubmachineGun, L"SubmachineGun.wav");
+    LoadSound(ResourceKeys::Sound_Gun, L"Gun.wav");
+    LoadSound(ResourceKeys::Sound_ShotGun, L"ShotGun.wav");
+    // -----
 }
 
 void ResourceManager::UnloadAll()
@@ -98,7 +113,7 @@ int ResourceManager::LoadMusic(const std::wstring& key, const std::wstring& path
 
 int ResourceManager::LoadSound(const std::wstring& key, const std::wstring& path)
 {
-    int sound = DxLib::LoadSoundMem(path.c_str());
+    int sound = DxLib::LoadSoundMem((L"./Data/Sounds/" +  path).c_str());
     if (sound == -1) DxPlus::Utils::FatalError((L"Failed to load music " + path).c_str());
     sounds[key] = sound;
     return sound;
