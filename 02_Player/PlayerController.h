@@ -26,9 +26,9 @@ public:
 	//プレイヤーの位置を取得
 	const Vec3& GetPosition() const { return position; }
 	const Vec3& GetCameraForward() const { return camera.GetForward(); }
-	//プレイヤーの生存を取得
+	//�v���C���[�̐������擾
 	const bool IsAlive() const { return isAlive; }
-	//プレイヤーのHPを取得
+	//�v���C���[��HP���擾
 	const int GetHp() const { return hp; }
 
 	void Init();
@@ -37,7 +37,7 @@ public:
 	void Step(float deltaTime, Stage& stage, const Vec3& moveVec);
 	void Draw() const;
 
-	//ダメージを渡してその分をHPから引く
+	//�_���[�W��n���Ă��̕���HP�������
 	void TakeDamage(const int damage);
 	void FireBullet(const Vec3& eye, const Vec3& forward);
 	Vec3 RandomSpreadDirection(const Vec3& forward, float spreadDeg);
@@ -52,7 +52,6 @@ private:
 
 	bool isAlive{ true };
 	bool isGrounded{ true };
-	bool isDead{ false };
 	bool isAim{ false };
 	bool isReload{ false };
 
@@ -66,6 +65,7 @@ private:
 	int rifleAmmo{ 0 };
 	int shotgunAmmo{ 0 };
 
+	float invincibleTimer{ 0.0f };
 	float damageTimer{ 0.0f };
 	float respawnTimer{ 0.0f };
 	float fireTimer{ 0.0f };

@@ -29,8 +29,9 @@ void PlayerController::Reset()
     hp = { Const::PLAYER_MAX_HP };
     jumpCount = { 0 };
 
+    invincibleTimer = { 0.0f };
     damageTimer = { 0.0f };
-    respawnTimer = { 0.0f };
+    respawnTimer = { Const::RESPAWN_TIME };
     fireTimer = { 0.0f };
     fireInterval = { Const::PISTOL_FIRE_INTERVAL };
 	reloadTimer = { Const::RELOAD_TIME };
@@ -46,8 +47,9 @@ void PlayerController::Reset()
 void PlayerController::Update(float deltaTime, Stage& stage)
 {
     if (!isAlive) {
-        respawnTimer += deltaTime;
-        if (respawnTimer >= Const::RESPAWN_TIME) {
+        respawnTimer -= deltaTime;
+        if (respawnTimer <= 0.0f) {
+            respawnTimer = Const::RESPAWN_TIME;
             hp = Const::PLAYER_MAX_HP;
             position = { 0,0,0 };
             isAlive = false;
@@ -61,6 +63,11 @@ void PlayerController::Update(float deltaTime, Stage& stage)
     {
         damageTimer -= deltaTime;
         if (damageTimer < 0.0f) damageTimer = 0.0f;
+    }
+
+    if (invincibleTimer > 0.0f) {
+        invincibleTimer -= deltaTime;
+        if (invincibleTimer < 0.0f) invincibleTimer = 0.0f;
     }
 
     static int prevMouseInput = 0;
@@ -432,12 +439,12 @@ void PlayerController::Draw() const
 
     DrawFormatString(x, y, GetColor(255, 255, 255), L"HP: %d / %d", hp, Const::PLAYER_MAX_HP);
 
-    //死亡時の表示
+    //���S���̕\��
     if (!isAlive) {
-        SetDrawBlendMode(DX_BLENDMODE_ALPHA, 150);
+        SetDrawBlendMode(DX_BLENDMODE_ALPHA, 110);
         DrawBox(0, 0, x, y, GetColor(255, 0, 0), TRUE);
 
-        DrawFormatStringToHandle(x / 2 - 70, y / 2 - 300, GetColor(255, 255, 255), deadFont, L"死亡");
+        DrawFormatStringToHandle(x / 2 - 130, y / 2 - 300, GetColor(255, 255, 255), deadFont, L"�����܂�");
         DrawFormatStringToHandle(x / 2 - 20, y / 2 - 200, GetColor(255, 255, 255),
             deadFont, L"%d", (int)respawnTimer);
     }
@@ -447,7 +454,7 @@ void PlayerController::Draw() const
         DrawFormatStringToHandle(x / 2 - 55, y / 2 + 15, GetColor(255, 200, 0), reloadFont, L"RELOADING...");
 	}
 
-    //ダメージ演出
+    //�_���[�W���o
     if (damageTimer > 0.0f)
     {
         float alphaRate = damageTimer / 0.2f;
@@ -461,8 +468,11 @@ void PlayerController::Draw() const
 
 void PlayerController::TakeDamage(const int damage)
 {
+    if (invincibleTimer > 0.0f) return;
+
     hp -= damage;
     damageTimer = 0.2f;
+    invincibleTimer = Const::INVINCIBLE_TIME;
 }
 
 void PlayerController::FireBullet(const Vec3& eye, const Vec3& forward)
