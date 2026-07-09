@@ -6,10 +6,18 @@
 void EnemyRoot::Init()
 {
 	//-63, 2000 âEÇÃï«
-	startPointsGround[0] = { -63, 0, 2000 };
-	startPointsGround[1] = { -63, 0 , -2000 };
-	startPointsSky[0] = { -2000, 300 ,  -64};
-	startPointsSky[1] = { 2000, 300 , -64 };
+	startPointsGround[0] = { -63, 0,   2500 };
+	startPointsGround[1] = { -63, 0 , -2500 };
+	startPointsGround[2] = { -300, 0 ,-2500 };
+	startPointsGround[3] = { 300, 0 , -2500 };
+
+
+	startPointsSky[0] = { -2500, 400 ,  64 };
+	startPointsSky[1] = {  2500, 400 , -64 };
+	startPointsSky[2] = { -2500, 400 , -2500 };
+	startPointsSky[3] = {  2500, 400 ,  2500 };
+	startPointsSky[4] = {  2500, 400 , -2500 };
+	startPointsSky[5] = { -2500, 400 ,  2500 };
 
 
 	//ÉSÅ[Éã

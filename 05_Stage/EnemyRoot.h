@@ -16,15 +16,15 @@ public:
 	[[nodiscard]] size_t GetRootPointsLength() const { return std::size(startPointsGround); }
 
 private:
-	Vec3 corePos_kari{ -110,0,-200 };
+	Vec3 corePos_kari{ 0, 0, 0 };
 
 
-	static constexpr size_t GROUND_START_POINT_AMOUNT = 2;
+	static constexpr size_t GROUND_START_POINT_AMOUNT = 4;
 	std::array<Vec3, GROUND_START_POINT_AMOUNT> startPointsGround;
 	size_t startIdx_Ground{ 0 };
 
 
-	static constexpr size_t SKY_START_POINT_AMOUNT = 2;
+	static constexpr size_t SKY_START_POINT_AMOUNT = 6;
 	std::array<Vec3, SKY_START_POINT_AMOUNT> startPointsSky;
 	size_t startIdx_Sky{ 0 };
 };
