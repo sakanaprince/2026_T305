@@ -1,13 +1,12 @@
 #include "GameClearScene.h"
 #include "SceneManager.h"
-#include "../04_Resource/ResourceManager.h"
-#include "../04_Resource/ResourceKeys.h"
 
 void GameClearScene::Init()
 {
     fontHandle = RM().GetFont(ResourceKeys::Font_ManufacturingConsent);
     backGroundHandle = RM().GetSprite(ResourceKeys::Sprite_GameClearBG);
     bgmHandle = RM().GetMusic(ResourceKeys::Music_GameClear);
+    soundClickHandle = RM().GetSound(ResourceKeys::Sound_Click);
     soundManager->PlayBGM(bgmHandle);
     DxLib::SetMouseDispFlag(TRUE);
     buttonTitleColor = buttonNormalColor;
@@ -29,6 +28,7 @@ void GameClearScene::Update(float deltaTime)
 
         if (GetMouseInput() & MOUSE_INPUT_LEFT)
         {
+            soundManager->PlaySENormal(soundClickHandle);
             Scene* gameScene = SceneManager::GetInstance().GetScene(SceneID::Title);
             SetNextScene(gameScene);
             return;

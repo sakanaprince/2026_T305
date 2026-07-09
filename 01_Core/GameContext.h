@@ -90,4 +90,6 @@ private:
 
     bool shopOpen{ false };
     int E_KEY_prevFrameDown{ -1 };
+
+    int soundSetTrapHandle{ -1 };
 };

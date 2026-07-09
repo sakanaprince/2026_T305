@@ -11,6 +11,7 @@ void GameContext::Init()
     SetFontSize(50);
     fontHandle = RM().GetFont(ResourceKeys::Font_ManufacturingConsent);
     trapModelHandle = RM().GetModel(ResourceKeys::Model_Trap);
+    soundSetTrapHandle = RM().GetSound(ResourceKeys::Sound_SetTrap);
 
     stage.Init();
     coin.Init();
@@ -55,6 +56,7 @@ void GameContext::Reset()
     {
         b.Reset();
     }
+    enemySpawner.EndGame();
 }
 
 void GameContext::Update(float deltaTime)
@@ -161,6 +163,13 @@ void GameContext::Draw() const
     for (auto& b : bullets) {
         b.Draw();
     }
+    if (spawnTraps.size() > 0)
+    {
+        for (auto& t : spawnTraps)
+        {
+            t->Draw();
+        }
+    }
     player.Draw();
 
     enemySpawner.DrawMiniMap();
@@ -180,14 +189,6 @@ void GameContext::Draw() const
     DrawFormatString(10, (int)DxPlus::CLIENT_HEIGHT * 0.95f, GetColor(255, 255, 255), 
         L"移動：WASD　射撃：左クリック　武器変更：マウスホイール　リロード：R　ダッシュ：左Shift　ジャンプ：Space");
     SetFontSize(50);
-
-    if (spawnTraps.size() > 0)
-    {
-        for (auto& t : spawnTraps)
-        {
-            t->Draw();
-        }
-    }
 }
 
 void GameContext::MouseController()
@@ -301,7 +302,7 @@ void GameContext::CollisionEnemyTrap()
         {
             if (Collision::IsHitSphereBox(en->GetSphere(), t->GetBox()))
             {
-                en->TakeGroundDamage(1);
+                en->TakeGroundDamage(t->GetDamage());
             }
         }
 
@@ -345,6 +346,7 @@ void GameContext::InstallationTrap()
         {
             spawnTraps.push_back(std::make_unique<Trap>(trapModelHandle, player.GetPosition()));
             possessionTrap--;
+            soundManager.PlaySENormal(soundSetTrapHandle);
             if (possessionTrap <= 0) { possessionTrap = 0; }
             Debug().Log(u8"現在のトラップの所持数トラップ", possessionTrap);
         }

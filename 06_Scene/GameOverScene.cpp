@@ -1,13 +1,12 @@
 #include "../06_Scene/GameOverScene.h"
 #include "SceneManager.h"
-#include "../04_Resource/ResourceManager.h"
-#include "../04_Resource/ResourceKeys.h"
 
 void GameOverScene::Init()
 {
     fontHandle = RM().GetFont(ResourceKeys::Font_ManufacturingConsent);
     backGroundHandle = RM().GetSprite(ResourceKeys::Sprite_GameOverBG);
     bgmHandle = RM().GetMusic(ResourceKeys::Music_GameOver);
+    soundClickHandle = RM().GetSound(ResourceKeys::Sound_Click);
     soundManager->PlayBGM(bgmHandle);
     DxLib::SetMouseDispFlag(TRUE);
     buttonTitleColor = buttonNormalColor;
@@ -30,6 +29,7 @@ void GameOverScene::Update(float deltaTime)
 
         if (GetMouseInput() & MOUSE_INPUT_LEFT)
         {
+            soundManager->PlaySENormal(soundClickHandle);
             Scene* gameScene = SceneManager::GetInstance().GetScene(SceneID::Title);
             SetNextScene(gameScene);
             return;
@@ -46,6 +46,7 @@ void GameOverScene::Update(float deltaTime)
         buttonContinueColor = buttonOnMouseColor;
         if (GetMouseInput() & MOUSE_INPUT_LEFT)
         {
+            soundManager->PlaySENormal(soundClickHandle);
             Scene* gameScene = SceneManager::GetInstance().GetScene(SceneID::Game);
             SetNextScene(gameScene);
             return;
