@@ -35,6 +35,7 @@ void PlayerController::Reset()
 
     hp = { Const::PLAYER_MAX_HP };
     jumpCount = { 0 };
+    resurrectionAmulet = { 0 };
 
     invincibleTimer = { 0.0f };
     damageTimer = { 0.0f };
@@ -514,6 +515,14 @@ void PlayerController::TakeDamage(const int damage)
     hp -= damage;
     damageTimer = 0.2f;
     invincibleTimer = Const::INVINCIBLE_TIME;
+}
+
+void PlayerController::Resurrection()
+{
+    if (resurrectionAmulet <= 0) return;
+    resurrectionAmulet--;
+    isAlive = true;
+    respawnTimer = Const::RESPAWN_TIME;
 }
 
 void PlayerController::FireBullet(const Vec3& eye, const Vec3& forward)
