@@ -29,7 +29,7 @@ protected:
 	float power{ 0.0f };
 
 	const float ExpandEndScale{ 1.0f };
-	const float ReduceEndScale{ 0.85f };
+	const float ReduceEndScale{ 0.95f };
 	const float MinReduceEndScale{ 0.5f };
 	const float ScaleSpeed{ 2.0f };
 	float pushedUXTimer{ 0.0f };
@@ -55,7 +55,7 @@ protected:
 	float buttonPosition_x{ 500.0f };
 	float buttonPosition_y{ 500.0f };
 	float buttonWidth{ 384.0f };
-	float buttonHeight{ 256.0f };
+	float buttonHeight{ 200.0f };
 
 	//É{É^ÉìÇÃêF
 	unsigned int buttonColor{ 0 };
