@@ -34,6 +34,8 @@ public:
 	void SetPrevMouse(int mouseX, int mouseY) { prevMouse = { mouseX, mouseY }; }
 	//ƒvƒŒƒCƒ„[‚ÌHP‚ğæ“¾
 	const int GetHp() const { return hp; }
+	//HP‚Ì‰ñ•œ
+	void HealHp() { hp = Const::PLAYER_MAX_HP; }
 
 	void Init();
 	void Reset();

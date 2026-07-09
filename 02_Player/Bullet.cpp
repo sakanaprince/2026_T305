@@ -12,7 +12,7 @@ void Bullet::Reset()
 {
 	bullet.radius = { 3.0f };
 	velocity = { 0.0f,0.0f,0.0f };
-	maxLife = { 2.0f };
+	maxLife = { 1.0f };
 	life = { maxLife };
 	isActive = { false };
 }
