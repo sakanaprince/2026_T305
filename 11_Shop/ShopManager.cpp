@@ -14,6 +14,7 @@ void ShopManager::Init(GameContext* gC)
 	btnTrap.Init(this, L"Ground Trap", L"罠です。地面に設置するタイプのシンプルなやつです。", 100, fontHandle);
 	btnHolyLight.Init(this, L"Holy Light", L"聖なる光です。全ての敵を滅ぼそうとします。", 500, fontHandle);
 	btnMap.Init(this, L"Radar Eye", L"レーダーです。コアと敵の位置を教えてくれます。", 150, fontHandle);
+	btnHeal.Init(this, L"Bandage", L"ばんそうこうです。あなたのHPを回復します。", 50, fontHandle);
 
 	btnCollection.clear();
 	btnCollection.push_back(&btnTutorial);
@@ -21,6 +22,7 @@ void ShopManager::Init(GameContext* gC)
 	btnCollection.push_back(&btnTrap);
 	btnCollection.push_back(&btnMap);
 	btnCollection.push_back(&btnHolyLight);
+	btnCollection.push_back(&btnHeal);
 
 	constexpr int basePosX = 100;
 	constexpr int distanceX = 400;

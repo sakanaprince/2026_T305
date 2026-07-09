@@ -7,6 +7,7 @@
 #include "BuyHolySushi.h"
 #include "BuyTrap.h"
 #include "BuyMap.h"
+#include "BuyHeal.h"
 class GameContext;
 
 class ShopManager
@@ -43,6 +44,7 @@ private:
 	BuyTrap btnTrap;
 	BuyHolySushi btnHolyLight;
 	BuyMap btnMap;
+	BuyHeal btnHeal;
 
 	DxPlus::Vec2Int mousePos{ 0,0 };
 	bool prevFrameMouseDown{ false };
