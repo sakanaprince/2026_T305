@@ -57,6 +57,7 @@ void GameContext::Reset()
         b.Reset();
     }
     enemySpawner.EndGame();
+    unlockMap = false;
 }
 
 void GameContext::Update(float deltaTime)
@@ -110,12 +111,12 @@ void GameContext::Update(float deltaTime)
 
 
     //テスト用
-    int buttonDown = DxPlus::Input::GetButtonDown(DxPlus::Input::PLAYER1);
-    if (buttonDown & DxPlus::Input::BUTTON_L1)
-    {
-        BuyTrap();
-        Debug().Log(u8"現在のトラップの所持数トラップ", possessionTrap);
-    }
+    //int buttonDown = DxPlus::Input::GetButtonDown(DxPlus::Input::PLAYER1);
+    //if (buttonDown & DxPlus::Input::BUTTON_TRIGGER3)
+    //{
+    //    BuyTrap();
+    //    Debug().Log(u8"現在のトラップの所持数トラップ", possessionTrap);
+    //}
     //---
 
 
@@ -144,6 +145,8 @@ void GameContext::Update(float deltaTime)
     float rate = (limit_Timer / limit_Time);
     SetBackgroundColor(64, 64 * rate,230 * rate );
     SetLightDifColor(GetColorF(1.0f, (1.0f * rate) + 0.2f ,(1.0f * rate) + 0.2f, 1.0f));
+
+    textTrapCount = std::to_wstring(possessionTrap);
 }
 
 void GameContext::Draw() const
@@ -172,7 +175,23 @@ void GameContext::Draw() const
     }
     player.Draw();
 
-    enemySpawner.DrawMiniMap();
+    if (unlockMap)
+    {
+        enemySpawner.DrawMiniMap();
+    }
+
+    if (possessionTrap > 0)
+    {
+        DxPlus::Text::DrawString(
+            (L"Trap = " + textTrapCount).c_str(),
+            { DxPlus::CLIENT_WIDTH * 0.63f, 80 },
+            GetColor(0, 0, 0),
+            DxPlus::Text::TextAlign::TOP_CENTER,
+            { 1.5f,1.5f },
+            0.0,
+            fontHandle);
+    }
+
     shopManager.Draw();
 
 
@@ -186,8 +205,8 @@ void GameContext::Draw() const
         fontHandle);
 
     SetFontSize(30);
-    DrawFormatString(10, (int)DxPlus::CLIENT_HEIGHT * 0.95f, GetColor(255, 255, 255), 
-        L"移動：WASD　射撃：左クリック　武器変更：マウスホイール　リロード：R　ダッシュ：左Shift　ジャンプ：Space");
+    DrawFormatString(10, (int)DxPlus::CLIENT_HEIGHT * 0.92f, GetColor(255, 255, 255), 
+        L"基本操作：WASD / 左クリック　武器変更：マウスホイール　リロード：R　ダッシュ：左Shift　ジャンプ：Space\nショップを開く：E 罠を配置： T タレット強化：Enter");
     SetFontSize(50);
 }
 
@@ -313,7 +332,7 @@ void GameContext::InstallationTrap()
 {
     int buttonDown = DxPlus::Input::GetButtonDown(DxPlus::Input::PLAYER1);
 
-    if (buttonDown & DxPlus::Input::BUTTON_START)
+    if (buttonDown & DxPlus::Input::BUTTON_TRIGGER3)
     {
         //現在の所持しているトラップが数が０の場合とプレイヤーが地面にいない場合は処理をしない
         if (possessionTrap == 0) { return; }

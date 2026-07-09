@@ -1,6 +1,6 @@
 #include "Bullet.h"
 #include "DxLib.h"
-#include "DxPlus.h"
+#include "../DxPlus/DxPlus.h"
 #include "../07_Math/DxConv.h"
 #include "../99_Utility/Const.h"
 

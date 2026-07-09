@@ -190,12 +190,14 @@ void EnemySpawner::Draw() const
 void EnemySpawner::DrawMiniMap() const
 {
 	//ミニマップ
-	constexpr int left = DxPlus::CLIENT_WIDTH * 0.7f;
+	constexpr int left = DxPlus::CLIENT_WIDTH * 0.85f;
 	constexpr int up = DxPlus::CLIENT_HEIGHT * 0.2f;
-	constexpr int right = left + 700;
-	constexpr int bottom = up + 700;
+	constexpr int right = left + 300;
+	constexpr int bottom = up + 300;
 	constexpr int center_x = right - (right - left) * 0.5f;
 	constexpr int center_y = bottom - (bottom - up) * 0.5f;
+
+	constexpr float scaleMul = 0.03f;
 
 	DxLib::SetDrawBlendMode(DX_BLENDMODE_ALPHA, 128);
 
@@ -208,7 +210,7 @@ void EnemySpawner::DrawMiniMap() const
 	DxLib::DrawLine(center_x, bottom, center_x, center_y, GetColor(16, 16, 16), 2);
 	DxLib::DrawLine(right, center_y, center_x, center_y, GetColor(16, 16, 16), 2);
 
-	constexpr float triangleSize = 32.0f;
+	constexpr float triangleSize = 16.0f;
 	DxLib::DrawTriangle(center_x, center_y - triangleSize - 50.0f,
 		center_x - triangleSize, center_y + 10, center_x + triangleSize, center_y + 10, GetColor(16, 16, 16), true);
 
@@ -231,7 +233,7 @@ void EnemySpawner::DrawMiniMap() const
 		float rotatedX = dx * std::cos(offsetYaw) - dz * std::sin(offsetYaw);
 		float rotatedZ = dx * std::sin(offsetYaw) + dz * std::cos(offsetYaw);
 		DxLib::DrawCircle(
-			coreX + rotatedX * 0.15f, coreY - rotatedZ * 0.1f,
+			coreX + rotatedX * scaleMul, coreY - rotatedZ * scaleMul,
 			30.0f, GetColor(8, 8, 16), true);
 	}
 
@@ -254,11 +256,11 @@ void EnemySpawner::DrawMiniMap() const
 
 		// 3. ミニマップの中心点をベースに、縮尺をかけて描画座標を決める
 		// 2D画面のY軸は下がプラスなので、Zの変換時はマイナスにします
-		float drawX = center_x + (rotatedX * 0.1f);
-		float drawY = center_y - (rotatedZ * 0.1f);
+		float drawX = center_x + (rotatedX * scaleMul);
+		float drawY = center_y - (rotatedZ * scaleMul);
 
 		// 4. 計算した座標に描画する
-		DxLib::DrawCircle(drawX, drawY, 20.0f, GetColor(255, 0, 0), true);
+		DxLib::DrawCircle(drawX, drawY, 10.0f, GetColor(255, 0, 0), true);
 
 		/*DxLib::DrawCircle(
 			center_x * std::cos(yaw) + worldPos.x * 0.15f,

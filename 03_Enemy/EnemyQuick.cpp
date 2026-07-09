@@ -15,6 +15,8 @@ void EnemyQuick::Reset()
 	isDamageReaction = false;
 	killedReactionTimer = 0.0f;
 	isKilledReaction = false;
+	hitSphereRadius = 100.0f;
+	height = 60.0f;
 
 	if (pEnemyRoot)
 	{

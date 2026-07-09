@@ -184,7 +184,7 @@ void Entity::StepGround(float deltaTime)
 		if (pEnemySpawner) 
 		{ 
 			pEnemySpawner->DecAliveEnemyCount(); 
-			pEnemySpawner->CoreDamage(10);
+			pEnemySpawner->CoreDamage(coreDamage);
 			moveSpeed = 0.0f;
 			return;
 		}

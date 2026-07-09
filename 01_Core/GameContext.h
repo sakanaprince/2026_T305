@@ -48,6 +48,10 @@ public:
     SoundManager& GetSoundManager() { return soundManager; }
     const SoundManager& GetSoundManager() const { return soundManager; }
 
+    int GetTrapCount() const { return possessionTrap; }
+
+    void UnlockMap() { unlockMap = true; }
+
     //トラップを購入したときの処理
     void BuyTrap() { possessionTrap++; }
 
@@ -76,6 +80,8 @@ private:
 
     Turret turrets[Const::TURRET_COUNT];
 
+    bool unlockMap{ false };
+
     //残り時間計測用
     float limit_Timer{ 0 };
     float limit_Time{ 300 };
@@ -92,4 +98,5 @@ private:
     int E_KEY_prevFrameDown{ -1 };
 
     int soundSetTrapHandle{ -1 };
+    std::wstring textTrapCount{L"" };
 };
