@@ -34,8 +34,10 @@ public:
 	bool IsGrounded() const { return isGrounded; }
 	//プレイヤーのHPを取得
 	const int GetHp() const { return hp; }
-	//HPの回復
-	void HealHp() { hp = Const::PLAYER_MAX_HP; }
+
+	void SetPrevMouse(int mouseX, int mouseY) { prevMouse = { mouseX, mouseY }; }
+	//復活のお守り 呼び出すごとに1増える
+	void ResurrectionAmuletPlus() { resurrectionAmulet++; }
 
 	void SetPrevMouse(int mouseX, int mouseY) { prevMouse = { mouseX, mouseY }; }
 	//復活のお守り 呼び出すごとに1増える
