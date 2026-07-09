@@ -10,19 +10,24 @@ void GameContext::Init()
 {
     SetFontSize(50);
     fontHandle = RM().GetFont(ResourceKeys::Font_ManufacturingConsent);
+    trapModelHandle = RM().GetModel(ResourceKeys::Model_Trap);
+    soundSetTrapHandle = RM().GetSound(ResourceKeys::Sound_SetTrap);
 
     stage.Init();
     coin.Init();
     core.Init();
     for (auto& t : turrets)
     {
-        t.Init(&player, &enemySpawner, &coin);
+        t.Init(&player, &enemySpawner, &coin, &soundManager);
     }
     enemyRoot.Init();
-    enemySpawner.Init(&enemyRoot,&player, this);
+    enemyDataManster.LoadJson();
+    enemySpawner.Init(&enemyRoot, &player, this, &enemyDataManster);
     bullets->Init();   
     player.Init();
     player.SetBulletPointer(bullets, Const::AMMO_MAX);
+    shopManager.Init(this);
+    soundManager.Init(&player);
 }
 
 void GameContext::Reset()
@@ -35,27 +40,88 @@ void GameContext::Reset()
     limit_prevTime = limit_Timer;
     
     text_Timer = std::to_wstring(static_cast<int>(limit_Timer));
+
+    possessionTrap = 0;
     
+    enemySpawner.Reset();
     stage.Reset();
     coin.Reset();
     core.Reset();
-    turrets[0].Reset({ 1030,260, 870 });
-    turrets[1].Reset({ -1170, 260, 870 });
-    turrets[2].Reset({ -1170, 260, -1340 });
-    turrets[3].Reset({ 1030, 260, -1340 });
+    turrets[0].Reset({ 1100,300, 1100 });
+    turrets[1].Reset({ -1100, 300, 1100 });
+    turrets[2].Reset({ -1100, 300, -1100 });
+    turrets[3].Reset({ 1100, 300, -1100 });
     player.Reset();
     for (auto& b : bullets) 
     {
         b.Reset();
     }
+    enemySpawner.EndGame();
 }
 
 void GameContext::Update(float deltaTime)
 { 
+    if (limit_Timer < 1.0f)
+    {
+        enemySpawner.EndGame();
+    }
+
+    //Eキーが押されているかチェック
+    int e_key_down = CheckHitKey(KEY_INPUT_E);
+
+    //前フレームにEキーが押されていないかつ現在フレームでEキーが押された場合ショップを開く
+    if (!E_KEY_prevFrameDown && e_key_down)
+    {
+        //ショップ状態の変更
+        shopManager.SwitchShopOpen();
+
+        //現在のショップの状態を取得
+        shopOpen = shopManager.IsShopOpen();
+
+        //マウスカーソルの出現・削除の切り替え
+        DxLib::SetMouseDispFlag(shopOpen);
+
+        //マウスカーソルの位置を中央に持ってくる
+        SetMousePoint(DxPlus::CLIENT_WIDTH / 2, DxPlus::CLIENT_HEIGHT / 2);
+
+        if (!shopOpen)
+        {
+            int mouseX, mouseY;
+            GetMousePoint(&mouseX, &mouseY);
+
+            //ショップを閉じた時に視点が飛んでいかないようにする
+            player.SetPrevMouse(mouseX, mouseY);
+        }
+    }
+
+    //現在のキーの情報を前フレームのキー情報保存用の変数に入れる
+    E_KEY_prevFrameDown = (e_key_down);
+
+    coin.Update();
+
+    shopManager.Update(deltaTime);
+
+    //ショップが開かれている場合はこれより下の処理は行わない
+    if (shopOpen) { return; }
+
+    MouseController();
+    
     TimeLimit(deltaTime);
 
+
+    //テスト用
+    int buttonDown = DxPlus::Input::GetButtonDown(DxPlus::Input::PLAYER1);
+    if (buttonDown & DxPlus::Input::BUTTON_L1)
+    {
+        BuyTrap();
+        Debug().Log(u8"現在のトラップの所持数トラップ", possessionTrap);
+    }
+    //---
+
+
+    InstallationTrap();
+
     core.Update();
-    coin.Update();
     for (auto& t : turrets)
     {
         t.Update(deltaTime);
@@ -71,6 +137,13 @@ void GameContext::Update(float deltaTime)
 
     CollisionEnemyBullet();
     CollisionEnemyArrow();
+    CollisionEnemyTrap();
+
+    Debug().Log("POS",player.GetPosition());
+
+    float rate = (limit_Timer / limit_Time);
+    SetBackgroundColor(64, 64 * rate,230 * rate );
+    SetLightDifColor(GetColorF(1.0f, (1.0f * rate) + 0.2f ,(1.0f * rate) + 0.2f, 1.0f));
 }
 
 void GameContext::Draw() const
@@ -81,6 +154,7 @@ void GameContext::Draw() const
     stage.Draw();
     coin.Draw();
     core.Draw();
+
     for (auto& t : turrets)
     {
         t.Draw();
@@ -89,7 +163,17 @@ void GameContext::Draw() const
     for (auto& b : bullets) {
         b.Draw();
     }
+    if (spawnTraps.size() > 0)
+    {
+        for (auto& t : spawnTraps)
+        {
+            t->Draw();
+        }
+    }
     player.Draw();
+
+    enemySpawner.DrawMiniMap();
+    shopManager.Draw();
 
 
     DxPlus::Text::DrawString(
@@ -102,9 +186,38 @@ void GameContext::Draw() const
         fontHandle);
 
     SetFontSize(30);
-    DrawFormatString(10, DxPlus::CLIENT_HEIGHT * 0.95f, GetColor(255, 255, 255), 
+    DrawFormatString(10, (int)DxPlus::CLIENT_HEIGHT * 0.95f, GetColor(255, 255, 255), 
         L"移動：WASD　射撃：左クリック　武器変更：マウスホイール　リロード：R　ダッシュ：左Shift　ジャンプ：Space");
     SetFontSize(50);
+}
+
+void GameContext::MouseController()
+{
+    int mouseX, mouseY;
+    DxLib::GetMousePoint(&mouseX, &mouseY);
+
+    if (mouseX <= 0)
+    {
+        SetMousePoint(DxPlus::CLIENT_WIDTH - 1, mouseY);
+        player.SetPrevMouse(DxPlus::CLIENT_WIDTH - 1, mouseY);
+    }
+    else if (mouseX >= DxPlus::CLIENT_WIDTH - 1)
+    {
+        SetMousePoint(0, mouseY);
+        player.SetPrevMouse(0, mouseY);
+    }
+
+    if (mouseY <= 0)
+    {
+        SetMousePoint(mouseX, DxPlus::CLIENT_HEIGHT - 1);
+        player.SetPrevMouse(mouseX, DxPlus::CLIENT_HEIGHT - 1);
+    }
+    else if (mouseY >= DxPlus::CLIENT_HEIGHT - 1)
+    {
+        SetMousePoint(mouseX, 0);
+        player.SetPrevMouse(mouseX, 0);
+    }
+
 }
 
 void GameContext::TimeLimit(float deltaTime)
@@ -175,4 +288,68 @@ void GameContext::CollisionEnemyArrow()
 
         }
     }
+}
+
+void GameContext::CollisionEnemyTrap()
+{
+    for (int i = 0; i < enemySpawner.GetEnemyCollectionSize(); i++)
+    {
+        auto& en = enemySpawner.GetEnemy(i);
+        if (!en) { continue; }
+        if (!en->IsAlive()) { continue; }
+
+        for (auto& t : spawnTraps)
+        {
+            if (Collision::IsHitSphereBox(en->GetSphere(), t->GetBox()))
+            {
+                en->TakeGroundDamage(t->GetDamage());
+            }
+        }
+
+    }
+}
+
+void GameContext::InstallationTrap()
+{
+    int buttonDown = DxPlus::Input::GetButtonDown(DxPlus::Input::PLAYER1);
+
+    if (buttonDown & DxPlus::Input::BUTTON_START)
+    {
+        //現在の所持しているトラップが数が０の場合とプレイヤーが地面にいない場合は処理をしない
+        if (possessionTrap == 0) { return; }
+
+
+        if (!player.IsGrounded()) { return; }
+
+
+        bool isHit = false;
+
+        //現在設置しているトラップが一つでもあれば設置しているトラップと被らないように当たり判定をチェックする
+        if (spawnTraps.size() > 0)
+        {
+            Collision::Box box;
+            box.centerPos = player.GetPosition();
+            box.scale = spawnTraps[0]->GetHitScale();
+
+            for (auto& t : spawnTraps)
+            {
+                if (Collision::IsHitBoxBox(box, t->GetBox()))
+                {
+                    isHit = true;
+                    break;
+                }
+            }
+        }
+
+        //他のトラップと当たり判定が被っていたら設置できないようにする
+        if (!isHit)
+        {
+            spawnTraps.push_back(std::make_unique<Trap>(trapModelHandle, player.GetPosition()));
+            possessionTrap--;
+            soundManager.PlaySENormal(soundSetTrapHandle);
+            if (possessionTrap <= 0) { possessionTrap = 0; }
+            Debug().Log(u8"現在のトラップの所持数トラップ", possessionTrap);
+        }
+    }
+
 }

@@ -1,12 +1,20 @@
 #include "PlayerController.h"
 #include "DxLib.h"
+#include "../04_Resource/ResourceKeys.h"
+#include "../04_Resource/ResourceManager.h"
 #include "../10_Physics/Raycast.h"
 #include "../99_Utility/Const.h"
+#include <algorithm>
 
 void PlayerController::Init()
 {
+    deadFont= CreateFontToHandle(NULL, 70, 5, DX_FONTTYPE_ANTIALIASING);
 	gunFont = CreateFontToHandle(NULL, 50, 3, DX_FONTTYPE_ANTIALIASING);
     reloadFont = CreateFontToHandle(NULL, 25, 2, DX_FONTTYPE_ANTIALIASING);
+
+    pistolHandle = RM().GetSound(ResourceKeys::Sound_Gun);
+    rifleHandle = RM().GetSound(ResourceKeys::Sound_SubmachineGun);
+    shotgunHandle = RM().GetSound(ResourceKeys::Sound_ShotGun);
 
     gun.Init();
 }
@@ -21,10 +29,17 @@ void PlayerController::Reset()
 	pitch = { 0.0f };
 
 	isGrounded = { true };
+    isAlive = { true };
+    isAim = { false };
 	isReload = { false };
 
     hp = { Const::PLAYER_MAX_HP };
+    jumpCount = { 0 };
+    resurrectionAmulet = { 0 };
 
+    invincibleTimer = { 0.0f };
+    damageTimer = { 0.0f };
+    respawnTimer = { Const::RESPAWN_TIME };
     fireTimer = { 0.0f };
     fireInterval = { Const::PISTOL_FIRE_INTERVAL };
 	reloadTimer = { Const::RELOAD_TIME };
@@ -39,6 +54,39 @@ void PlayerController::Reset()
 
 void PlayerController::Update(float deltaTime, Stage& stage)
 {
+    if (!isAlive) {
+        respawnTimer -= deltaTime;
+        if (respawnTimer <= 0.0f) {
+            respawnTimer = Const::RESPAWN_TIME;
+            hp = Const::PLAYER_MAX_HP;
+            position = { 0,0,0 };
+            isAlive = true;
+        }
+        return;
+    }
+
+    if (hp <= 0) {
+        Resurrection();
+        return;
+    }
+
+    if (damageTimer > 0.0f)
+    {
+        damageTimer -= deltaTime;
+        if (damageTimer < 0.0f) damageTimer = 0.0f;
+    }
+
+    if (invincibleTimer > 0.0f) {
+        invincibleTimer -= deltaTime;
+        if (invincibleTimer < 0.0f) invincibleTimer = 0.0f;
+    }
+
+    static int prevMouseInput = 0;
+    int nowMouse = GetMouseInput();
+    static bool prevSpace = false;
+    bool nowSpace = CheckHitKey(KEY_INPUT_SPACE);
+    bool leftDown = (nowMouse & MOUSE_INPUT_LEFT) && !(prevMouseInput & MOUSE_INPUT_LEFT);
+
     //現在の銃の種類を取得
     currentGunType = gun.GetGunType();
 
@@ -55,8 +103,6 @@ void PlayerController::Update(float deltaTime, Stage& stage)
 	forward = { cos(yaw), 0.0f, sin(yaw) };
 	right = { -forward.z, 0.0f, forward.x };
 
-	float playerSpeed = CheckHitKey(KEY_INPUT_LSHIFT) ? Const::PLAYER_DASH_SPEED : Const::PLAYER_WALK_SPEED;
-
 	// positionを直接動かさず、このフレームの「入力による水平移動ベクトル」を計算する
 	Vec3 moveVec = { 0.0f, 0.0f, 0.0f };
 	if (CheckHitKey(KEY_INPUT_W)) moveVec += forward;
@@ -64,19 +110,33 @@ void PlayerController::Update(float deltaTime, Stage& stage)
 	if (CheckHitKey(KEY_INPUT_A)) moveVec += right;
 	if (CheckHitKey(KEY_INPUT_D)) moveVec -= right;
 
+    float playerSpeed;
+
+    if (isAim) playerSpeed = Const::PLAYER_AIM_SPEED;
+    else if (CheckHitKey(KEY_INPUT_LSHIFT)) playerSpeed = Const::PLAYER_DASH_SPEED;
+    else playerSpeed = Const::PLAYER_WALK_SPEED;
+
+    isAim = nowMouse & MOUSE_INPUT_RIGHT;
+
 	// 斜め移動でも速くならないように正規化して速度を掛ける
 	if (moveVec.LengthSq() > Const::EPS) {
 		moveVec = moveVec.Normalized() * playerSpeed;
 	}
 
 	// スペースキーでジャンプ
-	if (CheckHitKey(KEY_INPUT_SPACE) && isGrounded) {
-		velocity.y = Const::PLAYER_JUMP_FORCE;
-		isGrounded = false;
+	if (nowSpace && !prevSpace) {
+        if (jumpCount < Const::MAX_JUNP_COUNT) {
+            velocity.y = Const::PLAYER_JUMP_FORCE;
+            isGrounded = false;
+            jumpCount++;
+        }
 	}
-    else if (!isGrounded) {
+    
+    if (!isGrounded) {
         velocity.y -= Const::GRAVITY * deltaTime;
     }
+
+    prevSpace = nowSpace;
 
     Step(deltaTime, stage, moveVec);
 
@@ -84,11 +144,15 @@ void PlayerController::Update(float deltaTime, Stage& stage)
 	Vec3 eye = position + Vec3(0, Const::PLAYER_EYE_POSITION, 0);
 
 	// カメラの更新
-	camera.UpdateFromPlayer(eye, yaw, pitch);
+	camera.UpdateFromPlayer(eye, yaw, pitch, isAim);
+
+    // 銃の種類の切り替え
+    gun.Update(isReload);
+    gun.UpdateFromCamera(position, camera.GetForward(), camera.GetRight(), camera.GetUp(), isAim);
 
 	// リロード判定
     if (!isReload && (CheckHitKey(KEY_INPUT_R) || 
-        pistolAmmo < 0 || rifleAmmo < 0 || shotgunAmmo < 0)) {
+        pistolAmmo <= 0 || rifleAmmo <= 0 || shotgunAmmo <= 0)) {
         isReload = true;
     }
 
@@ -102,10 +166,10 @@ void PlayerController::Update(float deltaTime, Stage& stage)
                 pistolAmmo = Const::PISTOL_MAGAZIN_MAX;
                 break;
             case GunType::Rifle:
-                rifleAmmo = Const::PISTOL_MAGAZIN_MAX;
+                rifleAmmo = Const::RIFLE_MAGAZIN_MAX;
                 break;
             case GunType::Shotgun:
-                shotgunAmmo = Const::PISTOL_MAGAZIN_MAX;
+                shotgunAmmo = Const::SHOTGUN_MAGAZIN_MAX;
                 break;
             }
 			reloadTimer = Const::RELOAD_TIME;
@@ -114,15 +178,7 @@ void PlayerController::Update(float deltaTime, Stage& stage)
 		return;
 	}
 
-    // 銃の種類の切り替え
-    gun.Update();
-    gun.UpdateFromCamera(position, camera.GetForward(), camera.GetRight(), camera.GetUp());
-
 	// 弾丸の発射
-	static int prevMouseInput = 0;
-	int nowMouse = GetMouseInput();
-	bool leftDown = (nowMouse & MOUSE_INPUT_LEFT) && !(prevMouseInput & MOUSE_INPUT_LEFT);
-
     switch (currentGunType)
     {
     case GunType::Pistol:
@@ -138,31 +194,54 @@ void PlayerController::Update(float deltaTime, Stage& stage)
 
     fireTimer -= deltaTime;
 
-	if (leftDown && fireTimer <= 0.0f) {
+	if (fireTimer <= 0.0f) {
+        Vec3 eyePos = camera.GetEye();
+        Vec3 forward = camera.GetForward();
+        float spread = 0.0f;
+
         switch (currentGunType)
         {
         case GunType::Pistol:
-            if (pistolAmmo > 0)
+            if (leftDown && pistolAmmo > 0)
             {
-                FireBullet(camera.GetEye(), camera.GetForward());
+                spread = isAim ? Const::PISTOL_SPREAD_ANGLE * Const::AIM_SPREAD_RATE
+                    : Const::PISTOL_SPREAD_ANGLE;
+
+                Vec3 dir = RandomSpreadDirection(forward, spread);
+
+                FireBullet(eyePos, dir);
+                sound.PlaySENormal(pistolHandle);
                 pistolAmmo--;
                 fireTimer = fireInterval;
             }
             break;
 
         case GunType::Rifle:
-            if (rifleAmmo > 0)
+            if ((nowMouse & MOUSE_INPUT_LEFT) && rifleAmmo > 0)
             {
-                FireBullet(camera.GetEye(), camera.GetForward());
+                spread = isAim ? Const::RIFLE_SPREAD_ANGLE * Const::AIM_SPREAD_RATE
+                    : Const::RIFLE_SPREAD_ANGLE;
+
+                Vec3 dir = RandomSpreadDirection(forward, spread);
+
+                FireBullet(eyePos, dir);
+                sound.PlaySENormal(rifleHandle);
                 rifleAmmo--;
                 fireTimer = fireInterval;
             }
             break;
 
         case GunType::Shotgun:
-            if (shotgunAmmo > 0)
+            if (leftDown && shotgunAmmo > 0)
             {
-                FireBullet(camera.GetEye(), camera.GetForward());
+                for (int n = 0; n < Const::SHOTGUN_PELLET_COUNT; n++)
+                {
+                    spread = isAim ? Const::SHOTGUN_SPREAD_ANGLE * Const::AIM_SPREAD_RATE
+                        : Const::SHOTGUN_SPREAD_ANGLE;
+                    Vec3 dir = RandomSpreadDirection(forward, spread);
+                    FireBullet(eyePos, dir);
+                }
+                sound.PlaySENormal(shotgunHandle);
                 shotgunAmmo--;
                 fireTimer = fireInterval;
             }
@@ -178,8 +257,7 @@ void PlayerController::Step(float deltaTime, Stage& stage, const Vec3& moveVec)
     constexpr int MAX_SLIDE_COUNT = 3;  // 壁の角で数回まで滑らせる
     constexpr float FLOOR_Y = 0.5f;     // これ以上なら床として扱う
     constexpr float SLIDE_UP_Y = 0.01f; // 上向きの滑りを打ち消すしきい値
-    constexpr float STEP_LIMIT_HEIGHT = 1.5f; // 乗り越えられる段差の高さ
-    constexpr float SLOPE_LIMIT_HEIGHT = 0.7f;
+    constexpr float STEP_LIMIT_HEIGHT = 50.0f; // 乗り越えられる段差の高さ
 
     const int stageHandle = stage.GetModelHandle();
 
@@ -233,6 +311,16 @@ void PlayerController::Step(float deltaTime, Stage& stage, const Vec3& moveVec)
 
             position += dir * allowed;
             moveLen -= allowed;
+
+            float stepHeight = closestHit.point.y - position.y;
+
+            // 段差が STEP_LIMIT_HEIGHT 以下なら乗り越える
+            if (stepHeight > 0.0f && stepHeight <= STEP_LIMIT_HEIGHT)
+            {
+                // プレイヤーを段差の上に持ち上げる
+                position.y = closestHit.point.y;
+                continue;
+            }
 
             if (moveLen <= Const::EPS)
             {
@@ -302,6 +390,7 @@ void PlayerController::Step(float deltaTime, Stage& stage, const Vec3& moveVec)
             position.y = groundY;
             velocity.y = 0.0f;
             isGrounded = true;
+            jumpCount = 0;
         }
         else
         {
@@ -319,17 +408,18 @@ void PlayerController::Step(float deltaTime, Stage& stage, const Vec3& moveVec)
 
 void PlayerController::Draw() const
 {
-    //プレイヤーのステージとの当たり判定の半径
-	DrawCylinder3D(DxConv::ToVECTOR(position), DxConv::ToVECTOR(position + Vec3(0, Const::PLAYER_EYE_POSITION, 0)),
-		Const::PLAYER_STAGE_RADIUS, 12, GetColor(0, 255, 0), GetColor(0, 255, 0), FALSE);
+ //   //プレイヤーのステージとの当たり判定の半径
+	//DrawCylinder3D(DxConv::ToVECTOR(position), DxConv::ToVECTOR(position + Vec3(0, Const::PLAYER_EYE_POSITION, 0)),
+	//	Const::PLAYER_STAGE_RADIUS, 12, GetColor(0, 255, 0), GetColor(0, 255, 0), FALSE);
 
-    //プレイヤーの敵との当たり判定の半径
-    DrawCylinder3D(DxConv::ToVECTOR(position), DxConv::ToVECTOR(position + Vec3(0, Const::PLAYER_EYE_POSITION, 0)),
-        Const::PLAYER_ENEMY_RADIUS, 12, GetColor(0, 0, 255), GetColor(0, 0, 255), FALSE);
+ //   //プレイヤーの敵との当たり判定の半径
+ //   DrawCylinder3D(DxConv::ToVECTOR(position), DxConv::ToVECTOR(position + Vec3(0, Const::PLAYER_EYE_POSITION, 0)),
+ //       Const::PLAYER_ENEMY_RADIUS, 12, GetColor(0, 0, 255), GetColor(0, 0, 255), FALSE);
 
 	//カメラのレティクルの描画
 	camera.ReticleDraw();
 
+    DrawHpBar();
     gun.Draw();
 
     //現在の銃の種類を表示
@@ -354,7 +444,7 @@ void PlayerController::Draw() const
         break;
     }
 
-	//右下に残弾数の表示
+    //右下に残弾数の表示
 	wchar_t buf[32];
 	swprintf(buf, 32, L"%s", ammoBuf);
 	int textWidth = GetDrawStringWidthToHandle(buf, wcslen(buf), gunFont);
@@ -362,18 +452,91 @@ void PlayerController::Draw() const
 	int x = DxPlus::CLIENT_WIDTH;
 	int y = DxPlus::CLIENT_HEIGHT;
 
-	DrawFormatStringToHandle(x - textWidth - 20, y - 60, GetColor(255, 255, 255)
-        , gunFont, L"%s", ammoBuf);
+	DrawFormatStringToHandle(x - textWidth - 20, y - 60, GetColor(255, 255, 255),
+        gunFont, L"%s", ammoBuf);
 
+    //銃の種類を表示
     swprintf(buf, 32, L"%s", gunName);
     textWidth = GetDrawStringWidthToHandle(buf, wcslen(buf), gunFont);
 
     DrawFormatStringToHandle(x - textWidth - 10, y - 120, GetColor(255, 255, 255), gunFont, L"%s", gunName);
 
-	//リロード中の表示
-	if (isReload) {
+    //リロード中の表示
+    if (isReload) {
         DrawFormatStringToHandle(x / 2 - 55, y / 2 + 15, GetColor(255, 200, 0), reloadFont, L"RELOADING...");
-	}
+    }
+
+    //ダメージ演出
+    if (damageTimer > 0.0f)
+    {
+        float alphaRate = damageTimer / 0.2f;
+        int alpha = (int)(alphaRate * 150);
+
+        SetDrawBlendMode(DX_BLENDMODE_ALPHA, alpha);
+        DrawBox(0, 0, x, y, GetColor(255, 0, 0), TRUE);
+        SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
+    }
+
+    //死亡時の表示
+    if (!isAlive) {
+        DrawFormatStringToHandle(x / 2 - 130, y / 2 - 300, GetColor(255, 255, 255), deadFont, L"復活まで");
+        DrawFormatStringToHandle(x / 2 - 20, y / 2 - 200, GetColor(255, 255, 255),
+            deadFont, L"%d", (int)respawnTimer);
+
+        SetDrawBlendMode(DX_BLENDMODE_ALPHA, 110);
+        DrawBox(0, 0, x, y, GetColor(255, 0, 0), TRUE);
+    }
+}
+
+void PlayerController::DrawHpBar() const
+{
+    if (Const::PLAYER_MAX_HP <= 0) return;
+    float rate = std::clamp((float)hp / (float)Const::PLAYER_MAX_HP, 0.0f, 1.0f);
+
+    int barX = 40;
+    int barY = 100;
+    int barWidth = 300;
+    int barHeight = 40;
+
+    // 枠線
+    DrawBox(barX - 2, barY - 2, barX + barWidth + 2, barY + barHeight + 2,
+        GetColor(255, 255, 255), FALSE);
+
+    int hpColor;
+    if (rate > 0.5f) hpColor = GetColor(0, 200, 0);        // 緑
+    else if (rate > 0.25f) hpColor = GetColor(255, 200, 0); // 黄
+    else hpColor = GetColor(255, 0, 0);                    // 赤
+
+    // HPバー本体
+    DrawBox(barX, barY, barX + (int)(barWidth * rate), barY + barHeight,
+        hpColor, TRUE);
+
+    // HP数値も表示
+    DrawFormatString(barX, barY - 5, GetColor(255, 255, 255),
+        L" HP:%d/%d", hp, Const::PLAYER_MAX_HP);
+}
+
+void PlayerController::TakeDamage(const int damage)
+{
+    if (!isAlive) return;
+    if (invincibleTimer > 0.0f) return;
+
+    hp -= damage;
+    damageTimer = 0.2f;
+    invincibleTimer = Const::INVINCIBLE_TIME;
+}
+
+void PlayerController::Resurrection()
+{
+    if (resurrectionAmulet <= 0) {
+        isAlive = false;
+        return;
+    }
+
+    resurrectionAmulet--;
+    isAlive = true;
+    hp = Const::PLAYER_MAX_HP;
+    respawnTimer = Const::RESPAWN_TIME;
 }
 
 void PlayerController::FireBullet(const Vec3& eye, const Vec3& forward)
@@ -387,4 +550,29 @@ void PlayerController::FireBullet(const Vec3& eye, const Vec3& forward)
             break;
         }
     }
+}
+
+Vec3 PlayerController::RandomSpreadDirection(const Vec3& forward, float spreadDeg)
+{
+    // ランダム角度
+    float yawOffset = (GetRand(2000) / 1000.0f - 1.0f) * spreadDeg;
+    float pitchOffset = (GetRand(2000) / 1000.0f - 1.0f) * spreadDeg;
+
+    float yawRad = yawOffset * DX_PI / 180.0f;
+    float pitchRad = pitchOffset * DX_PI / 180.0f;
+
+    // forward を回転させる
+    Vec3 dir = forward;
+
+    // yaw 回転
+    float cy = cos(yawRad);
+    float sy = sin(yawRad);
+    dir = { dir.x * cy - dir.z * sy, dir.y, dir.x * sy + dir.z * cy };
+
+    // pitch 回転
+    float cp = cos(pitchRad);
+    float sp = sin(pitchRad);
+    dir = { dir.x, dir.y * cp - dir.z * sp, dir.y * sp + dir.z * cp };
+
+    return dir.Normalized();
 }

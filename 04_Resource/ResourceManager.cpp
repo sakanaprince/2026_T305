@@ -10,12 +10,24 @@ ResourceManager& ResourceManager::GetInstance()
 
 void ResourceManager::LoadAll()
 {
+    // --- Sprite ---
     LoadSprite(ResourceKeys::Sprite_TitleBG, L"TitleBG.png");
     LoadSprite(ResourceKeys::Sprite_GameOverBG, L"GameOverBG.png");
     LoadSprite(ResourceKeys::Sprite_GameClearBG, L"GameClearBG.png");
+    LoadSprite(ResourceKeys::Sprite_TutorialPurpose, L"Tutorial_Purpose.png");
+    LoadSprite(ResourceKeys::Sprite_TutorialTurretRelease, L"Tutorial_Turret_Release.png");
+    LoadSprite(ResourceKeys::Sprite_TutorialTurretUpgrade, L"Tutorial_Turret_Upgrade.png");
+    LoadSprite(ResourceKeys::Sprite_TutorialShop, L"Tutorial_Shop.png");
     LoadSprite(ResourceKeys::Sprite_Coin, L"Coin.png");
-    LoadSprite(ResourceKeys::Sprite_TurretPrice, L"TurretPrice.png");
+    LoadSprite(ResourceKeys::Sprite_TurretReleasePrice, L"TurretPrice.png");
+    LoadSprite(ResourceKeys::Sprite_TurretUpgradePrice, L"TurretUpgrade.png");
+    // -----
+
+    // --- Font ---
     LoadFont(ResourceKeys::Font_ManufacturingConsent, L"./Data/Fonts/Manufacturing_Consent/ManufacturingConsent-Regular.ttf");
+    // -----
+
+    // --- Model ---
     LoadModel(ResourceKeys::Model_Stage, L"Stage.mv1");
     LoadModel(ResourceKeys::Model_Pistol, L"Pistol.mv1");
     LoadModel(ResourceKeys::Model_Rifle, L"Rifle.mv1");
@@ -24,6 +36,29 @@ void ResourceManager::LoadAll()
     LoadModel(ResourceKeys::Model_BrokenTurret, L"BrokenTurret.mv1");
     LoadModel(ResourceKeys::Model_NotArrowTurret, L"NotArrowTurret.mv1");
     LoadModel(ResourceKeys::Model_Arrow, L"Arrow.mv1");
+    LoadModel(ResourceKeys::Model_Trap, L"Trap.mv1");
+    // -----
+
+    // --- Sound ---
+    LoadSound(ResourceKeys::Sound_Arrow, L"ShotArrow.wav");
+    LoadSound(ResourceKeys::Sound_SubmachineGun, L"SubmachineGun.wav");
+    LoadSound(ResourceKeys::Sound_Gun, L"Gun.wav");
+    LoadSound(ResourceKeys::Sound_ShotGun, L"ShotGun.wav");
+    LoadSound(ResourceKeys::Sound_Explosion, L"Explosion.mp3");
+    LoadSound(ResourceKeys::Sound_OpenShop, L"OpenShop.mp3");
+    LoadSound(ResourceKeys::Sound_BuyItem, L"BuyItem.mp3");
+    LoadSound(ResourceKeys::Sound_EnemyDamage, L"EnemyDamage.wav");
+    LoadSound(ResourceKeys::Sound_SetTrap, L"SetTrap.wav");
+    LoadSound(ResourceKeys::Sound_Upgrade, L"Upgrade.wav");
+    LoadSound(ResourceKeys::Sound_Click, L"Click.wav");
+    // -----
+
+    // --- Music ---
+    LoadMusic(ResourceKeys::Music_Title, L"TitleSceneBGM.mp3");
+    LoadMusic(ResourceKeys::Music_Game, L"GameSceneBGM.mp3");
+    LoadMusic(ResourceKeys::Music_GameOver, L"GameOverSceneBGM.mp3");
+    LoadMusic(ResourceKeys::Music_GameClear, L"GameClearBGM.mp3");
+    // -----
 }
 
 void ResourceManager::UnloadAll()
@@ -32,6 +67,8 @@ void ResourceManager::UnloadAll()
     UnloadFonts();
     UnloadModels();
     UnloadSprites();
+    UnloadMusics();
+    UnloadSounds();
 }
 
 // ===============================[  GRIDS  ]===================================
@@ -84,7 +121,7 @@ int ResourceManager::GetSprite(const std::wstring& key) const
 
 int ResourceManager::LoadMusic(const std::wstring& key, const std::wstring& path)
 {
-    int music = DxLib::LoadSoundMem(path.c_str());
+    int music = DxLib::LoadSoundMem((L"./Data/Sounds/" + path).c_str());
     if (music == -1) DxPlus::Utils::FatalError((L"Failed to load music " + path).c_str());
     musics[key] = music;
     return music;
@@ -93,7 +130,7 @@ int ResourceManager::LoadMusic(const std::wstring& key, const std::wstring& path
 
 int ResourceManager::LoadSound(const std::wstring& key, const std::wstring& path)
 {
-    int sound = DxLib::LoadSoundMem(path.c_str());
+    int sound = DxLib::LoadSoundMem((L"./Data/Sounds/" +  path).c_str());
     if (sound == -1) DxPlus::Utils::FatalError((L"Failed to load music " + path).c_str());
     sounds[key] = sound;
     return sound;

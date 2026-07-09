@@ -28,10 +28,10 @@ void Core::Update()
 
 void Core::Draw() const
 {
-	DrawLine(0, 75, DxPlus::CLIENT_WIDTH * 0.5 - 60, 75, GetColor(0, 0, 0), 2);
-	DrawLine(DxPlus::CLIENT_WIDTH * 0.5 + 60, 75, DxPlus::CLIENT_WIDTH, 75, GetColor(0, 0, 0), 2);
+	DrawLine(0, 75, DxPlus::CLIENT_WIDTH / 2 - 60, 75, GetColor(0, 0, 0), 2);
+	DrawLine(DxPlus::CLIENT_WIDTH / 2 + 60, 75, (int)DxPlus::CLIENT_WIDTH, 75, GetColor(0, 0, 0), 2);
 
-	DrawCircle(DxPlus::CLIENT_WIDTH * 0.5, 75, 60, GetColor(0, 0, 0), false, 2);
+	DrawCircle(DxPlus::CLIENT_WIDTH / 2, 75, 60, GetColor(0, 0, 0), false, 2);
 
 
 	DxPlus::Text::DrawString(

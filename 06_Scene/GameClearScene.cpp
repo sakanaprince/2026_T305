@@ -1,12 +1,13 @@
 #include "GameClearScene.h"
 #include "SceneManager.h"
-#include "../04_Resource/ResourceManager.h"
-#include "../04_Resource/ResourceKeys.h"
 
 void GameClearScene::Init()
 {
     fontHandle = RM().GetFont(ResourceKeys::Font_ManufacturingConsent);
     backGroundHandle = RM().GetSprite(ResourceKeys::Sprite_GameClearBG);
+    bgmHandle = RM().GetMusic(ResourceKeys::Music_GameClear);
+    soundClickHandle = RM().GetSound(ResourceKeys::Sound_Click);
+    soundManager->PlayBGM(bgmHandle);
     DxLib::SetMouseDispFlag(TRUE);
     buttonTitleColor = buttonNormalColor;
     StartFadeIn();
@@ -27,6 +28,7 @@ void GameClearScene::Update(float deltaTime)
 
         if (GetMouseInput() & MOUSE_INPUT_LEFT)
         {
+            soundManager->PlaySENormal(soundClickHandle);
             Scene* gameScene = SceneManager::GetInstance().GetScene(SceneID::Title);
             SetNextScene(gameScene);
             return;
@@ -50,8 +52,8 @@ void GameClearScene::Render() const
 
     DrawBox
     (
-        titlePosX_1, titlePosY_1,
-        titlePosX_2, titlePos_Y2,
+        (int)titlePosX_1, (int)titlePosY_1,
+        (int)titlePosX_2, (int)titlePos_Y2,
         buttonTitleColor,
         true
     );

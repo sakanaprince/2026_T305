@@ -2,25 +2,12 @@
 #include "../99_Utility/Const.h"
 #include "EnemySpawner.h"
 
-void EnemyQuick::Init(EnemyRoot* enRoot, PlayerController* pc)
-{
-	radius = 80.0f;
-	height = 40.0f;
-	isAlive = false;
-	pEnemyRoot = enRoot;
-	pPlayer = pc;
 
-	if (!pEnemyRoot)
-	{
-		DxPlus::Utils::FatalError(L"null Ptr enemyRoot_p");
-		return;
-	}
-}
 
 void EnemyQuick::Reset()
 {
 	moveDir = Vec3(0.0f, 0.0f, 0.0f);
-	moveSpeed = 300.0f;
+	moveSpeed = 200.0f;
 	rootTargetIndex = 0;
 	currentHp = initHp;
 
@@ -31,76 +18,23 @@ void EnemyQuick::Reset()
 
 	if (pEnemyRoot)
 	{
-		position = pEnemyRoot->GetNextStartPos();
-		rootTargetPoint = pEnemyRoot->GetCorePos();
-		moveDir = (rootTargetPoint - position).Normalized();
+		position = pEnemyRoot->GetNextStartPos_Ground();
+		targetPosition = pEnemyRoot->GetCorePos();
+		moveDir = (targetPosition - position).Normalized();
 	}
 
 	isAlive = true;
 }
 
-void EnemyQuick::Update(float deltaTime)
-{
-	if (!isAlive) { return; }
-
-	if (!pEnemyRoot)
-	{
-		DxPlus::Utils::FatalError(L"EnemyRoot Null Ptr by Quick");
-		return;
-	}
-
-	if (isKilledReaction)
-	{
-		KilledReactionUpdate(deltaTime);
-		return;
-	}
-
-	if (isDamageReaction)
-	{
-		DamageReactionUpdate(deltaTime);
-		return;
-	}
-
-	StepGround(deltaTime);
-
-	animTimer += 10.0f * deltaTime;
-}
-
-void EnemyQuick::Draw() const
-{
-	if (!isAlive) { return; }
-
-	BodyLine();
-}
 
 void EnemyQuick::DrawDebug() const
 {
 	DrawSphere3D( DxConv::ToVECTOR(GetSphere().centerPos), radius, 16, GetColor(255, 0, 0), GetColor(255, 0, 0), false);
 }
 
-void EnemyQuick::TakeDamage(int amount)
-{
-	if (isKilledReaction) { return; }
-
-	amount = std::max(amount, 0);
-	currentHp = std::max(currentHp - amount, 0);
-
-	damageReactionTimer = DAMAGE_REACTION_TIME;
-	isDamageReaction = true;
-
-	if (currentHp == 0 && !isKilledReaction)
-	{
-		isKilledReaction = true;
-		killedReactionTimer = KILLED_REACTION_TIME;
-
-		if (pEnemySpawner) { pEnemySpawner->DecAliveEnemyCount(); }
-	}
-}
 
 void EnemyQuick::BodyLine() const
 {
-
-
 	float sizeMagnification = 1.0f;
 
 	if (isKilledReaction)

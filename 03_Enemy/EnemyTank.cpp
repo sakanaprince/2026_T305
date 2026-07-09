@@ -2,20 +2,7 @@
 #include "../99_Utility/Const.h"
 #include "EnemySpawner.h"
 
-void EnemyTank::Init(EnemyRoot* enRoot, PlayerController* pc)
-{
-	radius = 160.0f;
-	height = 70.0f;
-	hitSphereRadius = 100.0f;
-	isAlive = false;
-	pEnemyRoot = enRoot;
-	pPlayer = pc;
-	if (!pEnemyRoot)
-	{
-		DxPlus::Utils::FatalError(L"null Ptr enemyRoot_p");
-		return;
-	}
-}
+
 
 void EnemyTank::Reset()
 {
@@ -23,6 +10,8 @@ void EnemyTank::Reset()
 	moveSpeed = 20.0f;
 	rootTargetIndex = 0;
 	currentHp = initHp;
+	radius = 300.0f;
+	hitSphereRadius = 130.0f;
 
 	damageReactionTimer = 0.0f;
 	isDamageReaction = false;
@@ -31,70 +20,26 @@ void EnemyTank::Reset()
 
 	if (pEnemyRoot)
 	{
-		position = pEnemyRoot->GetNextStartPos();
-		rootTargetPoint = pEnemyRoot->GetCorePos();
-		moveDir = (rootTargetPoint - position).Normalized();
+		position = pEnemyRoot->GetNextStartPos_Ground();
+		targetPosition = pEnemyRoot->GetCorePos();
+		moveDir = (targetPosition - position).Normalized();
 	}
 
 	isAlive = true;
-}
-
-void EnemyTank::Update(float deltaTime)
-{
-	if (!isAlive) { return; }
-
-	if (!pEnemyRoot)
-	{
-		DxPlus::Utils::FatalError(L"EnemyRoot Null Ptr by Quick");
-		return;
-	}
-
-	if (isKilledReaction)
-	{
-		KilledReactionUpdate(deltaTime);
-		return;
-	}
-
-	if (isDamageReaction)
-	{
-		DamageReactionUpdate(deltaTime);
-		return;
-	}
-
-	StepGround(deltaTime);
-
-	animTimer += 10.0f * deltaTime;
 }
 
 void EnemyTank::Draw() const
 {
 	if (!isAlive) { return; }
 
-	BodyLine();
+	Entity::Draw();
+	
+	explosion.Draw();
 }
 
 void EnemyTank::DrawDebug() const
 {
 	DrawSphere3D(DxConv::ToVECTOR(GetSphere().centerPos), hitSphereRadius, 16, GetColor(255, 0, 0), GetColor(255, 0, 0), false);
-}
-
-void EnemyTank::TakeDamage(int amount)
-{
-	if (isKilledReaction) { return; }
-
-	amount = std::max(amount, 0);
-	currentHp = std::max(currentHp - amount, 0);
-
-	damageReactionTimer = DAMAGE_REACTION_TIME;
-	isDamageReaction = true;
-
-	if (currentHp == 0 && !isKilledReaction)
-	{
-		isKilledReaction = true;
-		killedReactionTimer = KILLED_REACTION_TIME;
-
-		if (pEnemySpawner) { pEnemySpawner->DecAliveEnemyCount(); }
-	}
 }
 
 void EnemyTank::BodyLine() const
@@ -120,7 +65,7 @@ void EnemyTank::BodyLine() const
 		DxConv::ToVECTOR({ position.x , (position.y + skin) , position.z }),
 		DxConv::ToVECTOR({ position.x , (position.y + skin + height), position.z }),
 
-		50 * sizeMagnification, 16, GetColor(0, 0, 250), GetColor(255, 255, 255), true
+		50 * sizeMagnification, 16, GetColor(10, 10, 50), GetColor(155, 155, 155), true
 	);
 
 

@@ -18,7 +18,7 @@ public:
 	void Reset(const Vec3& pos);
 
 	//プレイヤーの位置・向きからカメラを更新する
-	void UpdateFromPlayer(const Vec3& playerEye, float yaw, float pitch);
+	void UpdateFromPlayer(const Vec3& playerEye, float yaw, float pitch, bool isAim);
 
 	//レティクルの描画(十字)
 	void ReticleDraw()const;

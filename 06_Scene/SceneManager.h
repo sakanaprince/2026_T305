@@ -7,6 +7,7 @@
 #include "GameClearScene.h"
 #include "../08_Debug/DebugUI.h"
 #include "../99_Utility/Const.h"
+#include "../12_Sound/SoundManager.h"
 
 enum class SceneID { Title, Game, GameOver, GameClear };
 
@@ -43,7 +44,7 @@ private:
     SceneManager() = default;
     ~SceneManager() = default;
 
-    GameContext gameContext;
+    GameContext gameContext{ sound };
     TitleScene  titleScene{ &gameContext };
     GameScene   gameScene{ &gameContext };
     GameOverScene gameOverScene{ &gameContext };
@@ -53,5 +54,6 @@ private:
 
     RunConfig runConfig{};
     DebugUI debugUI;
+    SoundManager sound;
 };
 inline SceneManager& SM() { return SceneManager::GetInstance(); } // ショートカット

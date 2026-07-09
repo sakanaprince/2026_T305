@@ -4,16 +4,17 @@
 class EnemyFly final : public Entity
 {
 public:
-	void Init(EnemyRoot* enRoot, PlayerController* pc) override;
 	void Reset();
-	void Update(float deltaTime) override;
-	void Draw() const override;
+	void Update(float deltaTime)override;
 	void DrawDebug()const override;
-
-	void TakeDamage(int amount) override;
-
+	void StepGround(float deltaTime) override;
+	
+	
+	void ExplosionUpdate(float deltaTime) override;
+	void ExplosionDraw() const override;
 
 private:
 	void BodyLine()const override;
-	int initHp{ 10 };
+	float gravity{ 0.0f };
+	
 };

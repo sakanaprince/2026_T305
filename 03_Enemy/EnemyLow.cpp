@@ -7,25 +7,13 @@
 #include "../08_Debug/DebugUI.h"
 
 
-void EnemyLow::Init(EnemyRoot* enRoot, PlayerController* pc)
-{
-	isAlive = false;
-	pEnemyRoot = enRoot;
-	pPlayer = pc;
-
-	if (!pEnemyRoot)
-	{
-		DxPlus::Utils::FatalError(L"null Ptr enemyRoot_p");
-		return;
-	}
-}
 
 void EnemyLow::Reset()
 {
 	moveDir = Vec3(0.0f, 0.0f, 0.0f);
 		moveSpeed = 70.0f;
 	rootTargetIndex = 0;
-		currentHp = Const::ENEMY_LOW_MAXHP ;
+		currentHp = initHp ;
 		radius = 100.0f;
 		height = 60.0f;
 	damageReactionTimer = 0.0f;
@@ -35,49 +23,12 @@ void EnemyLow::Reset()
 
 	if (pEnemyRoot)
 	{
-		position = pEnemyRoot->GetNextStartPos();
-		rootTargetPoint = pEnemyRoot->GetCorePos();
-		moveDir = (rootTargetPoint - position).Normalized();
+		position = pEnemyRoot->GetNextStartPos_Ground();
+		targetPosition = pEnemyRoot->GetCorePos();
+		moveDir = (targetPosition - position).Normalized();
 	}
 	
 	isAlive = true;
-}
-
-void EnemyLow::Update(float deltaTime)
-{
-	if (!isAlive) { return; }
-
-	if (!pEnemyRoot)
-	{
-		DxPlus::Utils::FatalError(L"EnemyRoot Null Ptr by Low");
-		return;
-	}
-
-	if (isKilledReaction)
-	{
-		KilledReactionUpdate(deltaTime);
-		return;
-	}
-
-	if (isDamageReaction)
-	{
-		DamageReactionUpdate(deltaTime);
-		return;
-	}
-
-	StepGround(deltaTime);
-
-	animTimer += 10.0f * deltaTime;
-}
-
-
-
-
-void EnemyLow::Draw() const
-{
-	if (!isAlive) { return; }
-
-	BodyLine();
 }
 
 void EnemyLow::BodyLine() const
@@ -204,26 +155,6 @@ void EnemyLow::DrawDebug() const
 		if (i % 6 == 0) { MyDrawCircle(bottom0, top0); }
 	}
 	
-}
-
-void EnemyLow::TakeDamage(int amount)
-{
-	if (isKilledReaction) { return; }
-
-	amount = std::max(amount, 0);
-	currentHp = std::max(currentHp - amount, 0);
-
-	damageReactionTimer = DAMAGE_REACTION_TIME;
-	isDamageReaction = true;
-
-	if(currentHp == 0 && !isKilledReaction)
-	{
-		isKilledReaction = true;
-		killedReactionTimer = KILLED_REACTION_TIME;
-
-		if (pEnemySpawner) { pEnemySpawner->DecAliveEnemyCount(); }
-	}
-
 }
 
 
