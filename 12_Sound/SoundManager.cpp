@@ -36,7 +36,7 @@ void SoundManager::PlaySENormal(const int soundHandle, int soundVolume)
 	Play(soundHandle, DX_PLAYTYPE_BACK, soundVolume);
 }
 
-void SoundManager::PlaySEAtPosition(const int soundHandle, const Vec3& position)
+void SoundManager::PlaySEAtPosition(const int soundHandle, const Vec3& position, float maxDistance)
 {
 	//ƒvƒŒƒCƒ„[‚©‚çŒ©‚½‰¹‚Ì•ûŒü‚ðŽæ‚é
 	Vec3 toPlayer = position - player->GetPosition();
