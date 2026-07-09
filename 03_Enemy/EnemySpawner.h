@@ -20,6 +20,7 @@ public:
 	void Update(float deltaTime);
 	void Draw() const;
 
+	void DrawMiniMap() const;
 	const void CoreDamage(int damage) const;
 	const void MoneyInc(int money) const;
 

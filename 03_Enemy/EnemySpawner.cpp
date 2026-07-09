@@ -182,9 +182,97 @@ void EnemySpawner::Draw() const
 		e->DrawDebug();
 	}
 #endif
+	
 
 }
 
+
+void EnemySpawner::DrawMiniMap() const
+{
+	//ミニマップ
+	constexpr int left = DxPlus::CLIENT_WIDTH * 0.7f;
+	constexpr int up = DxPlus::CLIENT_HEIGHT * 0.2f;
+	constexpr int right = left + 700;
+	constexpr int bottom = up + 700;
+	constexpr int center_x = right - (right - left) * 0.5f;
+	constexpr int center_y = bottom - (bottom - up) * 0.5f;
+
+	DxLib::SetDrawBlendMode(DX_BLENDMODE_ALPHA, 128);
+
+	//背景でかい緑
+	DxLib::DrawBox(left, up, right, bottom, GetColor(0, 128, 0), true);
+
+	//飾りの線
+	DxLib::DrawLine(center_x, up,   center_x, center_y, GetColor(16, 16, 16), 2);
+	DxLib::DrawLine(left, center_y, center_x, center_y, GetColor(16, 16, 16), 2);
+	DxLib::DrawLine(center_x, bottom, center_x, center_y, GetColor(16, 16, 16), 2);
+	DxLib::DrawLine(right, center_y, center_x, center_y, GetColor(16, 16, 16), 2);
+
+	constexpr float triangleSize = 32.0f;
+	DxLib::DrawTriangle(center_x, center_y - triangleSize - 50.0f,
+		center_x - triangleSize, center_y + 10, center_x + triangleSize, center_y + 10, GetColor(16, 16, 16), true);
+
+	//コアの黒丸
+	int coreX = right - (right - left) * 0.5f;
+	int coreY = bottom - (bottom - up) * 0.5f;
+
+	auto playerPos = pGameContext->GetPlayer().GetPosition();
+	auto yaw = pGameContext->GetPlayer().GetYaw();
+
+	//core描画
+	{
+		constexpr int coreSize = 64.0f;
+		float dx = 0 - playerPos.x;
+		float dz = 0 - playerPos.z;
+
+		// 2. yaw（プレイヤーの向き）の「逆方向」に回転させる
+		float offsetYaw = -yaw + (DX_PI_F / 2.0f);
+		// プレイヤーが右を向いたら、世界は左に回る
+		float rotatedX = dx * std::cos(offsetYaw) - dz * std::sin(offsetYaw);
+		float rotatedZ = dx * std::sin(offsetYaw) + dz * std::cos(offsetYaw);
+		DxLib::DrawCircle(
+			coreX + rotatedX * 0.15f, coreY - rotatedZ * 0.1f,
+			30.0f, GetColor(8, 8, 16), true);
+	}
+
+	//時間なかったのでプレイヤーの位置と向きに応じて変わる処理だけ書いてもらいました
+	for (const auto& e : enemyCollection)
+	{
+		if (!e->IsAlive()) { continue; }
+
+		VECTOR worldPos = DxConv::ToVECTOR(e->GetPosition());
+
+	// 1. プレイヤーから見た「相対座標」を計算する
+		float dx = worldPos.x - playerPos.x;
+		float dz = worldPos.z - playerPos.z;
+
+		// 2. yaw（プレイヤーの向き）の「逆方向」に回転させる
+		float offsetYaw = -yaw + (DX_PI_F / 2.0f);
+		// プレイヤーが右を向いたら、世界は左に回る
+		float rotatedX = dx * std::cos(offsetYaw) - dz * std::sin(offsetYaw);
+		float rotatedZ = dx * std::sin(offsetYaw) + dz * std::cos(offsetYaw);
+
+		// 3. ミニマップの中心点をベースに、縮尺をかけて描画座標を決める
+		// 2D画面のY軸は下がプラスなので、Zの変換時はマイナスにします
+		float drawX = center_x + (rotatedX * 0.1f);
+		float drawY = center_y - (rotatedZ * 0.1f);
+
+		// 4. 計算した座標に描画する
+		DxLib::DrawCircle(drawX, drawY, 20.0f, GetColor(255, 0, 0), true);
+
+		/*DxLib::DrawCircle(
+			center_x * std::cos(yaw) + worldPos.x * 0.15f,
+			center_y * std::sin(yaw) - worldPos.z * 0.15f,
+			20.0f, GetColor(255, 0, 0), true);*/
+
+		//固定の位置と向きに対するアイコン表示
+			//DxLib::DrawCircle(
+	//	center_x + worldPos.x * 0.15f ,
+	//	center_y - worldPos.z * 0.15f ,
+	//	20.0f, GetColor(255, 0, 0), true);
+	}
+	DxLib::SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
+}
 
 const void EnemySpawner::CoreDamage(int damage) const
 {
