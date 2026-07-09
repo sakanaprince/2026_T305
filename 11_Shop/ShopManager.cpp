@@ -11,7 +11,7 @@ void ShopManager::Init(GameContext* gC)
 	fontHandle = RM().GetFont(ResourceKeys::Font_ManufacturingConsent);
 	btnTutorial.Init(this, L"Help?", L"WASD移動_Eショップ_Rリロード_左クリック攻撃_Shiftダッシュ_Enter罠を配置",0, fontHandle);
 	btnRepairCore.Init(this, L"Core Repair", L"コア耐久力を30回復します。こればかり購入するとお金が貯まりません...。", 50, fontHandle);
-	btnTrap.Init(this, L"Ground Trap", L"罠です。地面に設置するタイプのシンプルなやつです。", 100, fontHandle);
+	btnTrap.Init(this, L"Ground Trap", L"罠です。Tキーで仕掛けられます。", 100, fontHandle);
 	btnHolyLight.Init(this, L"Holy Light", L"聖なる光です。全ての敵を滅ぼそうとします。", 500, fontHandle);
 	btnMap.Init(this, L"Radar Eye", L"レーダーです。コアと敵の位置を教えてくれます。", 150, fontHandle);
 	btnHeal.Init(this, L"Bandage", L"ばんそうこうです。あなたのHPを回復します。", 50, fontHandle);

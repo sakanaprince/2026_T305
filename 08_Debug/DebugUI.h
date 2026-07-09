@@ -8,6 +8,8 @@ struct  DebugLog
     int cnt = 1;
 };
 
+class GameContext;
+
 class DebugUI
 {
 public:

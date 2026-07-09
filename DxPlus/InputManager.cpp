@@ -31,6 +31,7 @@ namespace DxPlus
 
             { BUTTON_TRIGGER1,  KEY_INPUT_SPACE },      // ジャンプ (UnityのJumpに対応)
             { BUTTON_TRIGGER2,  KEY_INPUT_LCONTROL },   // Fire1 (UnityのFire1に対応)
+            { BUTTON_TRIGGER3,  KEY_INPUT_T },          // トラップを配置
         };
 
         std::vector<ActionMapping> controllerMappingsP1

@@ -1,6 +1,6 @@
 #pragma once
 #include "DxLib.h"
-#include "DxPlus.h"
+#include "../DxPlus/DxPlus.h"
 #include "../07_Math/Vector3.h"
 #include "../07_Math/DxConv.h"
 
