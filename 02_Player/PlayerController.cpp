@@ -22,14 +22,16 @@ void PlayerController::Reset()
 	pitch = { 0.0f };
 
 	isGrounded = { true };
-    isDead = { true };
+    isAlive = { true };
     isAim = { false };
 	isReload = { false };
 
     hp = { Const::PLAYER_MAX_HP };
     jumpCount = { 0 };
 
-    respawnTimer = { 0.0f };
+    invincibleTimer = { 0.0f };
+    damageTimer = { 0.0f };
+    respawnTimer = { Const::RESPAWN_TIME };
     fireTimer = { 0.0f };
     fireInterval = { Const::PISTOL_FIRE_INTERVAL };
 	reloadTimer = { Const::RELOAD_TIME };
@@ -44,17 +46,29 @@ void PlayerController::Reset()
 
 void PlayerController::Update(float deltaTime, Stage& stage)
 {
-    if (isDead) {
-        respawnTimer += deltaTime;
-        if (respawnTimer >= Const::RESPAWN_TIME) {
+    if (!isAlive) {
+        respawnTimer -= deltaTime;
+        if (respawnTimer <= 0.0f) {
+            respawnTimer = Const::RESPAWN_TIME;
             hp = Const::PLAYER_MAX_HP;
             position = { 0,0,0 };
-            isDead = false;
+            isAlive = false;
         }
         return;
     }
 
-    if (hp <= 0) isDead = true;
+    if (hp <= 0) isAlive = false;
+
+    if (damageTimer > 0.0f)
+    {
+        damageTimer -= deltaTime;
+        if (damageTimer < 0.0f) damageTimer = 0.0f;
+    }
+
+    if (invincibleTimer > 0.0f) {
+        invincibleTimer -= deltaTime;
+        if (invincibleTimer < 0.0f) invincibleTimer = 0.0f;
+    }
 
     static int prevMouseInput = 0;
     int nowMouse = GetMouseInput();
@@ -423,12 +437,14 @@ void PlayerController::Draw() const
 
     DrawFormatStringToHandle(x - textWidth - 10, y - 120, GetColor(255, 255, 255), gunFont, L"%s", gunName);
 
-    //Ž€–SŽž‚Ì•\Ž¦
-    if (isDead) {
-        DrawFormatStringToHandle(x / 2-70, y / 2-300, GetColor(255, 255, 255), deadFont, L"Ž€–S");
+    DrawFormatString(x, y, GetColor(255, 255, 255), L"HP: %d / %d", hp, Const::PLAYER_MAX_HP);
 
-        swprintf(buf, 32, L"%d", (int)respawnTimer);
-        textWidth = GetDrawStringWidthToHandle(buf, wcslen(buf), deadFont);
+    //Ž€–SŽž‚Ì•\Ž¦
+    if (!isAlive) {
+        SetDrawBlendMode(DX_BLENDMODE_ALPHA, 110);
+        DrawBox(0, 0, x, y, GetColor(255, 0, 0), TRUE);
+
+        DrawFormatStringToHandle(x / 2 - 130, y / 2 - 300, GetColor(255, 255, 255), deadFont, L"•œŠˆ‚Ü‚Å");
         DrawFormatStringToHandle(x / 2 - 20, y / 2 - 200, GetColor(255, 255, 255),
             deadFont, L"%d", (int)respawnTimer);
     }
@@ -437,6 +453,26 @@ void PlayerController::Draw() const
 	if (isReload) {
         DrawFormatStringToHandle(x / 2 - 55, y / 2 + 15, GetColor(255, 200, 0), reloadFont, L"RELOADING...");
 	}
+
+    //ƒ_ƒ[ƒW‰‰o
+    if (damageTimer > 0.0f)
+    {
+        float alphaRate = damageTimer / 0.2f;
+        int alpha = (int)(alphaRate * 150);
+
+        SetDrawBlendMode(DX_BLENDMODE_ALPHA, alpha);
+        DrawBox(0, 0, x, y, GetColor(255, 0, 0), TRUE);
+        SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
+    }
+}
+
+void PlayerController::TakeDamage(const int damage)
+{
+    if (invincibleTimer > 0.0f) return;
+
+    hp -= damage;
+    damageTimer = 0.2f;
+    invincibleTimer = Const::INVINCIBLE_TIME;
 }
 
 void PlayerController::FireBullet(const Vec3& eye, const Vec3& forward)
