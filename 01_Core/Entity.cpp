@@ -160,8 +160,6 @@ void Entity::DrawHpBar() const
 	unsigned int BackColor = GetColor(128, 32, 32);
 	unsigned int HpColor = GetColor(0, 255, 0);
 
-
-
 	DxLib::DrawBox(left, top, right					,bottom, OutLineColor, false, 10);
 	DxLib::DrawBox(left, top, right					,bottom, BackColor, true);
 	DxLib::DrawBox(left, top, left + hpBarWidth * p ,bottom, HpColor, true);
@@ -202,7 +200,7 @@ void Entity::StepGround(float deltaTime)
 	{
 		if (!isDamageReaction && Collision::IsHitSphereSphere(pPlayer->GetPlayerSphere(), GetSphere()))
 		{
-			pPlayer->TakeDamage(2);
+			pPlayer->TakeDamage(coreDamage);
 			TakeDamage(1);
 		}
 	}
@@ -212,6 +210,8 @@ void Entity::StepGround(float deltaTime)
 
 bool Entity::IsClosePlayer()
 {
+	if (!pPlayer->IsAlive()) { return false; }
+
 	float distance = (pPlayer->GetPosition() - position).LengthSq();
 	int a = 0;
 	return distance < ChaseStartDistance * ChaseStartDistance;
