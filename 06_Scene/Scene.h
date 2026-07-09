@@ -24,6 +24,7 @@ public:
 
     // コンテキスト差し替え（常駐運用・テスト用）
     void SetGameContext(class GameContext* context) { gameContext = context; }
+    void SetSESoundManager(class SoundManager* sound) { soundManager = sound; }
     void DrawFadeOverlay() const;
 
 protected:
@@ -35,6 +36,7 @@ protected:
 protected:
     GameContext* gameContext = nullptr;
     Scene* nextScene = nullptr;
+    SoundManager* soundManager = nullptr;
     bool finished = false;
 
     //タイトルやリザルトシーンの文字の色

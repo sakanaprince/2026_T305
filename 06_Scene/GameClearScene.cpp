@@ -7,6 +7,8 @@ void GameClearScene::Init()
 {
     fontHandle = RM().GetFont(ResourceKeys::Font_ManufacturingConsent);
     backGroundHandle = RM().GetSprite(ResourceKeys::Sprite_GameClearBG);
+    bgmHandle = RM().GetMusic(ResourceKeys::Music_GameClear);
+    soundManager->PlayBGM(bgmHandle);
     DxLib::SetMouseDispFlag(TRUE);
     buttonTitleColor = buttonNormalColor;
     StartFadeIn();
@@ -50,8 +52,8 @@ void GameClearScene::Render() const
 
     DrawBox
     (
-        titlePosX_1, titlePosY_1,
-        titlePosX_2, titlePos_Y2,
+        (int)titlePosX_1, (int)titlePosY_1,
+        (int)titlePosX_2, (int)titlePos_Y2,
         buttonTitleColor,
         true
     );
