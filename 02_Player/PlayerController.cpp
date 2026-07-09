@@ -35,6 +35,7 @@ void PlayerController::Reset()
 
     hp = { Const::PLAYER_MAX_HP };
     jumpCount = { 0 };
+    resurrectionAmulet = { 0 };
 
     invincibleTimer = { 0.0f };
     damageTimer = { 0.0f };
@@ -451,8 +452,6 @@ void PlayerController::Draw() const
 
     DrawFormatStringToHandle(x - textWidth - 10, y - 120, GetColor(255, 255, 255), gunFont, L"%s", gunName);
 
-    DrawFormatString(x, y, GetColor(255, 255, 255), L"HP: %d / %d", hp, Const::PLAYER_MAX_HP);
-
     //リロード中の表示
     if (isReload) {
         DrawFormatStringToHandle(x / 2 - 55, y / 2 + 15, GetColor(255, 200, 0), reloadFont, L"RELOADING...");
@@ -505,7 +504,7 @@ void PlayerController::DrawHpBar() const
 
     // HP数値も表示
     DrawFormatString(barX, barY - 5, GetColor(255, 255, 255),
-        L"HP: %d / %d", hp, Const::PLAYER_MAX_HP);
+        L" HP:%d/%d", hp, Const::PLAYER_MAX_HP);
 }
 
 void PlayerController::TakeDamage(const int damage)
@@ -516,6 +515,14 @@ void PlayerController::TakeDamage(const int damage)
     hp -= damage;
     damageTimer = 0.2f;
     invincibleTimer = Const::INVINCIBLE_TIME;
+}
+
+void PlayerController::Resurrection()
+{
+    if (resurrectionAmulet <= 0) return;
+    resurrectionAmulet--;
+    isAlive = true;
+    respawnTimer = Const::RESPAWN_TIME;
 }
 
 void PlayerController::FireBullet(const Vec3& eye, const Vec3& forward)

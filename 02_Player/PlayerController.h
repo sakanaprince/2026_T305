@@ -30,22 +30,31 @@ public:
 	const float GetYaw() const { return yaw; }
 	//プレイヤーの生存を取得
 	const bool IsAlive() const { return isAlive; }
+	//設置判定
 	bool IsGrounded() const { return isGrounded; }
-	void SetPrevMouse(int mouseX, int mouseY) { prevMouse = { mouseX, mouseY }; }
 	//プレイヤーのHPを取得
 	const int GetHp() const { return hp; }
+
+	void SetPrevMouse(int mouseX, int mouseY) { prevMouse = { mouseX, mouseY }; }
+	//復活のお守り 呼び出すごとに1増える
+	void ResurrectionAmuletPlus() { resurrectionAmulet++; }
 
 	void Init();
 	void Reset();
 	void Update(float deltaTime, Stage& stage);
 	void Step(float deltaTime, Stage& stage, const Vec3& moveVec);
 	void Draw() const;
+
 	void DrawHpBar() const;
+	void FireBullet(const Vec3& eye, const Vec3& forward);
+	Vec3 RandomSpreadDirection(const Vec3& forward, float spreadDeg);
 
 	//ダメージを渡してその分をHPから引く
 	void TakeDamage(const int damage);
-	void FireBullet(const Vec3& eye, const Vec3& forward);
-	Vec3 RandomSpreadDirection(const Vec3& forward, float spreadDeg);
+	//HPの回復
+	void HealHp() { hp = Const::PLAYER_MAX_HP; }
+	//即時リスポーン
+	void Resurrection();
 
 private:
 	Vec3 position{ 0.0f,0.0f,0.0f };
@@ -63,6 +72,7 @@ private:
 	int hp{ 0 };
 	int jumpCount{ 0 };
 
+	int resurrectionAmulet{ 0 };
 	int bulletCount{ 0 };
 
 	int currentGunType{ 0 };
