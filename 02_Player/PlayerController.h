@@ -28,6 +28,8 @@ public:
 	const Vec3& GetCameraForward() const { return camera.GetForward(); }
 	//プレイヤーの生存を取得
 	const bool IsAlive() const { return isAlive; }
+	bool IsGrounded() const { return isGrounded; }
+	void SetPrevMouse(int mouseX, int mouseY) { prevMouse = { mouseX, mouseY }; }
 	//プレイヤーのHPを取得
 	const int GetHp() const { return hp; }
 
