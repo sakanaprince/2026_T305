@@ -1,6 +1,56 @@
 {
   "waves": [
     {
+      "key": "Low",
+      "spawnCount": 6,
+      "spawnDelay": 3
+    },
+    {
+      "key": "Quick",
+      "spawnCount": 6,
+      "spawnDelay": 3
+    },
+    {
+      "key": "Fly",
+      "spawnCount": 8,
+      "spawnDelay": 2
+    },
+    {
+      "key": "Tank",
+      "spawnCount": 1,
+      "spawnDelay": 5
+    },
+    {
+      "key": "Fly",
+      "spawnCount": 6,
+      "spawnDelay": 2
+    },
+    {
+      "key": "Low",
+      "spawnCount": 6,
+      "spawnDelay": 2
+    },
+    {
+      "key": "Tank",
+      "spawnCount": 2,
+      "spawnDelay": 8
+    },
+    {
+      "key": "Low",
+      "spawnCount": 6,
+      "spawnDelay": 2
+    },
+    {
+      "key": "Quick",
+      "spawnCount": 5,
+      "spawnDelay": 3
+    },
+    {
+      "key": "Low",
+      "spawnCount": 3,
+      "spawnDelay": 3
+    },
+    {
       "key": "Fly",
       "spawnCount": 16,
       "spawnDelay": 2
@@ -11,19 +61,44 @@
       "spawnDelay": 3
     },
     {
+      "key": "Fly",
+      "spawnCount": 5,
+      "spawnDelay": 3
+    },
+    {
       "key": "Quick",
       "spawnCount": 5,
       "spawnDelay": 3
     },
     {
       "key": "Fly",
-      "spawnCount": 16,
+      "spawnCount": 5,
+      "spawnDelay": 3
+    },
+    {
+      "key": "Tank",
+      "spawnCount": 2,
+      "spawnDelay": 8
+    },
+    {
+      "key": "Low",
+      "spawnCount": 4,
+      "spawnDelay": 1
+    },
+    {
+      "key": "Quick",
+      "spawnCount": 4,
+      "spawnDelay": 1
+    },
+    {
+      "key": "Fly",
+      "spawnCount": 4,
       "spawnDelay": 1
     },
     {
       "key": "Tank",
-      "spawnCount": 1,
-      "spawnDelay": 5
+      "spawnCount": 5,
+      "spawnDelay": 1
     }
   ]
 }
