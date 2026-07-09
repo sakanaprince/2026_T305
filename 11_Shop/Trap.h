@@ -24,6 +24,8 @@ public:
 
 	Vec3 GetHitScale() const { return hitScale; }
 
+	int GetDamage() const { return damage; }
+
 private:
 	int modelHandle{ -1 };
 
@@ -31,5 +33,6 @@ private:
 	Vec3 scale{ 0.0f,0.0f,0.0f };
 	Vec3 hitScale{ 30.0f, 10.0f, 30.0f };
 	float radius{ 0.0f };
+	int damage{ 3 };
 };
 
