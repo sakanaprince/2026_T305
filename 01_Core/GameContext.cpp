@@ -42,6 +42,7 @@ void GameContext::Reset()
 
     possessionTrap = 0;
     
+    enemySpawner.Reset();
     stage.Reset();
     coin.Reset();
     core.Reset();
@@ -58,6 +59,11 @@ void GameContext::Reset()
 
 void GameContext::Update(float deltaTime)
 { 
+    if (limit_Timer < 1.0f)
+    {
+        enemySpawner.EndGame();
+    }
+
     //Eキーが押されているかチェック
     int e_key_down = CheckHitKey(KEY_INPUT_E);
 
@@ -128,6 +134,12 @@ void GameContext::Update(float deltaTime)
     CollisionEnemyBullet();
     CollisionEnemyArrow();
     CollisionEnemyTrap();
+
+    Debug().Log("POS",player.GetPosition());
+
+    float rate = (limit_Timer / limit_Time);
+    SetBackgroundColor(64, 64 * rate,230 * rate );
+    SetLightDifColor(GetColorF(1.0f, (1.0f * rate) + 0.2f ,(1.0f * rate) + 0.2f, 1.0f));
 }
 
 void GameContext::Draw() const
@@ -138,6 +150,7 @@ void GameContext::Draw() const
     stage.Draw();
     coin.Draw();
     core.Draw();
+
     for (auto& t : turrets)
     {
         t.Draw();
@@ -148,6 +161,7 @@ void GameContext::Draw() const
     }
     player.Draw();
 
+    enemySpawner.DrawMiniMap();
     shopManager.Draw();
 
 
@@ -256,7 +270,7 @@ void GameContext::CollisionEnemyTrap()
         {
             if (Collision::IsHitSphereBox(en->GetSphere(), t->GetBox()))
             {
-                en->TakeDamage(1);
+                en->TakeGroundDamage(1);
             }
         }
 
