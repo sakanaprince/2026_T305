@@ -14,25 +14,30 @@ void ShopManager::Init(GameContext* gC)
 	btnTrap.Init(this, L"Ground Trap", L"罠です。地面に設置するタイプのシンプルなやつです。", 100, fontHandle);
 	btnHolyLight.Init(this, L"Holy Light", L"聖なる光です。全ての敵を滅ぼそうとします。", 500, fontHandle);
 	btnMap.Init(this, L"Radar Eye", L"レーダーです。コアと敵の位置を教えてくれます。", 150, fontHandle);
+	btnHeal.Init(this, L"Bandage", L"ばんそうこうです。あなたのHPを回復します。", 50, fontHandle);
+	btnAmulet.Init(this, L"TheAmulet", L"お守りです。持っていると運命に勝てるかも。", 350, fontHandle);
 
 	btnCollection.clear();
 	btnCollection.push_back(&btnTutorial);
 	btnCollection.push_back(&btnRepairCore);
 	btnCollection.push_back(&btnTrap);
 	btnCollection.push_back(&btnMap);
+	btnCollection.push_back(&btnHeal);
+	btnCollection.push_back(&btnAmulet);
 	btnCollection.push_back(&btnHolyLight);
 
 	constexpr int basePosX = 100;
 	constexpr int distanceX = 400;
 	constexpr int basePosY = 200;
 	constexpr int basePosY_2 = 650;
-	int roop = 0;
+	int loop = 0;
+
 	for (auto& b : btnCollection)
 	{
-		int y = roop >= 3 ? basePosY_2 : basePosY;
-		b->SetButtonPosition(basePosX + (distanceX * (roop % 3)), y);
+		int y = loop >= 4 ? basePosY_2 : basePosY;
+		b->SetButtonPosition(basePosX + (distanceX * (loop % 4)), y);
 
-		roop++;
+		loop++;
 	}
 
 	shopBackgroundColor = GetColor(200, 200, 210);
