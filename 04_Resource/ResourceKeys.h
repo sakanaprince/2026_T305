@@ -34,6 +34,10 @@ namespace ResourceKeys
     inline constexpr const wchar_t* Sound_SubmachineGun = L"SoundSubmachineGun";
     inline constexpr const wchar_t* Sound_Gun = L"SoundGun";
     inline constexpr const wchar_t* Sound_ShotGun = L"SoundShotGun";
+    inline constexpr const wchar_t* Sound_Explosion = L"Explosion";
+    inline constexpr const wchar_t* Sound_OpenShop = L"OpenShop";
+    inline constexpr const wchar_t* Sound_BuyItem = L"BuyItem";
+    inline constexpr const wchar_t* Sound_EnemyDamage = L"EnemyDamage";
 
     inline constexpr const wchar_t* Music_Title = L"MusicTitle";
     inline constexpr const wchar_t* Music_Game = L"MusicGame";

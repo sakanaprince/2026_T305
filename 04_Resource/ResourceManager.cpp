@@ -43,6 +43,10 @@ void ResourceManager::LoadAll()
     LoadSound(ResourceKeys::Sound_SubmachineGun, L"SubmachineGun.wav");
     LoadSound(ResourceKeys::Sound_Gun, L"Gun.wav");
     LoadSound(ResourceKeys::Sound_ShotGun, L"ShotGun.wav");
+    LoadSound(ResourceKeys::Sound_Explosion, L"Explosion.mp3");
+    LoadSound(ResourceKeys::Sound_OpenShop, L"OpenShop.mp3");
+    LoadSound(ResourceKeys::Sound_BuyItem, L"BuyItem.mp3");
+    LoadSound(ResourceKeys::Sound_EnemyDamage, L"EnemyDamage.wav");
     // -----
 
     // --- Music ---
