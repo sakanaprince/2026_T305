@@ -34,9 +34,10 @@ private:
     int tutorial_PurposeHandle{ -1 };
     int tutorial_TurretReleaseHandle{ -1 };
     int tutorial_TurretUpgradeHandle{ -1 };
+    int bgmHandle{ -1 };
 
-    float titleButtonSizeX{ 200 };
-    float titleButtonSizeY{ 50 };
+    int titleButtonSizeX{ 200 };
+    int titleButtonSizeY{ 50 };
 
     //タイトルボタンの設定
     float titlePosX_1{ DxPlus::CLIENT_WIDTH * 0.5f  - titleButtonSizeX };

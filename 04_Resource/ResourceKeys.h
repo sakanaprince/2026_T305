@@ -35,6 +35,11 @@ namespace ResourceKeys
     inline constexpr const wchar_t* Sound_Gun = L"SoundGun";
     inline constexpr const wchar_t* Sound_ShotGun = L"SoundShotGun";
 
+    inline constexpr const wchar_t* Music_Title = L"MusicTitle";
+    inline constexpr const wchar_t* Music_Game = L"MusicGame";
+    inline constexpr const wchar_t* Music_GameOver = L"MusicGameOver";
+    inline constexpr const wchar_t* Music_GameClear = L"MusicGameClear";
+
     // ===== Fonts =====
     inline constexpr const wchar_t* Font_ManufacturingConsent = L"Manufacturing Consent";
 }

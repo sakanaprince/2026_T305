@@ -12,4 +12,5 @@ public:
     void End() override;
 
 private:
+    int bgmHandle{ -1 };
 };

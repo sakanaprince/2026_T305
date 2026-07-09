@@ -7,11 +7,33 @@ void SoundManager::Init(PlayerController* _player)
 	player = _player;
 }
 
-void SoundManager::PlaySENormal(const int soundHandle, int soundVolume)
+void SoundManager::Play(const int soundHandle, int soundType, int soundVolume)
 {
+	//‰¹—Ê‚Ìİ’è
 	ChangeVolumeSoundMem(soundVolume, soundHandle);
 
-	PlaySoundMem(soundHandle, DX_PLAYTYPE_BACK);
+	//‰¹‚ÌÄ¶
+	PlaySoundMem(soundHandle, soundType);
+}
+
+void SoundManager::PlayBGM(const int soundHandle, int soundVolume)
+{
+	//Œ»İÄ¶’†‚ÌBGM‚ª‚ ‚ê‚Î~‚ß‚é
+	if (currentSoundHandle > 0)
+	{
+		StopSoundMem(currentSoundHandle);
+	}
+
+	Play(soundHandle, DX_PLAYTYPE_LOOP, soundVolume);
+
+	//Ä¶‚·‚éBGM‚ğŒ»İÄ¶’†‚ÌBGMŠi”[—p•Ï”‚É‘ã“ü
+	currentSoundHandle = soundHandle;
+	Debug().Log("currentSound", currentSoundHandle);
+}
+
+void SoundManager::PlaySENormal(const int soundHandle, int soundVolume)
+{
+	Play(soundHandle, DX_PLAYTYPE_BACK, soundVolume);
 }
 
 void SoundManager::PlaySEAtPosition(const int soundHandle, const Vec3& position)
@@ -62,9 +84,5 @@ void SoundManager::PlaySEAtPosition(const int soundHandle, const Vec3& position)
 	//‰¹‚Ì¶‰E‚ğ’²®
 	ChangePanSoundMem(soundDot, soundHandle);
 
-	//‰¹—Ê‚Ìİ’è
-	ChangeVolumeSoundMem(volume, soundHandle);
-
-	//‰¹‚ÌÄ¶
-	PlaySoundMem(soundHandle, DX_PLAYTYPE_BACK);
+	Play(soundHandle, DX_PLAYTYPE_BACK, volume);
 }

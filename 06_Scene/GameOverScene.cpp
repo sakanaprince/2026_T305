@@ -7,6 +7,8 @@ void GameOverScene::Init()
 {
     fontHandle = RM().GetFont(ResourceKeys::Font_ManufacturingConsent);
     backGroundHandle = RM().GetSprite(ResourceKeys::Sprite_GameOverBG);
+    bgmHandle = RM().GetMusic(ResourceKeys::Music_GameOver);
+    soundManager->PlayBGM(bgmHandle);
     DxLib::SetMouseDispFlag(TRUE);
     buttonTitleColor = buttonNormalColor;
     buttonContinueColor = buttonNormalColor;
@@ -67,8 +69,8 @@ void GameOverScene::Render() const
 
     DrawBox
     (
-        titlePosX_1, titlePosY_1,
-        titlePosX_2, titlePos_Y2,
+        (int)titlePosX_1, (int)titlePosY_1,
+        (int)titlePosX_2, (int)titlePos_Y2,
         buttonTitleColor,
         true
     );
@@ -79,8 +81,8 @@ void GameOverScene::Render() const
 
     DrawBox
     (
-        continuePosX_1, continuePosY_1,
-        continuePosX_2, continuePos_Y2,
+        (int)continuePosX_1, (int)continuePosY_1,
+        (int)continuePosX_2, (int)continuePos_Y2,
         buttonContinueColor,
         true
     );
