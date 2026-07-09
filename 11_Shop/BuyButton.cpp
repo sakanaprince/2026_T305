@@ -4,7 +4,7 @@
 #include <string>
 
 #include "../01_Core/GameContext.h"
-
+#include "../04_Resource/ResourceManager.h"
 void BuyButton::Init(ShopManager* shopManager, std::wstring _name, std::wstring _info, int _buyCost, int _fontHandle)
 {
 	pShopManager = shopManager;
@@ -33,6 +33,7 @@ void BuyButton::Update(float deltaTime)
 		gC->GetCoinManager().MinusCoin(buyCost);
 		pushedUXTimer = PushedUXTime;
 
+		gC->GetSoundManager().PlaySENormal(RM().GetSound(ResourceKeys::Sound_BuyItem));
 		//Œp³‚ğg‚Á‚½‚ç‰ğŒˆ‚Å‚«‚»‚¤(‚Å‚«‚Ü‚µ‚½
 		PurchaseItem();
 	}

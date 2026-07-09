@@ -226,7 +226,7 @@ void EnemySpawner::DrawMiniMap() const
 		float dz = 0 - playerPos.z;
 
 		// 2. yaw（プレイヤーの向き）の「逆方向」に回転させる
-		float offsetYaw = -yaw + (DX_PI_F / 2.0f);
+		float offsetYaw = - yaw + (DX_PI_F / 2.0f);
 		// プレイヤーが右を向いたら、世界は左に回る
 		float rotatedX = dx * std::cos(offsetYaw) - dz * std::sin(offsetYaw);
 		float rotatedZ = dx * std::sin(offsetYaw) + dz * std::cos(offsetYaw);
@@ -297,6 +297,16 @@ const void EnemySpawner::MoneyInc(int money) const
 	}
 
 	pGameContext->GetCoinManager().PlusCoin(money);
+}
+
+SoundManager& EnemySpawner::GetSoundManager()
+{
+	if (!pGameContext)
+	{
+		DxPlus::Utils::FatalError(L"Pointer GameContextがないバインド忘れてる EnemySpanerがいってる");
+	}
+
+	return pGameContext->GetSoundManager();
 }
 
 bool EnemySpawner::ReadyAllEnemyTakeDamage(int dmg, float delayTime)

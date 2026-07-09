@@ -10,6 +10,7 @@
 
 class GameContext;
 class EnemyDataMaster;
+class SoundManager;
 
 class EnemySpawner
 {
@@ -23,7 +24,7 @@ public:
 	void DrawMiniMap() const;
 	const void CoreDamage(int damage) const;
 	const void MoneyInc(int money) const;
-
+	SoundManager& GetSoundManager();
 	/// <summary>
 	/// ƒVƒ‡ƒbƒv•Â‚¶‚½Œã‚Å”½‰f‚³‚ê‚é‚½‚ß‚ÉŠÔ·‚ğì‚Á‚Ä‚¨‚¢‚½
 	/// </summary>

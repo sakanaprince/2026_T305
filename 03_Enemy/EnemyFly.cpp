@@ -36,7 +36,7 @@ void EnemyFly::Update(float deltaTime)
 
 		if (position.y < 0.0f)
 		{
-			explosion.Play({position.x, 0.0f, position.z}, 600.0f, 0.4f);
+			explosion.Play({position.x, 0.0f, position.z}, 600.0f, 0.4f, pEnemySpawner->GetSoundManager());
 
 			isAlive = false;
 		}
@@ -96,15 +96,15 @@ void EnemyFly::BodyLine() const
 		50 * sizeMagnification, 16, GetColor(0, 155, 20), GetColor(255, 255, 255), true
 	);
 
-
 	//position.yは固定
-	constexpr float SPIN_RADIUS = 70.0f;
-	constexpr float CAPSULE_RADIUS = 40.0f;
-	constexpr float spinSpeedBoost = 6.0f;
+	constexpr float SPIN_RADIUS = 170.0f;
+	constexpr float CAPSULE_RADIUS = 10.0f;
+	constexpr float spinSpeedBoost = 18.0f;
 
 	const float sinSpin = std::sinf(animTimer * spinSpeedBoost) * SPIN_RADIUS;
 	const float cosSpin = std::cosf(animTimer * spinSpeedBoost) * SPIN_RADIUS;
 
+	const float PropellerHeight = height * 2;
 	DxLib::DrawCapsule3D
 	(
 		//半分の2倍
@@ -112,15 +112,29 @@ void EnemyFly::BodyLine() const
 		//( 0 ~ 50 - 25) * 2 =  50
 		//-250 ~ 250　の値を使いたい、sinとかのぐるぐる巡回するやつで
 		//sinとかcosは -1から1をぐるぐるするという性質を使って理想を表現している
-		DxConv::ToVECTOR({ position.x + sinSpin, position.y + height, position.z + cosSpin }),
-		DxConv::ToVECTOR({ position.x, position.y + height, position.z }),
+		DxConv::ToVECTOR({ position.x + sinSpin, position.y + PropellerHeight, position.z + cosSpin }),
+		DxConv::ToVECTOR({ position.x, position.y + PropellerHeight, position.z }),
 		CAPSULE_RADIUS * sizeMagnification, 16, GetColor(10, 100, 0), GetColor(255, 255, 0), true
 	);
 
 	DxLib::DrawCapsule3D
 	(
-		DxConv::ToVECTOR({ position.x - sinSpin, position.y + height, position.z - cosSpin }),
-		DxConv::ToVECTOR({ position.x, position.y + height, position.z }),
+		DxConv::ToVECTOR({ position.x - sinSpin, position.y + PropellerHeight, position.z - cosSpin }),
+		DxConv::ToVECTOR({ position.x, position.y + PropellerHeight, position.z }),
+		CAPSULE_RADIUS * sizeMagnification, 16, GetColor(0, 155, 0), GetColor(255, 255, 0), true
+	);
+
+	DxLib::DrawCapsule3D
+	(
+		DxConv::ToVECTOR({ position.x - cosSpin, position.y + PropellerHeight, position.z - sinSpin }),
+		DxConv::ToVECTOR({ position.x, position.y + PropellerHeight, position.z }),
+		CAPSULE_RADIUS * sizeMagnification, 16, GetColor(0, 155, 0), GetColor(255, 255, 0), true
+	);
+
+	DxLib::DrawCapsule3D
+	(
+		DxConv::ToVECTOR({ position.x + cosSpin, position.y + PropellerHeight, position.z + sinSpin }),
+		DxConv::ToVECTOR({ position.x, position.y + PropellerHeight, position.z }),
 		CAPSULE_RADIUS * sizeMagnification, 16, GetColor(0, 155, 0), GetColor(255, 255, 0), true
 	);
 

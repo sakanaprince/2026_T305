@@ -3,6 +3,7 @@
 #include "../04_Resource/ResourceManager.h"
 #include "../01_Core/GameContext.h"
 
+
 void ShopManager::Init(GameContext* gC)
 {
 	pGameContext = gC;
@@ -43,6 +44,7 @@ void ShopManager::Update(float deltaTime)
 	if (isShopOpen && !prevShopOpen)
 	{
 		nowShopOpenAnimation = true;
+		pGameContext->GetSoundManager().PlaySENormal(RM().GetSound(ResourceKeys::Sound_OpenShop));
 		shopBackgroundPos = { -DxPlus::CLIENT_WIDTH, 0 };
 	}
 

@@ -102,12 +102,15 @@ void Entity::TakeDamage(int amount)
 	damageReactionTimer = DAMAGE_REACTION_TIME;
 	isDamageReaction = true;
 
+	pEnemySpawner->GetSoundManager().PlaySEAtPosition(RM().GetSound(ResourceKeys::Sound_EnemyDamage), position);
+
+
 	if (currentHp == 0 && !isKilledReaction)
 	{
 		isKilledReaction = true;
 		killedReactionTimer = KILLED_REACTION_TIME;
 
-		explosion.Play({position.x, position.y + skin, position.z }, 450.0f, 0.2f);
+		explosion.Play({position.x, position.y + skin, position.z }, 450.0f, 0.2f, pEnemySpawner->GetSoundManager());
 
 		pEnemySpawner->MoneyInc(dropCoin);
 
