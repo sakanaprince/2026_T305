@@ -2,6 +2,7 @@
 #include <unordered_map>
 #include <memory>
 #include "../json.hpp"
+#include <vector>
 
 enum class EnemyKey
 {
@@ -20,6 +21,13 @@ NLOHMANN_JSON_SERIALIZE_ENUM(EnemyKey,
 	}
 )
 
+struct EnemyWave
+{
+	EnemyKey key;
+	int spawnCount;
+	float spawnDelay;
+};
+
 
 
 struct EnemyStatus
@@ -37,9 +45,12 @@ public:
 	void LoadJson();
 	std::shared_ptr<EnemyStatus> GetEnemyStatus(EnemyKey key);
 
+	size_t GetEnemyWaveSize() { return enemyWaves.size(); }
+	std::shared_ptr<EnemyWave> GetEnemyWave(size_t idx);
+
 private:
 	std::unordered_map<EnemyKey, std::shared_ptr<EnemyStatus>> enemyAllData;
-
+	std::vector<std::shared_ptr<EnemyWave>> enemyWaves;
 	
 };
 

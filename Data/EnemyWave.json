@@ -1,0 +1,29 @@
+{
+  "waves": [
+    {
+      "key": "Fly",
+      "spawnCount": 16,
+      "spawnDelay": 2
+    },
+    {
+      "key": "Low",
+      "spawnCount": 5,
+      "spawnDelay": 3
+    },
+    {
+      "key": "Quick",
+      "spawnCount": 5,
+      "spawnDelay": 3
+    },
+    {
+      "key": "Fly",
+      "spawnCount": 16,
+      "spawnDelay": 1
+    },
+    {
+      "key": "Tank",
+      "spawnCount": 1,
+      "spawnDelay": 5
+    }
+  ]
+}

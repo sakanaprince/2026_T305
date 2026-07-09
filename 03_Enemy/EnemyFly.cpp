@@ -9,12 +9,12 @@ void EnemyFly::Reset()
 	moveSpeed = 400.0f;
 	rootTargetIndex = 0;
 	currentHp = initHp;
-
+	hitSphereRadius = 120.0f;
 	damageReactionTimer = 0.0f;
 	isDamageReaction = false;
 	killedReactionTimer = 0.0f;
 	isKilledReaction = false;
-
+	gravity = 0.0f;
 	if (pEnemyRoot)
 	{
 		position = pEnemyRoot->GetNextStartPos_Sky();
@@ -27,10 +27,45 @@ void EnemyFly::Reset()
 	isAlive = true;
 }
 
+void EnemyFly::Update(float deltaTime)
+{
+	if (isKilledReaction)
+	{
+		position.y -= gravity; 
+		gravity += 50.0f * deltaTime;
+
+		if (position.y < 0.0f)
+		{
+			explosion.Play({position.x, 0.0f, position.z}, 600.0f, 0.4f);
+
+			isAlive = false;
+		}
+		return;
+	}
+
+
+	Entity::Update(deltaTime);
+}
+
 
 void EnemyFly::DrawDebug() const
 {
 	DrawSphere3D(DxConv::ToVECTOR(GetSphere().centerPos), hitSphereRadius, 16, GetColor(255, 0, 0), GetColor(255, 0, 0), false);
+}
+
+void EnemyFly::StepGround(float deltaTime)
+{
+	Entity::StepGround(deltaTime);
+}
+
+void EnemyFly::ExplosionUpdate(float deltaTime)
+{
+	explosion.Update(deltaTime);
+}
+
+void EnemyFly::ExplosionDraw() const
+{
+	explosion.Draw();
 }
 
 

@@ -1,5 +1,6 @@
 #include "EnemySpawner.h"
 #include "../01_Core/GameContext.h"
+#include "../01_Core/EnemyDataMaster.h"
 
 #include "../05_Stage/EnemyRoot.h"
 #include "EnemyLow.h"
@@ -14,10 +15,17 @@
 void EnemySpawner::Init(EnemyRoot* enR, PlayerController* pc, GameContext* gC, EnemyDataMaster* eD)
 {
 	pGameContext = gC;
-
+	enemyCollection.clear();
 	enemyCollection.reserve(Const::MAX_ENEMY_COUNT);
+
 	spawnedCount = 0;
 	aliveEnemyCount = 0;
+	pEnemyDataMaster = eD;
+
+
+	currentWave = 0;
+	waveSpawned = 0;
+	maxWave = eD->GetEnemyWaveSize();
 
 	gameStartLeftTime = pGameContext->GetLimit_Timer();
 	//プール初期化
@@ -56,6 +64,18 @@ void EnemySpawner::Init(EnemyRoot* enR, PlayerController* pc, GameContext* gC, E
 		enemyCollection[i]->Init(enR, pc, EnemyKey::Fly);
 		enemyCollection[i]->BindEnemySpawner(this);
 	}
+
+
+
+}
+
+void EnemySpawner::Reset()
+{
+	spawnedCount = 0;
+	aliveEnemyCount = 0;
+	currentWave = 0;
+	waveSpawned = 0;
+
 }
 
 
@@ -71,39 +91,26 @@ void EnemySpawner::Update(float deltaTime)
 	}
 
 
-	if (spawnTimer >= spawnDuration - firstTimer)
-	{
-		//敵を全員出現させるサイクル
-		int spawnCycle = spawnedCount % static_cast<int>( ENEMY_NAME::AllEnemyNameCount);
-
-		if (static_cast<ENEMY_NAME>(spawnCycle) == ENEMY_NAME::Tank)
-		{
-			if (bossSpawnCount >= 0)
-			{
-				spawnCycle = static_cast<int>(ENEMY_NAME::Low);
-				bossSpawnCount--;
-			
-			}
-			else
-			{
-				bossSpawnCount = bossSpawnCountLimit;
-			}
-		}
-	
-
-		SpawnEnemy(static_cast<ENEMY_NAME>(spawnCycle));
-
-
-		spawnTimer = 0;
-	}
 
 	for (auto& e : enemyCollection)
 	{
+		
+
 		if (!e->IsAlive()) { continue; }
 
 		e->Update(deltaTime);
 	}
 
+	for (auto& e : enemyCollection)
+	{
+
+
+		if (!e->IsExplosionActive()) { continue; }
+
+		e->ExplosionUpdate(deltaTime);
+	}
+
+	//全体攻撃のフラグが経ってるなら全体攻撃のタイマーを進める
 	if (nowAllEnemyTakeDamage)
 	{
 		allEnemyTakeDamageDelayTimer -= deltaTime;
@@ -119,6 +126,25 @@ void EnemySpawner::Update(float deltaTime)
 			}
 		}
 	}
+
+	if (currentWave >= maxWave) { return; }
+
+	if (spawnTimer >= nextSpawnTime)
+	{
+		auto wave = pEnemyDataMaster->GetEnemyWave(currentWave);
+
+		SpawnEnemy(wave->key);
+		waveSpawned++;
+
+		nextSpawnTime = wave->spawnDelay;
+		if (waveSpawned >= wave->spawnCount)
+		{
+			currentWave++;
+			waveSpawned = 0;
+		}
+
+		spawnTimer = 0;
+	}
 }
 
 void EnemySpawner::Draw() const
@@ -129,6 +155,14 @@ void EnemySpawner::Draw() const
 
 		e->Draw();
 	}
+
+	for (const auto& e : enemyCollection)
+	{
+		if (!e->IsExplosionActive()) { continue; }
+
+		e->ExplosionDraw();
+	}
+
 
 	//ホーリー寿司の演出
 	if (nowAllEnemyTakeDamage)
@@ -193,13 +227,18 @@ void EnemySpawner::PlaySoundPos(int handle, Vec3 pos)
 	pGameContext->GetSoundManager().PlaySEAtPosition(handle, pos);
 }
 
-void EnemySpawner::SpawnEnemy(ENEMY_NAME enName)
+void EnemySpawner::EndGame()
+{
+	for (auto& e : enemyCollection)
+	{
+		e->EndGameDeActive();
+	}
+}
+
+void EnemySpawner::SpawnEnemy(EnemyKey enName)
 {
 	//出現限界の数を超えてるならreturn
 	if (aliveEnemyCount > Const::MAX_ENEMY_COUNT){	return; }
-
-	//呼んではいけないAllCountが引数ならreturn
-	if (enName == ENEMY_NAME::AllEnemyNameCount) { return; }
 
 	//嗚呼今は基底クラスのEntityを召喚してしまっているのか（自力で解決済み makeUnique使えばよかった）
 
@@ -210,10 +249,10 @@ void EnemySpawner::SpawnEnemy(ENEMY_NAME enName)
 
 	size_t startIndex = 0;
 
-	if (enName == ENEMY_NAME::Low){startIndex = 0;}
-	else if (enName == ENEMY_NAME::Quick){startIndex = Const::MAX_SAME_ENEMY_POOL_COUNT;}
-	else if (enName == ENEMY_NAME::Tank) {startIndex = Const::MAX_SAME_ENEMY_POOL_COUNT * 2;}
-	else if (enName == ENEMY_NAME::Fly) {startIndex = Const::MAX_SAME_ENEMY_POOL_COUNT * 3;}
+	if		(enName == EnemyKey::Low){startIndex = 0;}
+	else if (enName == EnemyKey::Quick){startIndex = Const::MAX_SAME_ENEMY_POOL_COUNT;}
+	else if (enName == EnemyKey::Tank) {startIndex = Const::MAX_SAME_ENEMY_POOL_COUNT * 2;}
+	else if (enName == EnemyKey::Fly) {startIndex = Const::MAX_SAME_ENEMY_POOL_COUNT * 3;}
 
 	//待機状態の敵を探してResetする
 	for (size_t i = startIndex; i < startIndex + Const::MAX_SAME_ENEMY_POOL_COUNT; i++)
