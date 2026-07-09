@@ -33,6 +33,6 @@ private:
 	Vec3 scale{ 0.0f,0.0f,0.0f };
 	Vec3 hitScale{ 30.0f, 10.0f, 30.0f };
 	float radius{ 0.0f };
-	int damage{ 3 };
+	int damage{ 5 };
 };
 
