@@ -9,6 +9,7 @@ void TitleScene::Init()
     tutorial_PurposeHandle = RM().GetSprite(ResourceKeys::Sprite_TutorialPurpose);
     tutorial_TurretReleaseHandle = RM().GetSprite(ResourceKeys::Sprite_TutorialTurretRelease);
     tutorial_TurretUpgradeHandle = RM().GetSprite(ResourceKeys::Sprite_TutorialTurretUpgrade);
+    tutorial_ShopHandle = RM().GetSprite(ResourceKeys::Sprite_TutorialShop);
     soundClickHandle = RM().GetSound(ResourceKeys::Sound_Click);
     bgmHandle = RM().GetMusic(ResourceKeys::Music_Title);
     soundManager->PlayBGM(bgmHandle);
@@ -94,6 +95,9 @@ void TitleScene::Render() const
         break;
     case Turret_Upgrade:
         TutorialTurretUpgrade();
+        break;
+    case Shop:
+        TutorialShop();
         break;
     }
 
@@ -190,7 +194,7 @@ void TitleScene::TutorialPurposeRender() const
 
 void TitleScene::TutorialOperation() const
 {
-    DxPlus::Text::DrawString(L"移動：WASD　ダッシュ：左Shift　ジャンプ：Space\n\n射撃：左クリック　リロード：R　武器切り替え：マウスホイール",
+    DxPlus::Text::DrawString(L"移動：WASD　ダッシュ：左Shift　ジャンプ：Space\n\n射撃：左クリック　リロード：R　武器切り替え：マウスホイール\n\n ショップ：E",
         { DxPlus::CLIENT_WIDTH * 0.5f, DxPlus::CLIENT_HEIGHT * 0.35f },
         textColor, DxPlus::Text::TextAlign::MIDDLE_CENTER, { 2,2 }, 0);
 }
@@ -209,6 +213,15 @@ void TitleScene::TutorialTurretUpgrade() const
     DxPlus::Sprite::Draw(tutorial_TurretUpgradeHandle);
 
     DxPlus::Text::DrawString(L"修理したタレットは\nコインを使って強化することもできる。",
+        { DxPlus::CLIENT_WIDTH * 0.5f, 100 },
+        textColor, DxPlus::Text::TextAlign::MIDDLE_CENTER, { 3,3 }, 0);
+}
+
+void TitleScene::TutorialShop() const
+{
+    DxPlus::Sprite::Draw(tutorial_ShopHandle);
+
+    DxPlus::Text::DrawString(L"Eキーでショップを開き\nコインを使って様々なものを購入しよう。",
         { DxPlus::CLIENT_WIDTH * 0.5f, 100 },
         textColor, DxPlus::Text::TextAlign::MIDDLE_CENTER, { 3,3 }, 0);
 }

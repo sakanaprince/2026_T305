@@ -9,6 +9,7 @@ enum Tutorial
     Operation,       //操作
     Turret_Release,  //タレットの解放
     Turret_Upgrade,  //タレットのアップグレード
+    Shop,            //ショップのチュートリアル
     None             //これ以上チュートリアルはない
 };
 
@@ -27,6 +28,7 @@ public:
     void TutorialOperation() const;
     void TutorialTurretRelease() const;
     void TutorialTurretUpgrade() const;
+    void TutorialShop() const;
 
 private:
     int fontHandle{ -1 };
@@ -34,6 +36,7 @@ private:
     int tutorial_PurposeHandle{ -1 };
     int tutorial_TurretReleaseHandle{ -1 };
     int tutorial_TurretUpgradeHandle{ -1 };
+    int tutorial_ShopHandle{ -1 };
     int bgmHandle{ -1 };
 
     int titleButtonSizeX{ 200 };

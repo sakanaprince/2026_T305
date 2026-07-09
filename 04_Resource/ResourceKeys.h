@@ -11,6 +11,7 @@ namespace ResourceKeys
     inline constexpr const wchar_t* Sprite_TutorialPurpose = L"SpriteTutorialPurpose"; 
     inline constexpr const wchar_t* Sprite_TutorialTurretRelease = L"SpriteTutorialTurretRelease";
     inline constexpr const wchar_t* Sprite_TutorialTurretUpgrade = L"SpriteTutorialTurretUpgrade";
+    inline constexpr const wchar_t* Sprite_TutorialShop = L"SpriteTutorialShop";
     inline constexpr const wchar_t* Sprite_Coin = L"SpriteCoin";
     inline constexpr const wchar_t* Sprite_TurretReleasePrice = L"SpriteTurretReleasePrice";
     inline constexpr const wchar_t* Sprite_TurretUpgradePrice = L"SpriteTurretUpgradePerice";
