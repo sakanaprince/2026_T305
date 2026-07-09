@@ -1,7 +1,5 @@
 #include "TitleScene.h"
-#include "../04_Resource/ResourceManager.h"
 #include "SceneManager.h"
-#include "../04_Resource/ResourceKeys.h"
 
 void TitleScene::Init()
 {
@@ -11,6 +9,7 @@ void TitleScene::Init()
     tutorial_PurposeHandle = RM().GetSprite(ResourceKeys::Sprite_TutorialPurpose);
     tutorial_TurretReleaseHandle = RM().GetSprite(ResourceKeys::Sprite_TutorialTurretRelease);
     tutorial_TurretUpgradeHandle = RM().GetSprite(ResourceKeys::Sprite_TutorialTurretUpgrade);
+    soundClickHandle = RM().GetSound(ResourceKeys::Sound_Click);
     bgmHandle = RM().GetMusic(ResourceKeys::Music_Title);
     soundManager->PlayBGM(bgmHandle);
     titleButtonColor = buttonNormalColor;
@@ -34,6 +33,7 @@ void TitleScene::Update(float deltaTime)
     {
         if (ButtonCheckHit(mouseX, mouseY, titlePosX_1, titlePosX_2, titlePosY_1, titlePosY_2, titleButtonColor))
         {
+            soundManager->PlaySENormal(soundClickHandle);
             //タイトルボタンの判定
             Scene* gameScene = SceneManager::GetInstance().GetScene(SceneID::Game);
             SetNextScene(gameScene);
@@ -44,6 +44,7 @@ void TitleScene::Update(float deltaTime)
         //チュートリアルボタンの判定
         if (ButtonCheckHit(mouseX, mouseY, tutorialPosX_1, tutorialPosX_2, tutorialPosY_1, tutorialPosY_2, tutorialButtonColor))
         {
+            soundManager->PlaySENormal(soundClickHandle);
             titleButtonColor = buttonNormalColor;
             tutorial = 1;
         }
@@ -56,7 +57,7 @@ void TitleScene::Update(float deltaTime)
         if (ButtonCheckHit(mouseX, mouseY, nextPosX_1, nextPosX_2, nextPosY_1, nextPosY_2, nextButtonColor))
         {
             tutorial++;
-            
+            soundManager->PlaySENormal(soundClickHandle);
             if (tutorial == Tutorial::None)
             {
                 tutorial = 0;
@@ -69,7 +70,7 @@ void TitleScene::Update(float deltaTime)
         if (ButtonCheckHit(mouseX, mouseY, returnPosX_1, returnPosX_2, returnPosY_1, returnPosY_2, returnButtonColor))
         {
             tutorial--;
-
+            soundManager->PlaySENormal(soundClickHandle);
             mouseIntervalTimer = mouseInterval;
         }
     }

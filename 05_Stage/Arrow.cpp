@@ -55,7 +55,7 @@ void Arrow::Draw() const
 #endif // DEBUG
 }
 
-void Arrow::LaunchArrow(Vec3 forward, float deltaTime, Turret& turret)
+void Arrow::LaunchArrow(Vec3 forward, Turret& turret)
 {
 	velocity = forward;
 	position = turret.GetPosition();

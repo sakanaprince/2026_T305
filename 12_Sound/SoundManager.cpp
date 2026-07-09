@@ -28,7 +28,6 @@ void SoundManager::PlayBGM(const int soundHandle, int soundVolume)
 
 	//Ä¶‚·‚éBGM‚ğŒ»İÄ¶’†‚ÌBGMŠi”[—p•Ï”‚É‘ã“ü
 	currentSoundHandle = soundHandle;
-	Debug().Log("currentSound", currentSoundHandle);
 }
 
 void SoundManager::PlaySENormal(const int soundHandle, int soundVolume)

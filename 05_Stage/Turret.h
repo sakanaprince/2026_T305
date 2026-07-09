@@ -50,7 +50,8 @@ private:
 	int spriteReleasePrice{ -1 };  //タレットを解放する前の画像
 	int spriteUpgradePrice{ -1 };   //タレットのUpgradeの画像
 
-	int soundArrowHandle{ -1 };
+	int soundArrowHandle{ -1 };    //矢の発射音
+	int soundUpgradeHandle{ -1 };  //アップグレードの音
 
 	Vec3 scale{ 2.0f,2.0f,2.0f };
 	Vec3 position{ 0.0f,0.0f,0.0f };

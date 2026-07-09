@@ -14,6 +14,7 @@ void Turret::Init(PlayerController* _player, EnemySpawner* _enemySpawner, Coin* 
 	MV1SetScale(modelTurret, DxConv::ToVECTOR(scale));
 	modelTurretHandle = modelBrokenTurret;
 	soundArrowHandle = RM().GetSound(ResourceKeys::Sound_Arrow);
+	soundUpgradeHandle = RM().GetSound(ResourceKeys::Sound_Upgrade);
 
 	player = _player;
 	enemySpawner = _enemySpawner;
@@ -39,6 +40,7 @@ void Turret::Reset(Vec3 startPosition)
 	state = State::Broken;
 	isPriceDraw = false;
 	spritePrice = spriteReleasePrice;
+	modelTurretHandle = modelBrokenTurret;
 
 	for (auto& a : arrows)
 	{
@@ -76,6 +78,7 @@ void Turret::Update(float deltaTime)
 				coin->MinusCoin(turretCoin);
 				modelTurretHandle = modelTurret;
 				spritePrice = spriteUpgradePrice;
+				sound->PlaySENormal(soundUpgradeHandle);
 				state = State::Available;
 			}
 			break;
@@ -84,6 +87,7 @@ void Turret::Update(float deltaTime)
 			{
 				coin->MinusCoin(turretUpgradeCoin);
 				shotIntervalTime -= shotIntervalDownRate;
+				sound->PlaySENormal(soundUpgradeHandle);
 				if (shotIntervalTime <= 0.0f)
 				{
 					shotIntervalTime = 0.0f;
