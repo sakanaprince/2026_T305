@@ -21,7 +21,9 @@ namespace Const
 	//ジャンプの回数
 	constexpr int MAX_JUNP_COUNT{ 2 };
 	//リスポーンまでの時間
-	constexpr int RESPAWN_TIME{ 10 }; 
+	constexpr int RESPAWN_TIME{ 10 };
+	//プレイヤーの無敵時間
+	constexpr int INVINCIBLE_TIME{ 10 };
 	//プレイヤーの視界の高さ
 	constexpr float PLAYER_EYE_POSITION{ 110.0f };
 
