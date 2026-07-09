@@ -43,8 +43,14 @@ public:
     virtual void DrawDebug()const {}; //îªíËÇÃâ¬éãâªÇ∆Ç© Ç≈
     virtual void Release() {}; 
 
+    bool IsExplosionActive() { return explosion.IsActive(); };
+    virtual void ExplosionUpdate(float deltaTime) {};
+    virtual void ExplosionDraw() const {};
+
     virtual void TakeDamage(int amount);
     virtual void TakeGroundDamage(int amount);
+
+    void EndGameDeActive() { isAlive = false; }
 
     void BindEnemyDataMaster(EnemyDataMaster* dtm) { pEnemyDataMaster = dtm; }
 
@@ -53,7 +59,7 @@ protected:
     EnemyKey myKey{EnemyKey::Low};
 
     int currentHp{1};
-    const float hpBarHeight{ 20 };
+    const int hpBarHeight{ 20 };
 
     //JsonÇ≈í≤êÆÇ∑ÇÈ
     int initHp{ 30 };

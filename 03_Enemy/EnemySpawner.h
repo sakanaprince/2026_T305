@@ -9,16 +9,18 @@
 #include <vector>
 
 class GameContext;
+class EnemyDataMaster;
+
 class EnemySpawner
 {
 public:
 	EnemySpawner() = default;
 	void Init(EnemyRoot* enRoot, PlayerController* pc, GameContext* gC, EnemyDataMaster* eD);
+	void Reset();
 	void Update(float deltaTime);
 	void Draw() const;
 
-
-
+	void DrawMiniMap() const;
 	const void CoreDamage(int damage) const;
 	const void MoneyInc(int money) const;
 
@@ -33,16 +35,16 @@ public:
 		aliveEnemyCount--;
 	}
 
-	enum class ENEMY_NAME
-	{
-		Low = 0,
-		Quick,
-		Tank,
-		Fly,
+	//enum class ENEMY_NAME
+	//{
+	//	Low = 0,
+	//	Quick,
+	//	Tank,
+	//	Fly,
 
-		//AllEnemyNameCountは全部で何種類の敵がいるかを返す
-		AllEnemyNameCount
-	};
+	//	//AllEnemyNameCountは全部で何種類の敵がいるかを返す
+	//	AllEnemyNameCount
+	//};
 
 
 	/// <summary>
@@ -56,10 +58,11 @@ public:
 	size_t GetEnemyCollectionSize() { return enemyCollection.size(); }
 
 	void PlaySoundPos(int handle, Vec3 pos);
+	void EndGame();
 	
 
 private:
-	void SpawnEnemy(ENEMY_NAME enName);
+	void SpawnEnemy(EnemyKey enName);
 
 	GameContext* pGameContext{ nullptr };
 
@@ -69,10 +72,16 @@ private:
 
 	float spawnTimer{ 0.0f };
 	const float spawnDuration{ 5.0f };
-
 	int spawnedCount{ 0 };
-	int bossSpawnCount{ 0 };
-	const int bossSpawnCountLimit{ 3 };
+
+
+	//ウェーブ関連
+	EnemyDataMaster* pEnemyDataMaster{ nullptr };
+
+	size_t maxWave{ 0 };
+	size_t currentWave{ 0 };
+	int waveSpawned{ 0 };
+	float nextSpawnTime{ 0.0f };
 
 	//ゲーム開始時のクリアまでの残り時間を覚えておく
 	float gameStartLeftTime{ 0 };

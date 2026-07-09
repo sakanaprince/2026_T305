@@ -8,23 +8,29 @@ void ShopManager::Init(GameContext* gC)
 	pGameContext = gC;
 
 	fontHandle = RM().GetFont(ResourceKeys::Font_ManufacturingConsent);
+	btnTutorial.Init(this, L"Help?", L"WASD移動_Eショップ_Rリロード_左クリック攻撃_Shiftダッシュ_Enter罠を配置",0, fontHandle);
 	btnRepairCore.Init(this, L"Core Repair", L"コア耐久力を30回復します。こればかり購入するとお金が貯まりません...。", 50, fontHandle);
-	btnSushi.Init(this, L"Holy Sushi", L"聖なるお寿司です。全ての敵を滅ぼそうとします。", 250, fontHandle);
 	btnTrap.Init(this, L"Ground Trap", L"罠です。地面に設置するタイプのシンプルなやつです。", 100, fontHandle);
-
+	btnHolyLight.Init(this, L"Holy Light", L"聖なる光です。全ての敵を滅ぼそうとします。", 500, fontHandle);
+	btnMap.Init(this, L"Radar Eye", L"レーダーです。コアと敵の位置を教えてくれます。", 150, fontHandle);
 
 	btnCollection.clear();
+	btnCollection.push_back(&btnTutorial);
 	btnCollection.push_back(&btnRepairCore);
-	btnCollection.push_back(&btnSushi);
 	btnCollection.push_back(&btnTrap);
+	btnCollection.push_back(&btnMap);
+	btnCollection.push_back(&btnHolyLight);
 
 	constexpr int basePosX = 100;
 	constexpr int distanceX = 400;
-	constexpr int basePosY = 500;
+	constexpr int basePosY = 200;
+	constexpr int basePosY_2 = 650;
 	int roop = 0;
 	for (auto& b : btnCollection)
 	{
-		b->SetButtonPosition(basePosX + (distanceX * roop), basePosY);
+		int y = roop >= 3 ? basePosY_2 : basePosY;
+		b->SetButtonPosition(basePosX + (distanceX * (roop % 3)), y);
+
 		roop++;
 	}
 
@@ -83,7 +89,7 @@ void ShopManager::Draw()const
 
 	SetFontSize(70);
 	wchar_t box[64];
-	swprintf(box, sizeof(box) / sizeof(wchar_t), L"W E L C O M E...  T O  S H O P");
+	swprintf(box, sizeof(box) / sizeof(wchar_t), L"W E L C O M E   T O . . .    S H O P");
 	DxPlus::Text::DrawString(
 		box,
 		{ DxPlus::CLIENT_WIDTH * 0.5f, DxPlus::CLIENT_HEIGHT * 0.1f },
