@@ -44,6 +44,13 @@ void ResourceManager::LoadAll()
     LoadSound(ResourceKeys::Sound_Gun, L"Gun.wav");
     LoadSound(ResourceKeys::Sound_ShotGun, L"ShotGun.wav");
     // -----
+
+    // --- Music ---
+    LoadMusic(ResourceKeys::Music_Title, L"TitleSceneBGM.mp3");
+    LoadMusic(ResourceKeys::Music_Game, L"GameSceneBGM.mp3");
+    LoadMusic(ResourceKeys::Music_GameOver, L"GameOverSceneBGM.mp3");
+    LoadMusic(ResourceKeys::Music_GameClear, L"GameClearBGM.mp3");
+    // -----
 }
 
 void ResourceManager::UnloadAll()
@@ -52,6 +59,8 @@ void ResourceManager::UnloadAll()
     UnloadFonts();
     UnloadModels();
     UnloadSprites();
+    UnloadMusics();
+    UnloadSounds();
 }
 
 // ===============================[  GRIDS  ]===================================
@@ -104,7 +113,7 @@ int ResourceManager::GetSprite(const std::wstring& key) const
 
 int ResourceManager::LoadMusic(const std::wstring& key, const std::wstring& path)
 {
-    int music = DxLib::LoadSoundMem(path.c_str());
+    int music = DxLib::LoadSoundMem((L"./Data/Sounds/" + path).c_str());
     if (music == -1) DxPlus::Utils::FatalError((L"Failed to load music " + path).c_str());
     musics[key] = music;
     return music;
