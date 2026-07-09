@@ -1,5 +1,7 @@
 #include "PlayerController.h"
 #include "DxLib.h"
+#include "../04_Resource/ResourceKeys.h"
+#include "../04_Resource/ResourceManager.h"
 #include "../10_Physics/Raycast.h"
 #include "../99_Utility/Const.h"
 #include <algorithm>
@@ -9,6 +11,10 @@ void PlayerController::Init()
     deadFont= CreateFontToHandle(NULL, 70, 5, DX_FONTTYPE_ANTIALIASING);
 	gunFont = CreateFontToHandle(NULL, 50, 3, DX_FONTTYPE_ANTIALIASING);
     reloadFont = CreateFontToHandle(NULL, 25, 2, DX_FONTTYPE_ANTIALIASING);
+
+    pistolHandle = RM().GetSound(ResourceKeys::Sound_Gun);
+    rifleHandle = RM().GetSound(ResourceKeys::Sound_SubmachineGun);
+    shotgunHandle = RM().GetSound(ResourceKeys::Sound_ShotGun);
 
     gun.Init();
 }
@@ -203,6 +209,7 @@ void PlayerController::Update(float deltaTime, Stage& stage)
                 Vec3 dir = RandomSpreadDirection(forward, spread);
 
                 FireBullet(eyePos, dir);
+                sound.PlaySENormal(pistolHandle);
                 pistolAmmo--;
                 fireTimer = fireInterval;
             }
@@ -217,6 +224,7 @@ void PlayerController::Update(float deltaTime, Stage& stage)
                 Vec3 dir = RandomSpreadDirection(forward, spread);
 
                 FireBullet(eyePos, dir);
+                sound.PlaySENormal(rifleHandle);
                 rifleAmmo--;
                 fireTimer = fireInterval;
             }
@@ -232,6 +240,7 @@ void PlayerController::Update(float deltaTime, Stage& stage)
                     Vec3 dir = RandomSpreadDirection(forward, spread);
                     FireBullet(eyePos, dir);
                 }
+                sound.PlaySENormal(shotgunHandle);
                 shotgunAmmo--;
                 fireTimer = fireInterval;
             }

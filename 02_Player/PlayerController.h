@@ -6,6 +6,7 @@
 #include "../05_Stage/Stage.h"
 #include "../07_Math/Vector3.h"
 #include "../10_Physics/Collision.h"
+#include "../12_Sound/SoundManager.h"
 #include "../99_Utility/Const.h"
 
 class PlayerController
@@ -26,6 +27,7 @@ public:
 	//プレイヤーの位置を取得
 	const Vec3& GetPosition() const { return position; }
 	const Vec3& GetCameraForward() const { return camera.GetForward(); }
+	const float GetYaw() const { return yaw; }
 	//プレイヤーの生存を取得
 	const bool IsAlive() const { return isAlive; }
 	bool IsGrounded() const { return isGrounded; }
@@ -79,10 +81,15 @@ private:
 	int gunFont{ -1 };
 	int reloadFont{ -1 };
 
+	int pistolHandle{ -1 };
+	int rifleHandle{ -1 };
+	int shotgunHandle{ -1 };
+
 	DxPlus::Vec2Int currentMouse{ 0,0 };
 	DxPlus::Vec2Int prevMouse{ 0,0 };
 
 	CameraController camera;
 	Gun gun;
 	Bullet* bullets = nullptr;
+	SoundManager sound;
 };
