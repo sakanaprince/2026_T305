@@ -42,6 +42,7 @@ void GameContext::Reset()
     text_Timer = std::to_wstring(static_cast<int>(limit_Timer));
 
     possessionTrap = 0;
+    spawnTraps.clear();
     
     enemySpawner.Reset();
     stage.Reset();
